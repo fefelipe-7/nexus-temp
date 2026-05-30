@@ -1,0 +1,6 @@
+{
+  "name": "Nexus",
+  "description": "Sistema pessoal de organização, memória e análise de vida. Base de captura rápida e análises profundas sobre saúde, mente, execução, recursos e relações.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
