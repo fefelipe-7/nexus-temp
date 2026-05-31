@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import App from '../App';
-import { RouterProvider } from '../components/RouterContext';
+import { RouterProvider } from '../app/router/RouterProvider';
 import { NexusAlertProvider } from '../components/NexusAlertContext';
 
 describe('App renderizacao', () => {

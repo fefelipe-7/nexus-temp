@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { storage } from '../lib/storage';
 import { DailyRecord, Task, FinanceTransaction, Habit } from '../domain/entities';
-import { useRouter } from './RouterContext';
+import { useRouter } from '../app/router/RouterProvider';
 import { useNexusAlert } from './NexusAlertContext';
 
 interface RegistrarSheetProps {
