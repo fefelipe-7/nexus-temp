@@ -11,6 +11,7 @@ import {
   Smile, Moon, Droplet, Coins, Info, Compass, HelpCircle, AlertCircle
 } from 'lucide-react';
 import { storage, calcularLifeInsights } from '../lib/storage';
+import { useNexusAlert, NexusModule } from './NexusAlertContext';
 
 // Import existing robust modular submenus to preserve full-fidelity interaction!
 import SaudeModule from './SaudeModule';
@@ -30,16 +31,9 @@ type ActiveModuleType = 'menu' | 'saude' | 'mente' | 'acao' | 'financas' | 'rela
 export default function ModulesView({ selectedDate, refreshCount, triggerRefresh }: ModulesViewProps) {
   const [activeModule, setActiveModule] = useState<ActiveModuleType>('menu');
   const [isStructureOpen, setIsStructureOpen] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
+  const { showAlert } = useNexusAlert();
 
   const insights = calcularLifeInsights(selectedDate);
-
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => {
-      setToast(prev => prev === msg ? null : prev);
-    }, 2000);
-  };
 
   const areasList = [
     {
@@ -100,23 +94,23 @@ export default function ModulesView({ selectedDate, refreshCount, triggerRefresh
   ];
 
   const handleQuickEntry = (label: string) => {
-    showToast(`Direcionando para o registro de ${label}...`);
+    let mod: NexusModule = 'sistema';
+    if (label.includes('Sono') || label.includes('Água') || label.includes('Treino') || label.includes('Refeição')) {
+      mod = 'saude';
+    } else if (label.includes('Humor') || label.includes('Diário') || label.includes('Foco')) {
+      mod = 'mente';
+    } else if (label.includes('Tarefa') || label.includes('Hábito') || label.includes('Projeto')) {
+      mod = 'acao';
+    } else if (label.includes('Despesa') || label.includes('Gasto') || label.includes('Receita') || label.includes('Finanças')) {
+      mod = 'recursos';
+    }
+    showAlert(`Direcionando para o registro de ${label}...`, mod);
     // Simulated quick entry or prompt to use central Intelligence creator
   };
 
   return (
     <div className="space-y-6 pb-24 text-[#20201D] font-sans bg-[#F7F6F1] animate-fade-in">
       
-      {/* Toast flutuante */}
-      <AnimatePresence>
-        {toast && (
-          <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-[#20201D] text-[#F7F6F1] text-[11px] font-mono py-2.5 px-4 rounded-full shadow-md flex items-center gap-1.5 border border-[#E3E0D8]/10">
-            <Sparkles className="w-3.5 h-3.5 text-nexus-purple" />
-            <span>{toast}</span>
-          </div>
-        )}
-      </AnimatePresence>
-
       <AnimatePresence mode="wait">
         {activeModule === 'menu' ? (
           <motion.div
@@ -135,7 +129,7 @@ export default function ModulesView({ selectedDate, refreshCount, triggerRefresh
 
               {/* Botão circular de Filtro/Busca */}
               <button 
-                onClick={() => showToast("Calibrando áreas do sistema...")}
+                onClick={() => showAlert("Calibrando áreas do sistema...", 'sistema')}
                 className="w-10 h-10 rounded-full bg-white border border-[#E3E0D8] flex items-center justify-center hover:bg-nexus-soft active-tap cursor-pointer"
                 title="Pesquisar sub-módulos"
               >
@@ -187,7 +181,8 @@ export default function ModulesView({ selectedDate, refreshCount, triggerRefresh
                       key={area.id}
                       onClick={() => {
                         setActiveModule(area.id);
-                        showToast(`Abrindo módulo: ${area.name}`);
+                        const modRef: NexusModule = area.id === 'financas' ? 'recursos' : (area.id as NexusModule);
+                        showAlert(`Abrindo módulo: ${area.name}`, modRef);
                       }}
                       className="w-full text-left bg-white border border-[#E3E0D8] rounded-[22px] p-4.5 hover:border-[#77736B]/55 flex items-center justify-between gap-4 transition-all active-tap cursor-pointer"
                     >
@@ -458,7 +453,7 @@ export default function ModulesView({ selectedDate, refreshCount, triggerRefresh
                   <button 
                     onClick={() => {
                       setIsStructureOpen(false);
-                      showToast("Navegando pela estrutura!");
+                      showAlert("Navegando pela estrutura!", 'sistema');
                     }}
                     className="w-full bg-[#20201D] hover:bg-black text-white py-2.5 rounded-xl font-bold min-h-[42px] cursor-pointer active-tap text-center"
                   >

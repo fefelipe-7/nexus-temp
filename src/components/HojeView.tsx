@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { storage, calcularLifeInsights } from '../lib/storage';
 import { Habito, Tarefa, RegistroDiario } from '../types';
+import { useNexusAlert } from './NexusAlertContext';
 
 interface HojeViewProps {
   selectedDate: string;
@@ -40,8 +41,7 @@ export default function HojeView({
   const [isAddMealOpen, setIsAddMealOpen] = useState(false);
   const [novaRefeicao, setNovaRefeicao] = useState('');
 
-  // Local feedback toast
-  const [toast, setToast] = useState<string | null>(null);
+  const { showAlert } = useNexusAlert();
 
   // Toggle completed list visibility
   const [showCompleted, setShowCompleted] = useState(false);
@@ -53,16 +53,9 @@ export default function HojeView({
     setRegistroHoje(storage.getRegistroPorData(selectedDate));
   }, [selectedDate, refreshCount]);
 
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => {
-      setToast(prev => prev === msg ? null : prev);
-    }, 2200);
-  };
-
   const toggleHabitoCheck = (id: string) => {
     const isChecked = storage.toggleHabito(id, selectedDate);
-    showToast(isChecked ? "Rotina cumprida com sucesso! ✨" : "Check-in removido.");
+    showAlert(isChecked ? "Rotina cumprida com sucesso! ✨" : "Check-in removido.", 'acao', 'habito');
     triggerRefresh();
   };
 
@@ -74,7 +67,7 @@ export default function HojeView({
       todos[index].concluida = !todos[index].concluida;
       todos[index].dataConclusao = todos[index].concluida ? selectedDate : undefined;
       storage.saveTarefas(todos);
-      showToast(!prevVal ? "Tarefa concluída! Bom trabalho. ✓" : "Tarefa marcada como pendente.");
+      showAlert(!prevVal ? "Tarefa concluída! Bom trabalho. ✓" : "Tarefa marcada como pendente.", 'acao', 'tarefa');
       triggerRefresh();
     }
   };
@@ -82,7 +75,7 @@ export default function HojeView({
   const handleSalvarNovaTarefa = (e: React.FormEvent) => {
     e.preventDefault();
     if (!novaTarefaNome.trim()) {
-      showToast("Por favor, descreva a tarefa.");
+      showAlert("Por favor, descreva a tarefa.", 'acao', 'tarefa');
       return;
     }
 
@@ -102,7 +95,7 @@ export default function HojeView({
 
     setNovaTarefaNome('');
     setIsAddSheetOpen(false);
-    showToast("Tarefa inserida na sua agenda!");
+    showAlert("Tarefa inserida na sua agenda!", 'acao', 'tarefa');
     triggerRefresh();
   };
 
@@ -110,7 +103,7 @@ export default function HojeView({
     const reg = storage.getRegistroPorData(selectedDate) || { data: selectedDate };
     reg.hidratacao = (reg.hidratacao || 0) + qtdL;
     storage.actualizarRegistro(reg);
-    showToast(`Bênção hídrica: +${qtdL * 1000}ml registrados. 💧`);
+    showAlert(`Bênção hídrica: +${qtdL * 1000}ml registrados. 💧`, 'saude', 'hidratacao');
     triggerRefresh();
   };
 
@@ -118,7 +111,7 @@ export default function HojeView({
     const reg = storage.getRegistroPorData(selectedDate) || { data: selectedDate };
     reg[fld] = val;
     storage.actualizarRegistro(reg);
-    showToast(`Sintonia de ${fld === 'humor' ? 'Humor' : 'Foco'} atualizada para ${val}/10.`);
+    showAlert(`Sintonia de ${fld === 'humor' ? 'Humor' : 'Foco'} atualizada para ${val}/10.`, 'mente', fld);
     triggerRefresh();
   };
 
@@ -134,14 +127,14 @@ export default function HojeView({
 
     setNovaRefeicao('');
     setIsAddMealOpen(false);
-    showToast("Refeição registrada na biologia.");
+    showAlert("Refeição registrada na biologia.", 'saude', 'alimentacao');
     triggerRefresh();
   };
 
   const handleDeletarTarefa = (id: string) => {
     const todos = storage.getTarefas().filter(t => t.id !== id);
     storage.saveTarefas(todos);
-    showToast("Tarefa removida.");
+    showAlert("Tarefa removida.", 'acao', 'tarefa');
     triggerRefresh();
   };
 
@@ -311,23 +304,13 @@ export default function HojeView({
     } else if (agora.tipo === 'habit' && agora.raw) {
       toggleHabitoCheck(agora.raw.id);
     } else {
-      showToast("Abra o Registrar para iniciar diário.");
+      showAlert("Abra o Registrar para iniciar diário.", 'mente', 'diario');
     }
   };
 
   return (
     <div className="space-y-6 pb-24 text-charcoal relative animate-fade-in font-sans">
       
-      {/* Floating feedback notification for native mobile experience */}
-      <AnimatePresence>
-        {toast && (
-          <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-ink text-white text-[11px] font-mono font-bold py-2.5 px-4 rounded-xl shadow-lg border border-hairline/20 animate-fade-in flex items-center gap-1.5 whitespace-nowrap">
-            <Sparkles className="w-3.5 h-3.5 text-brand-yellow font-bold" />
-            <span>{toast}</span>
-          </div>
-        )}
-      </AnimatePresence>
-
       {/* 1. EDITORIAL HEADER */}
       <header className="flex justify-between items-start px-0.5">
         <div>
@@ -346,7 +329,7 @@ export default function HojeView({
               onChange={(e) => {
                 if (e.target.value) {
                   setSelectedDate(e.target.value);
-                  showToast("Foco temporal alterado.");
+                  showAlert("Foco temporal alterado.", 'sistema', 'geral');
                 }
               }}
               className="absolute inset-0 opacity-0 cursor-pointer w-full h-full pointer-events-auto"

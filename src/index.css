@@ -60,6 +60,28 @@
 
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Alert integration variables */
+  --color-success: #1aae39;
+  --color-success-foreground: #14802c;
+  --color-success-soft: #EAF6EE;
+  --color-success-alpha: rgba(26, 174, 57, 0.15);
+
+  --color-info: #6D5DD3;
+  --color-info-foreground: #5645d4;
+  --color-info-soft: #F1EDFF;
+  --color-info-alpha: rgba(109, 93, 211, 0.15);
+
+  --color-warning: #f5d75e;
+  --color-warning-foreground: #9a7d0a;
+  --color-warning-soft: #F8F1DE;
+  --color-warning-alpha: rgba(245, 215, 94, 0.15);
+
+  --color-primary-soft: #EAF3FB;
+  --color-primary-alpha: rgba(9, 105, 218, 0.15);
+
+  --color-destructive-soft: #FBEDEA;
+  --color-destructive-alpha: rgba(224, 109, 83, 0.15);
 }
 
 /* Otimizações Globais de Mobile UX */

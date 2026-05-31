@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { storage } from '../lib/storage';
 import { RegistroDiario } from '../types';
+import { useNexusAlert, NexusModule } from './NexusAlertContext';
 
 interface InsightsViewProps {
   selectedDate: string;
@@ -33,25 +34,12 @@ export default function InsightsView({ selectedDate, refreshCount }: InsightsVie
   const [registros, setRegistros] = useState<RegistroDiario[]>([]);
   const [activeFilter, setActiveFilter] = useState<'Todos' | 'Saúde' | 'Mente' | 'Ação' | 'Finanças' | 'Vida'>('Todos');
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
+  const { showAlert } = useNexusAlert();
 
   // Dynamic graph select variables
   const [metricA, setMetricA] = useState<CompareMetrics>('sono');
   const [metricB, setMetricB] = useState<CompareMetrics>('humor');
   const [hoveredDataIdx, setHoveredDataIdx] = useState<number | null>(null);
-
-  useEffect(() => {
-    // Sort chronological order for graphs
-    const data = [...storage.getRegistros()].sort((a, b) => a.data.localeCompare(b.data));
-    setRegistros(data);
-  }, [selectedDate, refreshCount]);
-
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => {
-      setToast(prev => prev === msg ? null : prev);
-    }, 2200);
-  };
 
   // Static defined elegant editorial insights that react to activeFilter
   const allInsights = [
@@ -167,19 +155,15 @@ export default function InsightsView({ selectedDate, refreshCount }: InsightsVie
   const metricColorA = METRIC_DETAILS[metricA].color;
   const metricColorB = METRIC_DETAILS[metricB].color;
 
+  useEffect(() => {
+    // Sort chronological order for graphs
+    const data = [...storage.getRegistros()].sort((a, b) => a.data.localeCompare(b.data));
+    setRegistros(data);
+  }, [selectedDate, refreshCount]);
+
   return (
     <div className="space-y-6 pb-24 text-[#20201D] font-sans bg-[#F7F6F1] animate-fade-in">
       
-      {/* Toast flutuante de feedback */}
-      <AnimatePresence>
-        {toast && (
-          <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-[#20201D] text-[#F7F6F1] text-[11px] font-mono py-2.5 px-4 rounded-full shadow-md flex items-center gap-1.5 border border-[#E3E0D8]/10">
-            <Sparkles className="w-3.5 h-3.5 text-[#6D5DD3]" />
-            <span>{toast}</span>
-          </div>
-        )}
-      </AnimatePresence>
-
       {/* 1. HEADER EDITORIAL */}
       <header className="flex justify-between items-center px-1 pt-1.5">
         <div>
@@ -189,7 +173,7 @@ export default function InsightsView({ selectedDate, refreshCount }: InsightsVie
 
         <button 
           onClick={() => {
-            showToast("Banco de hábitos recalibrado em tempo real.");
+            showAlert("Banco de hábitos recalibrado em tempo real.", 'sistema');
           }}
           className="w-10 h-10 rounded-full bg-white border border-[#E3E0D8] flex items-center justify-center hover:bg-stone-100 active-tap cursor-pointer transition-colors"
           title="Recalibrar tendências"
@@ -231,7 +215,9 @@ export default function InsightsView({ selectedDate, refreshCount }: InsightsVie
               value={metricA} 
               onChange={(e) => {
                 setMetricA(e.target.value as CompareMetrics);
-                showToast(`Cruzando ${METRIC_DETAILS[e.target.value as CompareMetrics].labelMin} com ${METRIC_DETAILS[metricB].labelMin}`);
+                const valName = METRIC_DETAILS[e.target.value as CompareMetrics].labelMin;
+                const bName = METRIC_DETAILS[metricB].labelMin;
+                showAlert(`Cruzando ${valName} com ${bName}`, 'mente', 'foco');
               }}
               className="w-full text-xs font-semibold bg-[#F7F6F1] border border-[#E3E0D8] rounded-lg p-2 text-[#20201D] focus:outline-none"
             >
@@ -247,7 +233,9 @@ export default function InsightsView({ selectedDate, refreshCount }: InsightsVie
               value={metricB} 
               onChange={(e) => {
                 setMetricB(e.target.value as CompareMetrics);
-                showToast(`Cruzando ${METRIC_DETAILS[metricA].labelMin} com ${METRIC_DETAILS[e.target.value as CompareMetrics].labelMin}`);
+                const aName = METRIC_DETAILS[metricA].labelMin;
+                const valName = METRIC_DETAILS[e.target.value as CompareMetrics].labelMin;
+                showAlert(`Cruzando ${aName} com ${valName}`, 'mente', 'foco');
               }}
               className="w-full text-xs font-semibold bg-[#F7F6F1] border border-[#E3E0D8] rounded-lg p-2 text-[#20201D] focus:outline-none"
             >
@@ -437,7 +425,13 @@ export default function InsightsView({ selectedDate, refreshCount }: InsightsVie
             key={filter}
             onClick={() => {
               setActiveFilter(filter);
-              showToast(`Segmentado por: ${filter}`);
+              let modTarget: NexusModule = 'sistema';
+              if (filter === 'Saúde') modTarget = 'saude';
+              else if (filter === 'Mente') modTarget = 'mente';
+              else if (filter === 'Ação') modTarget = 'acao';
+              else if (filter === 'Finanças') modTarget = 'recursos';
+              else if (filter === 'Vida') modTarget = 'relacoes';
+              showAlert(`Segmentado por: ${filter}`, modTarget);
             }}
             className={`flex items-center justify-center px-4 h-9 rounded-full text-xs font-semibold cursor-pointer shrink-0 transition-all select-none border active-tap ${
               activeFilter === filter 
@@ -494,7 +488,13 @@ export default function InsightsView({ selectedDate, refreshCount }: InsightsVie
 
                   <button 
                     onClick={() => {
-                      showToast(`Iniciação analítica: ${ins.titulo}`);
+                      let activeMod: NexusModule = 'mente';
+                      const cat = ins.categoria.toLowerCase();
+                      if (cat.includes('saúde')) activeMod = 'saude';
+                      else if (cat.includes('ação')) activeMod = 'acao';
+                      else if (cat.includes('finanças') || cat.includes('recursos')) activeMod = 'recursos';
+                      else if (cat.includes('vida') || cat.includes('relações')) activeMod = 'relacoes';
+                      showAlert(`Iniciação analítica: ${ins.titulo}`, activeMod);
                     }}
                     className="text-[10.5px] font-bold text-[#6D5DD3] hover:underline flex items-center gap-0.5 cursor-pointer active-tap select-none"
                   >
@@ -609,7 +609,7 @@ export default function InsightsView({ selectedDate, refreshCount }: InsightsVie
                   <button 
                     onClick={() => {
                       setIsDetailOpen(false);
-                      showToast("Configurado! Ative a sua melhor versão.");
+                      showAlert("Configurado! Ative a sua melhor versão.", 'sistema');
                     }}
                     className="w-full bg-[#20201D] hover:bg-black text-white py-3 rounded-xl font-bold min-h-[44px] cursor-pointer active-tap text-center"
                   >

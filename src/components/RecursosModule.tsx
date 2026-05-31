@@ -8,6 +8,7 @@ import { motion } from 'motion/react';
 import { DollarSign, Wallet, TrendingUp, TrendingDown, Plus, Trash2, Calendar, Clock } from 'lucide-react';
 import { TransacaoFinanceira } from '../types';
 import { storage } from '../lib/storage';
+import { useNexusAlert } from './NexusAlertContext';
 
 interface RecursosModuleProps {
   selectedDate: string;
@@ -20,13 +21,14 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
   const [novoTipo, setNovoTipo] = useState<'despesa' | 'receita'>('despesa');
   const [novaCategoria, setNovaCategoria] = useState<string>('Alimentação');
   const [novaDescr, setNovaDescr] = useState<string>('');
+  const { showAlert } = useNexusAlert();
 
   const financas = storage.getFinancas()
     .sort((a, b) => b.data.localeCompare(a.data));
 
   const handleLancarTransacao = () => {
     if (!novoValor || parseFloat(novoValor) <= 0) {
-      alert('Informe um valor monetário válido superior a zero.');
+      showAlert('Informe um valor monetário válido superior a zero.', 'recursos', 'financas');
       return;
     }
     const valorNum = parseFloat(novoValor);
@@ -44,7 +46,7 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
     todos.push(nova);
     storage.saveFinancas(todos);
 
-    // Atualiza despesa diária agregada se houver registro diário correspondente
+    // Ajusta o registro diário correspondente se necessário
     const reg = storage.getRegistroPorData(selectedDate);
     if (reg) {
       if (novoTipo === 'despesa') {
@@ -58,7 +60,7 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
     setNovoValor('');
     setNovaDescr('');
     triggerRefresh();
-    alert('Transação lançada com sucesso!');
+    showAlert('Transação lançada com sucesso!', 'recursos', 'financas');
   };
 
   const handleDeletarTransacao = (id: string, transacao: TransacaoFinanceira) => {

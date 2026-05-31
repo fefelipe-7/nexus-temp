@@ -8,6 +8,7 @@ import { motion } from 'motion/react';
 import { HeartHandshake, Users, PhoneCall, Plus, Trash2, Calendar, UserCheck, CheckCircle } from 'lucide-react';
 import { ConnectionPessoa } from '../types';
 import { storage } from '../lib/storage';
+import { useNexusAlert } from './NexusAlertContext';
 
 interface RelacoesModuleProps {
   selectedDate: string;
@@ -19,6 +20,7 @@ export default function RelacoesModule({ selectedDate, refreshCount, triggerRefr
   const [novaPessoaNome, setNovaPessoaNome] = useState<string>('');
   const [novoVinculo, setNovoVinculo] = useState<'familia' | 'amizades' | 'relacionamento' | 'networking'>('amizades');
   const [novaFreqDias, setNovaFreqDias] = useState<number>(7);
+  const { showAlert } = useNexusAlert();
 
   const pessoas = storage.getPessoas()
     .sort((a, b) => {
@@ -46,7 +48,7 @@ export default function RelacoesModule({ selectedDate, refreshCount, triggerRefr
     setNovaPessoaNome('');
     setNovaFreqDias(7);
     triggerRefresh();
-    alert('Conexão humana cadastrada com sucesso!');
+    showAlert('Conexão humana cadastrada com sucesso!', 'relacoes', 'conexoes');
   };
 
   const handleDeletarPessoa = (id: string) => {
@@ -70,9 +72,9 @@ export default function RelacoesModule({ selectedDate, refreshCount, triggerRefr
         storage.actualizarRegistro(reg);
 
         triggerRefresh();
-        alert(`Conversa com ${todos[index].nome} anotada no dia de hoje!`);
+        showAlert(`Conversa com ${todos[index].nome} anotada no dia de hoje!`, 'relacoes', 'conexoes');
       } else {
-        alert('Você já registrou uma conversa com essa pessoa hoje.');
+        showAlert('Você já registrou uma conversa com essa pessoa hoje.', 'relacoes', 'conexoes');
       }
     }
   };

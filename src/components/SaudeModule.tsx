@@ -8,6 +8,7 @@ import { motion } from 'motion/react';
 import { Flame, Droplets, Moon, Shield, Sparkles, Plus, AlertCircle, Dumbbell } from 'lucide-react';
 import { RegistroDiario } from '../types';
 import { storage } from '../lib/storage';
+import { useNexusAlert } from './NexusAlertContext';
 
 interface SaudeModuleProps {
   selectedDate: string;
@@ -15,19 +16,12 @@ interface SaudeModuleProps {
 }
 
 export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleProps) {
-  const [toast, setToast] = useState<string | null>(null);
   const [novoTreinoNome, setNovoTreinoNome] = useState<string>('');
   const [novoTreinoEsforco, setNovoTreinoEsforco] = useState<number>(6);
   const [novoTreinoDuracao, setNovoTreinoDuracao] = useState<number>(45);
 
   const [coposAguaAdd, setCoposAguaAdd] = useState<number>(0.25); // 250ml padrão
-
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => {
-      setToast(prev => prev === msg ? null : prev);
-    }, 2200);
-  };
+  const { showAlert } = useNexusAlert();
 
   const registros = storage.getRegistros()
     .sort((a, b) => b.data.localeCompare(a.data));
@@ -36,7 +30,7 @@ export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleP
 
   const handleSalvarTreino = () => {
     if (!novoTreinoNome.trim()) {
-      showToast('Por favor, informe o nome do treino.');
+      showAlert('Por favor, informe o nome do treino.', 'saude', 'treino');
       return;
     }
     const reg = storage.getRegistroPorData(selectedDate) || { data: selectedDate };
@@ -45,14 +39,14 @@ export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleP
     reg.treinoDuracao = novoTreinoDuracao;
     storage.actualizarRegistro(reg);
     setNovoTreinoNome('');
-    showToast('Treino registrado com sucesso!');
+    showAlert('Treino registrado com sucesso!', 'saude', 'treino');
   };
 
   const handleAddHidratacao = (quantidadeL: number) => {
     const reg = storage.getRegistroPorData(selectedDate) || { data: selectedDate };
     reg.hidratacao = (reg.hidratacao || 0) + quantidadeL;
     storage.actualizarRegistro(reg);
-    showToast(`Acrescentado +${quantidadeL * 1000}ml de água.`);
+    showAlert(`Acrescentado +${quantidadeL * 1000}ml de água.`, 'saude', 'hidratacao');
   };
 
   // Prepara dados do gráfico semanal de Hidratação
@@ -76,14 +70,6 @@ export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleP
 
   return (
     <div className="space-y-6 pb-24 text-charcoal relative">
-      
-      {/* Toast flutuante de feedback mobile-friendly */}
-      {toast && (
-        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-ink text-white text-[11px] font-mono font-semibold py-2.5 px-4 rounded-xl shadow-lg border border-hairline/20 animate-fade-in flex items-center gap-1.5 whitespace-nowrap">
-          <Sparkles className="w-3.5 h-3.5 text-brand-yellow" />
-          <span>{toast}</span>
-        </div>
-      )}
       
       {/* Top Banner de Identidade estilo Notion */}
       <div className="flex items-center gap-3">

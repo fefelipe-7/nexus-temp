@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { storage, calcularLifeInsights } from '../lib/storage';
 import { LifeInsights, RegistroDiario } from '../types';
+import { useNexusAlert } from './NexusAlertContext';
 
 interface HomeViewProps {
   selectedDate: string;
@@ -23,15 +24,15 @@ interface HomeViewProps {
 
 export default function HomeView({ 
   selectedDate, 
-  setSelectedDate, 
-  onOpenRecord, 
+  setSelectedDate,
+  onOpenRecord,
   setActiveTab,
   refreshCount,
   onOpenSearch
 }: HomeViewProps) {
   const [insights, setInsights] = useState<LifeInsights | null>(null);
   const [registroHoje, setRegistroHoje] = useState<RegistroDiario | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
+  const { showAlert } = useNexusAlert();
   const [waterVolume, setWaterVolume] = useState<number>(1.2);
 
   useEffect(() => {
@@ -44,27 +45,20 @@ export default function HomeView({
     }
   }, [selectedDate, refreshCount]);
 
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => {
-      setToast(prev => prev === msg ? null : prev);
-    }, 2500);
-  };
-
   const handleAddQuickHydration = () => {
     const reg = storage.getRegistroPorData(selectedDate) || { data: selectedDate };
     const novoValor = (reg.hidratacao || 0) + 0.25;
     reg.hidratacao = novoValor;
     storage.actualizarRegistro(reg);
     setWaterVolume(novoValor);
-    showToast("💧 Copo d'água registrado! +250ml adicionados.");
+    showAlert("Copo d'água registrado! +250ml adicionados.", 'saude', 'agua');
   };
 
   const handleRegistrarHumor = (humorVal: number) => {
     const reg = storage.getRegistroPorData(selectedDate) || { data: selectedDate };
     reg.humor = humorVal;
     storage.actualizarRegistro(reg);
-    showToast(`Sintonizado: humor definido em ${humorVal}/10.`);
+    showAlert(`Sintonizado: humor definido em ${humorVal}/10.`, 'mente', 'humor');
   };
 
   // Dynamic visual parameters reflecting state or falling back to premium requested style
@@ -74,14 +68,6 @@ export default function HomeView({
   return (
     <div className="space-y-7 pb-20 text-nexus-text font-sans bg-nexus-bg animate-fade-in">
       
-      {/* Toast flutuante de feedback - Elegante e mínimo */}
-      {toast && (
-        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-[#20201D] text-[#F7F6F1] text-[11px] font-mono py-2.5 px-4 rounded-full shadow-md flex items-center gap-1.5 border border-[#E3E0D8]/10">
-          <span className="w-2 h-2 rounded-full bg-nexus-purple animate-pulse" />
-          <span>{toast}</span>
-        </div>
-      )}
-
       {/* 1. HEADER EMOCIONAL */}
       <header className="flex justify-between items-center px-1 pt-1.5">
         <div>

@@ -8,6 +8,7 @@ import { motion } from 'motion/react';
 import { Brain, Smile, Activity, ShieldAlert, Sparkles, FileText, CheckCircle, Clock } from 'lucide-react';
 import { RegistroDiario } from '../types';
 import { storage } from '../lib/storage';
+import { useNexusAlert } from './NexusAlertContext';
 
 interface MenteModuleProps {
   selectedDate: string;
@@ -19,6 +20,7 @@ export default function MenteModule({ selectedDate, refreshCount }: MenteModuleP
   const [novoHumor, setNovoHumor] = useState<number>(7);
   const [novoEstresse, setNovoEstresse] = useState<number>(3);
   const [novaMeditacao, setNovaMeditacao] = useState<number>(10);
+  const { showAlert } = useNexusAlert();
 
   const registros = storage.getRegistros()
     .sort((a, b) => b.data.localeCompare(a.data)); // ordenado do mais recente ao mais antigo
@@ -35,7 +37,7 @@ export default function MenteModule({ selectedDate, refreshCount }: MenteModuleP
     }
     storage.actualizarRegistro(hojeReg);
     setNovoJournal('');
-    alert('Informações de Mente atualizadas com sucesso!');
+    showAlert('Informações de Mente atualizadas com sucesso!', 'mente', 'diario');
   };
 
   // Prepara dados do gráfico semanal de Humor dos últimos 7 registros

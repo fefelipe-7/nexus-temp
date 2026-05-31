@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Home as HomeIcon, ClipboardList, Plus, Lightbulb, LayoutGrid, 
@@ -16,14 +16,16 @@ import HojeView from './components/HojeView';
 import RegistrarSheet from './components/RegistrarSheet';
 import InsightsView from './components/InsightsView';
 import ModulesView from './components/ModulesView';
+import { useRouter } from './components/RouterContext';
 
 export default function App() {
   const [selectedDate, setSelectedDate] = useState<string>('2026-05-29'); // Tempo atual de referência local
-  const [activeTab, setActiveTab] = useState<string>('home');
-  const [isRecordOpen, setIsRecordOpen] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [refreshCount, setRefreshCount] = useState<number>(0);
+
+  const { path, baseTab, isRegisterModal, navigate, openRegisterModal, closeRegisterModal } = useRouter();
+  const mainRef = useRef<HTMLElement>(null);
 
   // Inicializa o banco local ao iniciar o app
   useEffect(() => {
@@ -42,19 +44,34 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Força o scroll para o topo sempre que uma rota/aba muda
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTop = 0;
+    }
+  }, [path]);
+
   const triggerRefresh = () => {
     setRefreshCount(prev => prev + 1);
   };
 
+  const handleSetActiveTab = (tab: string) => {
+    if (tab === 'home') navigate('/home');
+    else if (tab === 'hoje' || tab === 'execução') navigate('/today');
+    else if (tab === 'insights') navigate('/insights');
+    else if (tab === 'modulos') navigate('/modules');
+    else if (tab === 'perfil') navigate('/profile');
+  };
+
   const renderActiveTabContent = () => {
-    switch (activeTab) {
+    switch (baseTab) {
       case 'home':
         return (
           <HomeView 
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
-            onOpenRecord={() => setIsRecordOpen(true)}
-            setActiveTab={setActiveTab}
+            onOpenRecord={openRegisterModal}
+            setActiveTab={handleSetActiveTab}
             refreshCount={refreshCount}
             onOpenSearch={() => { setIsSearchOpen(true); setSearchQuery(''); }}
           />
@@ -147,11 +164,11 @@ export default function App() {
     if (!searchQuery.trim()) {
       return {
         acoes: [
-          { label: 'Registrar Sono', action: () => { setIsSearchOpen(false); setIsRecordOpen(true); } },
-          { label: 'Lançar Despesa / Receita', action: () => { setIsSearchOpen(false); setIsRecordOpen(true); } },
-          { label: 'Registrar Refeição', action: () => { setIsSearchOpen(false); setIsRecordOpen(true); } },
-          { label: 'Ir para Painel Evolução', action: () => { setIsSearchOpen(false); setActiveTab('home'); } },
-          { label: 'Ir para Hoje Operacional', action: () => { setIsSearchOpen(false); setActiveTab('hoje'); } },
+          { label: 'Registrar Sono', action: () => { setIsSearchOpen(false); openRegisterModal(); } },
+          { label: 'Lançar Despesa / Receita', action: () => { setIsSearchOpen(false); openRegisterModal(); } },
+          { label: 'Registrar Refeição', action: () => { setIsSearchOpen(false); openRegisterModal(); } },
+          { label: 'Ir para Painel Evolução', action: () => { setIsSearchOpen(false); navigate('/home'); } },
+          { label: 'Ir para Hoje Operacional', action: () => { setIsSearchOpen(false); navigate('/today'); } },
         ],
         tarefas: [],
         pessoas: [],
@@ -166,9 +183,9 @@ export default function App() {
     const habitos = storage.getHabitos().filter(h => h.nome.toLowerCase().includes(q));
 
     const acoes = [
-      { label: 'Registrar Sono', action: () => { setIsSearchOpen(false); setIsRecordOpen(true); } },
-      { label: 'Lançar Gasto', action: () => { setIsSearchOpen(false); setIsRecordOpen(true); } },
-      { label: 'Escrever no Diário', action: () => { setIsSearchOpen(false); setIsRecordOpen(true); } },
+      { label: 'Registrar Sono', action: () => { setIsSearchOpen(false); openRegisterModal(); } },
+      { label: 'Lançar Gasto', action: () => { setIsSearchOpen(false); openRegisterModal(); } },
+      { label: 'Escrever no Diário', action: () => { setIsSearchOpen(false); openRegisterModal(); } },
     ].filter(a => a.label.toLowerCase().includes(q));
 
     return { acoes, tarefas, pessoas, habitos };
@@ -205,9 +222,9 @@ export default function App() {
               </button>
 
               <button 
-                onClick={() => setActiveTab('perfil')}
+                onClick={() => navigate('/profile')}
                 className={`w-8 h-8 rounded-full overflow-hidden border cursor-pointer active-tap transition-all ${
-                  activeTab === 'perfil' ? 'border-[#6D5DD3] ring-2 ring-[#6D5DD3]/25' : 'border-nexus-border'
+                  baseTab === 'perfil' ? 'border-[#6D5DD3] ring-2 ring-[#6D5DD3]/25' : 'border-nexus-border'
                 }`}
                 title="Meu Perfil"
               >
@@ -223,10 +240,13 @@ export default function App() {
         </header>
 
         {/* Conteúdo Central Móvel de Container Estilo App */}
-        <main className="flex-1 w-full px-4 pt-4 pb-24 overflow-y-auto no-scrollbar scroll-smooth bg-nexus-bg relative">
+        <main 
+          ref={mainRef}
+          className="flex-1 w-full px-4 pt-4 pb-28 sm:pb-24 overflow-y-auto no-scrollbar scroll-smooth bg-nexus-bg relative"
+        >
           <AnimatePresence mode="wait">
             <motion.div
-              key={activeTab}
+              key={baseTab}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
@@ -238,27 +258,30 @@ export default function App() {
           </AnimatePresence>
         </main>
 
-        {/* Barra de Navegação Inferior Flutuante em Pílula */}
-        <nav className="absolute bottom-4 left-3.5 right-3.5 h-[64px] bg-[rgba(255,255,255,0.92)] backdrop-blur-md border border-nexus-border rounded-[999px] z-40 shadow-xs flex items-center justify-around px-2 py-1">
+        {/* Barra de Navegação Inferior Fixa no mobile / Absoluta no simulador */}
+        <nav className="fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-4 sm:left-3.5 sm:right-3.5 h-[64px] bg-[rgba(255,255,255,0.92)] backdrop-blur-md border-t sm:border border-nexus-border rounded-none sm:rounded-[999px] z-40 shadow-xs flex items-center justify-around px-3 py-1 pb-[calc(env(safe-area-inset-bottom,0px)+4px)] sm:pb-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isRegistrar = item.id === 'registrar';
-            const active = activeTab === item.id;
+            const active = baseTab === item.id;
             
             return (
               <button
                 key={item.id}
                 onClick={() => {
                   if (isRegistrar) {
-                    setIsRecordOpen(true);
+                    openRegisterModal();
                   } else {
-                    setActiveTab(item.id);
+                    if (item.id === 'home') navigate('/home');
+                    else if (item.id === 'hoje') navigate('/today');
+                    else if (item.id === 'insights') navigate('/insights');
+                    else if (item.id === 'modulos') navigate('/modules');
                     triggerRefresh();
                   }
                 }}
                 className={`flex flex-col items-center gap-0.5 flex-1 relative transition-all active-tap cursor-pointer select-none rounded-[999px] min-h-[46px] justify-center ${
                   isRegistrar 
-                    ? 'text-[#6D5DD3] font-bold scale-102 bg-[#EEEAFD] max-h-[48px] max-w-[48px] rounded-[999px] border border-[#d3caf7]' 
+                    ? 'text-[#6D5DD3] font-bold scale-102 bg-[#EEEAFD] max-h-[48px] max-w-[48px] rounded-[999px] border border-[#d3caf7] sm:scale-100' 
                     : active 
                       ? 'text-[#20201D] font-bold py-1 bg-[#F0EFEB]/50 rounded-[999px]' 
                       : 'text-[#77736B] hover:text-[#20201D]'
@@ -286,10 +309,10 @@ export default function App() {
 
       {/* Bottom Sheet de Registros Inteligente */}
       <AnimatePresence>
-        {isRecordOpen && (
+        {isRegisterModal && (
           <RegistrarSheet 
-            isOpen={isRecordOpen}
-            onClose={() => setIsRecordOpen(false)}
+            isOpen={isRegisterModal}
+            onClose={closeRegisterModal}
             selectedDate={selectedDate}
             onSaveSuccess={triggerRefresh}
           />
@@ -357,7 +380,7 @@ export default function App() {
                         key={t.id}
                         onClick={() => {
                           setIsSearchOpen(false);
-                          setActiveTab('hoje');
+                          navigate('/today');
                         }}
                         className="p-2 border border-hairline-soft rounded-md hover:border-slate cursor-pointer transition-colors flex justify-between items-center text-xs"
                       >
@@ -379,7 +402,7 @@ export default function App() {
                         key={p.id}
                         onClick={() => {
                           setIsSearchOpen(false);
-                          setActiveTab('modulos');
+                          navigate('/modules');
                         }}
                         className="p-2 border border-hairline-soft rounded-md hover:border-slate cursor-pointer transition-colors flex justify-between items-center text-xs"
                       >
@@ -399,7 +422,7 @@ export default function App() {
                         key={h.id}
                         onClick={() => {
                           setIsSearchOpen(false);
-                          setActiveTab('hoje');
+                          navigate('/today');
                         }}
                         className="p-2 border border-hairline-soft rounded-md hover:border-slate cursor-pointer transition-colors flex justify-between items-center text-xs"
                       >
