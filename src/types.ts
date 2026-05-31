@@ -83,6 +83,7 @@ export interface Tarefa {
   concluida: boolean;
   dataCriacao: string;
   dataConclusao?: string;
+  periodo?: 'manha' | 'tarde' | 'noite';
 }
 
 export interface TransacaoFinanceira {

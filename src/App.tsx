@@ -56,6 +56,7 @@ export default function App() {
             onOpenRecord={() => setIsRecordOpen(true)}
             setActiveTab={setActiveTab}
             refreshCount={refreshCount}
+            onOpenSearch={() => { setIsSearchOpen(true); setSearchQuery(''); }}
           />
         );
       case 'hoje':
@@ -88,7 +89,7 @@ export default function App() {
   };
 
   const navItems = [
-    { id: 'home', label: 'Evolução', icon: HomeIcon },
+    { id: 'home', label: 'Início', icon: HomeIcon },
     { id: 'hoje', label: 'Hoje', icon: ClipboardList },
     { id: 'registrar', label: 'Registrar', icon: Plus }, // Centro da Inteligência
     { id: 'insights', label: 'Insights', icon: Lightbulb },
@@ -130,44 +131,42 @@ export default function App() {
   const resultados = getSearchResults();
 
   return (
-    <div id="nexus_app" className="min-h-[100dvh] bg-surface flex flex-col font-sans select-none antialiased text-charcoal">
+    <div id="nexus_app" className="min-h-screen bg-[#F0EFEB] sm:py-6 flex items-center justify-center select-none antialiased text-[#20201D]">
       
-      {/* Top Header Barra Sólida estilo Notion */}
-      <header className="bg-canvas border-b border-hairline sticky top-0 z-40 px-4 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] pb-3 shadow-none">
-        <div className="max-w-xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <h1 className="text-base font-bold tracking-tight text-ink font-sans">
-              Nexus
-            </h1>
-            <span className="text-[10px] font-mono tracking-wider font-bold text-primary bg-tint-lavender border border-brand-purple-300 px-1.5 py-0.5 rounded-sm uppercase">
-              V2 Intel
-            </span>
+      {/* Device Emulation wrapping canvas for premium mobile preview */}
+      <div className="w-full sm:max-w-[390px] sm:h-[844px] sm:rounded-[40px] sm:border-[8px] sm:border-[#20201D] sm:shadow-2xl bg-nexus-bg flex flex-col relative overflow-hidden transition-all duration-300">
+        
+        {/* Top Header Barra Sólida estilo Notion */}
+        <header className="bg-nexus-bg border-b border-nexus-border sticky top-0 z-40 px-4 pt-4 pb-3 shadow-none shrink-0">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-sm font-black tracking-tight text-[#20201D] font-sans">
+                Nexus
+              </h1>
+              <span className="text-[9px] font-mono tracking-wider font-bold text-white bg-[#6D5DD3] border border-[#6D5DD3]/10 px-1 py-0.2 rounded-xs uppercase">
+                V2 INTEL
+              </span>
+            </div>
+
+            {/* Barra de Busca rápida clicável estilo Notion */}
+            <button 
+              onClick={() => { setIsSearchOpen(true); setSearchQuery(''); }}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 border border-nexus-border rounded-lg hover:border-[#77736B] bg-nexus-surface text-[10px] text-[#77736B] font-semibold max-w-[130px] w-full text-left transition-colors cursor-pointer active-tap shrink-0"
+              title="Paleta de Comandos (Ctrl+K)"
+            >
+              <Search className="w-3.5 h-3.5 text-[#77736B] shrink-0" />
+              <span className="truncate flex-1">Buscar comandos</span>
+            </button>
           </div>
+        </header>
 
-          {/* Barra de Busca rápida clicável estilo Notion */}
-          <button 
-            onClick={() => { setIsSearchOpen(true); setSearchQuery(''); }}
-            className="flex items-center gap-2 px-3 py-1.5 border border-hairline rounded-md hover:border-slate bg-surface-soft text-[10px] sm:text-xs text-slate font-medium max-w-[170px] sm:max-w-[220px] w-full text-left transition-colors cursor-pointer"
-          >
-            <Search className="w-3.5 h-3.5 text-stone shrink-0" />
-            <span className="truncate flex-1">Buscar comandos (Ctrl+K)</span>
-          </button>
+        {/* Conteúdo Central Móvel de Container Estilo App */}
+        <main className="flex-1 w-full px-4 pt-4 pb-24 overflow-y-auto no-scrollbar scroll-smooth bg-nexus-bg">
+          {renderActiveTabContent()}
+        </main>
 
-          <div className="flex items-center gap-1 text-slate font-mono text-[9px]">
-            <ShieldCheck className="w-3.5 h-3.5 text-brand-green" />
-            <span className="hidden sm:inline">Offline-First</span>
-          </div>
-        </div>
-      </header>
-
-      {/* Conteúdo Central Móvel de Container Estilo App */}
-      <main className="flex-1 w-full max-w-xl mx-auto px-4 pt-4 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] bg-canvas border-x border-hairline scroll-smooth">
-        {renderActiveTabContent()}
-      </main>
-
-      {/* Barra de Navegação Inferior de layout do usuário */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-canvas border-t border-hairline pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] px-2 z-40 shadow-sm shadow-stone-300/10">
-        <div className="max-w-xl mx-auto flex items-center justify-around">
+        {/* Barra de Navegação Inferior Flutuante em Pílula */}
+        <nav className="absolute bottom-4 left-3.5 right-3.5 h-[64px] bg-[rgba(255,255,255,0.92)] backdrop-blur-md border border-nexus-border rounded-[999px] z-40 shadow-xs flex items-center justify-around px-2 py-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isRegistrar = item.id === 'registrar';
@@ -184,34 +183,33 @@ export default function App() {
                     triggerRefresh();
                   }
                 }}
-                className={`flex flex-col items-center gap-0.5 p-1 flex-1 relative transition-all active-tap cursor-pointer select-none rounded-md min-h-[48px] justify-center ${
+                className={`flex flex-col items-center gap-0.5 flex-1 relative transition-all active-tap cursor-pointer select-none rounded-[999px] min-h-[46px] justify-center ${
                   isRegistrar 
-                    ? 'text-primary hover:text-primary-pressed scale-105 font-bold' 
+                    ? 'text-[#6D5DD3] font-bold scale-102 bg-[#EEEAFD] max-h-[48px] max-w-[48px] rounded-[999px] border border-[#d3caf7]' 
                     : active 
-                      ? 'text-ink font-semibold bg-surface' 
-                      : 'text-slate hover:text-ink'
+                      ? 'text-[#20201D] font-bold py-1 bg-[#F0EFEB]/50 rounded-[999px]' 
+                      : 'text-[#77736B] hover:text-[#20201D]'
                 }`}
               >
-                <div className={`p-0.5 rounded-sm ${isRegistrar ? 'bg-tint-lavender p-1 border border-brand-purple-300 rounded-lg shadow-2xs' : ''}`}>
-                  <Icon className={`${isRegistrar ? 'w-5 h-5 text-primary stroke-[2.5]' : 'w-4.5 h-4.5'}`} />
+                <div className="shrink-0">
+                  <Icon className={`${isRegistrar ? 'w-4.5 h-4.5 text-[#6D5DD3] stroke-[2.7]' : 'w-4.5 h-4.5'}`} />
                 </div>
-                <span className={`text-[9px] sm:text-[10px] ${isRegistrar ? 'font-bold text-primary mt-0.5' : 'font-medium tracking-tight'}`}>
-                  {item.label}
-                </span>
-                
-                {/* Indicador Ativo fino do Notion */}
-                {active && !isRegistrar && (
-                  <motion.div 
-                    layoutId="activeTabIndicator" 
-                    className="absolute bottom-0 left-2 right-2 h-[2px] bg-primary" 
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                  />
+                {!isRegistrar && (
+                  <span className={`text-[9.5px] font-bold tracking-tight ${active ? 'text-[#20201D]' : 'text-[#77736B]'}`}>
+                    {item.label}
+                  </span>
+                )}
+                {isRegistrar && (
+                  <span className="text-[7.5px] font-extrabold tracking-tight text-[#6D5DD3]">
+                    Criar
+                  </span>
                 )}
               </button>
             );
           })}
-        </div>
-      </nav>
+        </nav>
+
+      </div>
 
       {/* Bottom Sheet de Registros Inteligente */}
       <AnimatePresence>

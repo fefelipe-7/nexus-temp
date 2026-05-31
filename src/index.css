@@ -45,6 +45,19 @@
   --color-steel: #787671;
   --color-stone: #a4a097;
 
+  /* Nexus custom theme tokens */
+  --color-nexus-bg: #F7F6F1;
+  --color-nexus-surface: #FFFFFF;
+  --color-nexus-soft: #F0EFEB;
+  --color-nexus-border: #E3E0D8;
+  --color-nexus-text: #20201D;
+  --color-nexus-secondary: #77736B;
+  --color-nexus-lavender: #F1EDFF;
+  --color-nexus-purple: #6D5DD3;
+  --color-nexus-green: #EAF6EE;
+  --color-nexus-blue: #EAF3FB;
+  --color-nexus-warm: #F8F1DE;
+
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
