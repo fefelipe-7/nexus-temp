@@ -1,24 +1,18 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Award, FolderKanban, CheckSquare, Flame, Plus, Target, Trash2, Calendar, ClipboardList } from 'lucide-react';
-import { Goal, Project, Task, Habit } from '../domain/entities';
-import { storage } from '../lib/storage';
+import { Goal, Project, Task, Habit } from '../../domain/entities';
+import { storage } from '../../lib/storage';
 
-interface ExecucaoModuleProps {
+interface ExecutionModulePageProps {
   selectedDate: string;
   refreshCount: number;
   triggerRefresh: () => void;
 }
 
-export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefresh }: ExecucaoModuleProps) {
+export default function ExecutionModulePage({ selectedDate, refreshCount, triggerRefresh }: ExecutionModulePageProps) {
   const [subTab, setSubTab] = useState<'tarefas' | 'habitos' | 'metas_projetos'>('tarefas');
 
-  // Estados locais para Criação
   const [novaTarefaNome, setNovaTarefaNome] = useState<string>('');
   const [novaTarefaPrioridade, setNovaTarefaPrioridade] = useState<'baixa' | 'media' | 'alta'>('media');
   const [novaTarefaProjId, setNovaTarefaProjId] = useState<string>('');
@@ -29,7 +23,6 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
   const [novaMetaNome, setNovaMetaNome] = useState<string>('');
   const [novaMetaArea, setNovaMetaArea] = useState<string>('execução');
 
-  // Dados carregados
   const metas = storage.getGoals();
   const projetos = storage.getProjects();
   const tarefas = storage.getTasks();
@@ -115,7 +108,6 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
   return (
     <div className="space-y-6 text-charcoal">
       
-      {/* Top Banner de Identidade estilo Notion */}
       <div className="flex items-center gap-3">
         <div className="p-2.5 bg-tint-blue text-brand-blue rounded-md border border-hairline-soft">
           <Award className="w-5 h-5 animate-pulse" />
@@ -126,7 +118,6 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
         </div>
       </div>
 
-      {/* Navegação Secundária da Seção estilo Notion Tabs */}
       <div className="flex gap-1 bg-surface-soft border border-hairline p-1 rounded-md">
         <button 
           onClick={() => setSubTab('tarefas')}
@@ -154,10 +145,8 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
         </button>
       </div>
 
-      {/* ABA TAREFAS */}
       {subTab === 'tarefas' && (
         <div className="space-y-5">
-          {/* Adicionar Task Rápida */}
           <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
             <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider">
               NOVA TAREFA DIÁRIA
@@ -201,7 +190,6 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
             </div>
           </div>
 
-          {/* Listagem de Tarefas */}
           <div className="space-y-2">
             <h4 className="text-xs font-bold font-mono text-slate uppercase tracking-wider px-1">
               CHECKLIST OPERACIONAL
@@ -261,10 +249,8 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
         </div>
       )}
 
-      {/* ABA HÁBITOS */}
       {subTab === 'habitos' && (
         <div className="space-y-5">
-          {/* Adicionar Hábito */}
           <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
             <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider">
               NOVO HÁBITO RECORRENTE
@@ -298,7 +284,6 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
             </button>
           </div>
 
-          {/* Listagem de Hábitos */}
           <div className="space-y-2">
             <h4 className="text-xs font-bold font-mono text-slate uppercase tracking-wider px-1">
               ACOMPANHAMENTO DE CONSTÂNCIA
@@ -354,10 +339,8 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
         </div>
       )}
 
-      {/* ABA METAS E PROJETOS */}
       {subTab === 'metas_projetos' && (
         <div className="space-y-5">
-          {/* Adicionar Goal */}
           <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
             <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider">
               NOVA META ESTRUTURAL
@@ -391,7 +374,6 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
             </button>
           </div>
 
-          {/* Listagem de Metas de Projetos */}
           <div className="space-y-4">
             <div className="flex items-center gap-1.5 px-1 py-1">
               <Target className="w-4 h-4 text-brand-blue" />
@@ -415,7 +397,6 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
                             {m.area}
                           </span>
                         </div>
-                        {/* Progresso de barra */}
                         <div className="space-y-1.5 mt-2.5">
                           <div className="flex justify-between text-[11px] font-mono text-slate">
                             <span>Pontos estruturados</span>
@@ -430,7 +411,6 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
                         </div>
                       </div>
 
-                      {/* Projetos pertencentes à Goal */}
                       {projs.length > 0 && (
                         <div className="space-y-2 pt-2.5 border-t border-hairline-soft">
                           <span className="text-[10px] font-mono font-bold text-slate uppercase tracking-wider block">

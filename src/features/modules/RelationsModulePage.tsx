@@ -1,22 +1,17 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { HeartHandshake, Users, PhoneCall, Plus, Trash2, Calendar, UserCheck, CheckCircle } from 'lucide-react';
-import { Person } from '../domain/entities';
-import { storage } from '../lib/storage';
-import { useNexusAlert } from './NexusAlertContext';
+import { Person } from '../../domain/entities';
+import { storage } from '../../lib/storage';
+import { useNexusAlert } from '../../components/NexusAlertContext';
 
-interface RelacoesModuleProps {
+interface RelationsModulePageProps {
   selectedDate: string;
   refreshCount: number;
   triggerRefresh: () => void;
 }
 
-export default function RelacoesModule({ selectedDate, refreshCount, triggerRefresh }: RelacoesModuleProps) {
+export default function RelationsModulePage({ selectedDate, refreshCount, triggerRefresh }: RelationsModulePageProps) {
   const [novaPessoaNome, setNovaPessoaNome] = useState<string>('');
   const [novoVinculo, setNovoVinculo] = useState<'familia' | 'amizades' | 'relacionamento' | 'networking'>('amizades');
   const [novaFreqDias, setNovaFreqDias] = useState<number>(7);
@@ -24,7 +19,6 @@ export default function RelacoesModule({ selectedDate, refreshCount, triggerRefr
 
   const pessoas = storage.getPeople()
     .sort((a, b) => {
-      // Ordena por prioridade de urgência (frequenciaContatoScore menor primeiro)
       return (a.frequenciaContatoScore || 0) - (b.frequenciaContatoScore || 0);
     });
 
@@ -65,10 +59,9 @@ export default function RelacoesModule({ selectedDate, refreshCount, triggerRefr
         todos[index].historicoInteracoes.push(selectedDate);
         storage.savePeople(todos);
 
-        // Dispara de volta ao registro diário correspondente
         const reg = storage.getRegistroPorData(selectedDate) || { data: selectedDate };
         reg.socialAtivo = true;
-        reg.interacoesQualidade = 8; // valor moderadamente bom por padrão
+        reg.interacoesQualidade = 8;
         storage.actualizarRegistro(reg);
 
         triggerRefresh();
@@ -82,7 +75,6 @@ export default function RelacoesModule({ selectedDate, refreshCount, triggerRefr
   return (
     <div className="space-y-6 text-charcoal">
       
-      {/* Top Banner de Identidade estilo Notion */}
       <div className="flex items-center gap-3">
         <div className="p-2.5 bg-tint-orange text-brand-orange-deep rounded-md border border-hairline-soft">
           <HeartHandshake className="w-5 h-5" />
@@ -93,7 +85,6 @@ export default function RelacoesModule({ selectedDate, refreshCount, triggerRefr
         </div>
       </div>
 
-      {/* Explicando a Filosofia estilo Nota do Notion */}
       <div className="p-4 bg-surface-soft border border-hairline rounded-lg space-y-1.5 shadow-none">
         <span className="text-xs font-bold text-brand-orange-deep block">Combate ao Isolamento</span>
         <p className="text-[11px] text-slate leading-relaxed">
@@ -101,7 +92,6 @@ export default function RelacoesModule({ selectedDate, refreshCount, triggerRefr
         </p>
       </div>
 
-      {/* Cadastrar Nova Pessoa */}
       <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
         <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider pb-1 border-b border-hairline-soft">
           CADASTRAR CONTATO DE VALOR
@@ -161,7 +151,6 @@ export default function RelacoesModule({ selectedDate, refreshCount, triggerRefr
         </div>
       </div>
 
-      {/* Visualização de Proximidade (Calculadores) */}
       <div className="space-y-3">
         <h4 className="text-xs font-bold font-mono text-slate uppercase tracking-wider px-1">
           REDE DE CONEXÕES ATIVAS
@@ -191,7 +180,6 @@ export default function RelacoesModule({ selectedDate, refreshCount, triggerRefr
                       <span>Alvo: <strong className="text-charcoal font-semibold">falar a cada {p.frequenciaDiasAlvo} d</strong></span>
                     </div>
 
-                    {/* Barra de Score de proximidade */}
                     <div className="space-y-1 max-w-sm pt-0.5">
                       <div className="w-full bg-surface-soft border border-hairline-soft h-1.5 rounded-full overflow-hidden">
                         <div 

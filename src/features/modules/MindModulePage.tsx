@@ -1,21 +1,16 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Brain, Smile, Activity, ShieldAlert, Sparkles, FileText, CheckCircle, Clock } from 'lucide-react';
-import { DailyRecord } from '../domain/entities';
-import { storage } from '../lib/storage';
-import { useNexusAlert } from './NexusAlertContext';
+import { DailyRecord } from '../../domain/entities';
+import { storage } from '../../lib/storage';
+import { useNexusAlert } from '../../components/NexusAlertContext';
 
-interface MenteModuleProps {
+interface MindModulePageProps {
   selectedDate: string;
   refreshCount: number;
 }
 
-export default function MenteModule({ selectedDate, refreshCount }: MenteModuleProps) {
+export default function MindModulePage({ selectedDate, refreshCount }: MindModulePageProps) {
   const [novoJournal, setNovoJournal] = useState<string>('');
   const [novoHumor, setNovoHumor] = useState<number>(7);
   const [novoEstresse, setNovoEstresse] = useState<number>(3);
@@ -23,7 +18,7 @@ export default function MenteModule({ selectedDate, refreshCount }: MenteModuleP
   const { showAlert } = useNexusAlert();
 
   const registros = storage.getRegistros()
-    .sort((a, b) => b.data.localeCompare(a.data)); // ordenado do mais recente ao mais antigo
+    .sort((a, b) => b.data.localeCompare(a.data));
 
   const handleSalvarInputMente = () => {
     const hojeReg = storage.getRegistroPorData(selectedDate) || { data: selectedDate };
@@ -40,7 +35,6 @@ export default function MenteModule({ selectedDate, refreshCount }: MenteModuleP
     showAlert('Informações de Mente atualizadas com sucesso!', 'mente', 'diario');
   };
 
-  // Prepara dados do gráfico semanal de Humor dos últimos 7 registros
   const ultimosRegistrosHumor = [...registros]
     .filter(r => r.humor !== undefined)
     .slice(0, 7)
@@ -49,7 +43,6 @@ export default function MenteModule({ selectedDate, refreshCount }: MenteModuleP
   return (
     <div className="space-y-6 text-charcoal">
       
-      {/* Top Banner de Identidade estilo Notion */}
       <div className="flex items-center gap-3">
         <div className="p-2.5 bg-tint-teal text-brand-teal rounded-md border border-hairline-soft">
           <Brain className="w-5 h-5 animate-pulse" />
@@ -60,10 +53,8 @@ export default function MenteModule({ selectedDate, refreshCount }: MenteModuleP
         </div>
       </div>
 
-      {/* Grid de Métricas de Visualização */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         
-        {/* Card 1: Estabilidade Emocional */}
         <div className="bg-canvas border border-hairline rounded-lg p-4 shadow-none space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate font-semibold">Estabilidade Emocional</span>
@@ -75,7 +66,6 @@ export default function MenteModule({ selectedDate, refreshCount }: MenteModuleP
           </div>
         </div>
 
-        {/* Card 2: Minutos de Consciência (Meditação) */}
         <div className="bg-canvas border border-hairline rounded-lg p-4 shadow-none space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate font-semibold">Tempo de Presença (7d)</span>
@@ -89,7 +79,6 @@ export default function MenteModule({ selectedDate, refreshCount }: MenteModuleP
           </div>
         </div>
 
-        {/* Card 3: Carga Mental Estimada */}
         <div className="bg-canvas border border-hairline rounded-lg p-4 shadow-none space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate font-semibold">Carga Mental Estimada</span>
@@ -103,7 +92,6 @@ export default function MenteModule({ selectedDate, refreshCount }: MenteModuleP
 
       </div>
 
-      {/* Seção Gráfica: Evolução Semanal de Humor */}
       <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
         <div>
           <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider">
@@ -118,7 +106,6 @@ export default function MenteModule({ selectedDate, refreshCount }: MenteModuleP
           <p className="text-center text-xs text-stone py-6 italic">Não há registros de humor cadastrados ainda.</p>
         ) : (
           <div className="pt-4 pb-2 space-y-4">
-            {/* Gráfico Horizontal de Humor estilo Cal */}
             <div className="flex items-end justify-between h-36 gap-2 pt-2 px-2 bg-surface-soft border border-hairline-soft rounded-lg p-3">
               {ultimosRegistrosHumor.map((reg, idx) => {
                 const humorVal = reg.humor || 5;
@@ -148,7 +135,6 @@ export default function MenteModule({ selectedDate, refreshCount }: MenteModuleP
         )}
       </div>
 
-      {/* Entrada Rápida de Meditação & Notas */}
       <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
         <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider pb-1 border-b border-hairline-soft">
           REGISTRAR MOMENTO DE MINDFULNESS / DIÁRIO
@@ -220,7 +206,6 @@ export default function MenteModule({ selectedDate, refreshCount }: MenteModuleP
         </div>
       </div>
 
-      {/* Histórico Narrativo / Memórias de Diário */}
       <div className="space-y-3">
         <h4 className="text-xs font-bold font-mono text-slate uppercase tracking-wider px-1">
           MEMÓRIA PESSOAL (ENTRADAS DE JOURNALING)
