@@ -15,12 +15,13 @@ interface WizardShellProps {
   onCommit?: () => void;
   saving?: boolean;
   sucesso?: boolean;
+  commitLabel?: string;
   children: ReactNode;
 }
 
 export function WizardShell({
   title, icon: Icon, colorBg, colorText, colorAccent,
-  step, totalSteps, onBack, onNext, onCommit, saving, sucesso, children,
+  step, totalSteps, onBack, onNext, onCommit, saving, sucesso, commitLabel, children,
 }: WizardShellProps) {
   const progress = (step / totalSteps) * 100;
   const isLastStep = step === totalSteps;
@@ -69,7 +70,7 @@ export function WizardShell({
         ) : (
           <button onClick={onCommit} disabled={saving} className="px-4 py-2 rounded-md text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs animate-pulse"
             style={{ backgroundColor: colorAccent }}>
-            {saving ? <span>Salvando...</span> : <><Check className="w-3.5 h-3.5" /><span>Salvar Tudo</span></>}
+            {saving ? <span>Salvando...</span> : <><Check className="w-3.5 h-3.5" /><span>{commitLabel ?? 'Salvar Tudo'}</span></>}
           </button>
         )}
       </div>
