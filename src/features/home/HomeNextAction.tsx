@@ -1,0 +1,32 @@
+import React from 'react';
+
+interface HomeNextActionProps {
+  onOpenRecord: () => void;
+}
+
+export function HomeNextAction({ onOpenRecord }: HomeNextActionProps) {
+  return (
+    <div className="space-y-2">
+      <h4 className="text-[10px] font-bold font-mono text-[#77736B] uppercase tracking-wider px-1">Próximo passo</h4>
+
+      <div className="bg-nexus-surface border border-nexus-border rounded-[20px] p-4 flex justify-between items-center gap-4 hover:border-[#77736B]/40 transition-colors">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#6D5DD3]/60 animate-pulse" />
+            <h5 className="text-[13px] font-bold text-[#20201D]">Fazer diário subjetivo</h5>
+          </div>
+          <p className="text-[11.5px] text-[#77736B] leading-normal pl-3.5">
+            Dois minutos para descarregar pensamentos antes de continuar.
+          </p>
+        </div>
+
+        <button
+          onClick={onOpenRecord}
+          className="bg-[#20201D] hover:bg-[#20201D]/90 text-white hover:text-[#F1EDFF] text-[10.5px] font-bold px-3.5 py-2.5 rounded-full active-tap cursor-pointer transition-all shrink-0 min-h-[36px]"
+        >
+          Começar
+        </button>
+      </div>
+    </div>
+  );
+}

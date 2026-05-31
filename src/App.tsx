@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { inicializarStorage } from './lib/storage';
-import HomeView from './components/HomeView';
-import HojeView from './components/HojeView';
+import HomeView from './features/home/HomeView';
+import HojeView from './features/today/HojeView';
 import RegistrarSheet from './components/RegistrarSheet';
-import InsightsView from './components/InsightsView';
-import ModulesView from './components/ModulesView';
+import InsightsView from './features/insights/InsightsView';
+import ModulesView from './features/modules/ModulesView';
 import RegistrationWizards from './components/RegistrationWizards';
 import { useRouter } from './app/router/RouterProvider';
 import { AppHeader } from './app/shell/AppHeader';
