@@ -21,6 +21,7 @@
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
     "framer-motion": "^11.18.2",
+    "lightningcss": "^1.28.2",
     "lucide-react": "^0.546.0",
     "radix-ui": "^1.4.3",
     "react": "^19.0.1",
