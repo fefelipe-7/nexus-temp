@@ -264,6 +264,16 @@ export const storage = {
     }
     return check;
   },
+  completarHabito: (id: string, data: string): void => {
+    const todos = storage.getHabitos();
+    const index = todos.findIndex(h => h.id === id);
+    if (index >= 0) {
+      if (!todos[index].historicoCheckins.includes(data)) {
+        todos[index].historicoCheckins.push(data);
+        storage.saveHabitos(todos);
+      }
+    }
+  },
 
   // Metas
   getMetas: (): Meta[] => loadData<Meta>(STORAGE_KEYS.METAS),

@@ -7,10 +7,13 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   X, Moon, Smile, Flame, Droplets, CheckSquare, 
-  DollarSign, FileText, Calendar, Lightbulb, Save, Check, Plus, Utensils
+  DollarSign, FileText, Calendar, Lightbulb, Save, Check, Plus, Utensils,
+  Zap, Compass, ArrowLeft, ChevronRight
 } from 'lucide-react';
 import { storage } from '../lib/storage';
-import { RegistroDiario, Tarefa, TransacaoFinanceira } from '../types';
+import { RegistroDiario, Tarefa, TransacaoFinanceira, Habito } from '../types';
+import { useRouter } from './RouterContext';
+import { useNexusAlert } from './NexusAlertContext';
 
 interface RegistrarSheetProps {
   isOpen: boolean;
@@ -19,14 +22,19 @@ interface RegistrarSheetProps {
   onSaveSuccess: () => void;
 }
 
-type ModeType = 'grid' | 'sono' | 'humor' | 'treino' | 'refeicao' | 'tarefa' | 'gasto' | 'journal' | 'evento' | 'ideia';
+type RegistrationStep = 'entry_picker' | 'mode_picker' | 'quick_capture';
+type EntryType = 'sono' | 'refeicao' | 'treino' | 'gasto' | 'humor' | 'journal' | 'tarefa' | 'habito';
 
 export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSuccess }: RegistrarSheetProps) {
-  const [mode, setMode] = useState<ModeType>('grid');
+  const { navigate } = useRouter();
+  const { showAlert } = useNexusAlert();
+
+  const [currentStep, setCurrentStep] = useState<RegistrationStep>('entry_picker');
+  const [selectedType, setSelectedType] = useState<EntryType | null>(null);
   const [salvando, setSalvando] = useState<boolean>(false);
   const [sucesso, setSucesso] = useState<boolean>(false);
 
-  // States para os dados
+  // States fields for Quick Capture forms
   const [sono, setSono] = useState<number>(7.5);
   const [sonoQualidade, setSonoQualidade] = useState<number>(7);
   
@@ -37,30 +45,39 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
 
   const [treinoNome, setTreinoNome] = useState<string>('');
   const [treinoDuracao, setTreinoDuracao] = useState<number>(45);
-  const [treinoEsforco, setTreinoEsforco] = useState<number>(5);
 
   const [novaRefeicao, setNovaRefeicao] = useState<string>('');
-  const [hidratacao, setHidratacao] = useState<number>(0);
+  const [hidratacao, setHidratacao] = useState<number>(2.0);
 
   const [tarefaNome, setTarefaNome] = useState<string>('');
   const [tarefaPrioridade, setTarefaPrioridade] = useState<'baixa' | 'media' | 'alta'>('media');
-  const [tarefaProjId, setTarefaProjId] = useState<string>('');
 
   const [gastoTipo, setGastoTipo] = useState<'despesa' | 'receita'>('despesa');
   const [gastoValor, setGastoValor] = useState<string>('');
+  const [gastoCat, setGastoCat] = useState<string>('Alimentação');
   const [gastoDescr, setGastoDescr] = useState<string>('');
-  const [gastoCat, setGastoCat] = useState<string>('Lazer');
 
   const [diarioText, setDiarioText] = useState<string>('');
 
-  const [eventoNome, setEventoNome] = useState<string>('');
+  // Quick Habit Toggle States
+  const [habitsList, setHabitsList] = useState<Habito[]>([]);
+  const [selectedHabitId, setSelectedHabitId] = useState<string>('');
 
-  const [ideiaNome, setIdeiaNome] = useState<string>('');
-
-  // Sincroniza dados do registro do dia ao abrir
   useEffect(() => {
     if (isOpen) {
-      setMode('grid');
+      setCurrentStep('entry_picker');
+      setSelectedType(null);
+      setSucesso(false);
+      setSalvando(false);
+
+      // Load habits
+      const loadedHabits = storage.getHabitos();
+      setHabitsList(loadedHabits);
+      if (loadedHabits.length > 0) {
+        setSelectedHabitId(loadedHabits[0].id);
+      }
+
+      // Prepopulate
       const reg = storage.getRegistroPorData(selectedDate);
       if (reg) {
         setSono(reg.sono ?? 7.5);
@@ -71,7 +88,6 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
         setFoco(reg.foco ?? 7);
         setTreinoNome(reg.treinoNome ?? '');
         setTreinoDuracao(reg.treinoDuracao ?? 45);
-        setTreinoEsforco(reg.treinoEsforco ?? 5);
         setDiarioText(reg.diario ?? '');
         setHidratacao(reg.hidratacao ?? 2.0);
       } else {
@@ -83,27 +99,55 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
         setFoco(7);
         setTreinoNome('');
         setTreinoDuracao(45);
-        setTreinoEsforco(5);
         setDiarioText('');
         setHidratacao(2.0);
       }
-      setSucesso(false);
-      setSalvando(false);
       setNovaRefeicao('');
       setTarefaNome('');
       setGastoValor('');
       setGastoDescr('');
-      setEventoNome('');
-      setIdeiaNome('');
     }
   }, [isOpen, selectedDate]);
 
   if (!isOpen) return null;
 
-  const performSaveAndClose = (updateFn: (reg: RegistroDiario) => void) => {
+  const handleSelectType = (type: EntryType) => {
+    setSelectedType(type);
+    setCurrentStep('mode_picker');
+  };
+
+  const handleSelectMode = (mode: 'quick' | 'detailed') => {
+    if (!selectedType) return;
+
+    if (mode === 'detailed') {
+      // Map EntryType to Wizard route
+      let routePath = '/register/sleep';
+      if (selectedType === 'refeicao') routePath = '/register/meal';
+      else if (selectedType === 'treino') routePath = '/register/workout';
+      else if (selectedType === 'gasto') routePath = '/register/expense';
+      else if (selectedType === 'humor') routePath = '/register/mood';
+      else if (selectedType === 'journal') routePath = '/register/journal';
+      else if (selectedType === 'tarefa') routePath = '/register/task';
+      else if (selectedType === 'habito') routePath = '/register/habit';
+
+      // Route to fullscreen wizard
+      onClose();
+      navigate(routePath);
+    } else {
+      // Open inline Quick Capture Form
+      setCurrentStep('quick_capture');
+    }
+  };
+
+  const executeQuickSave = (saveAction: (reg: RegistroDiario) => void) => {
     setSalvando(true);
     const reg = storage.getRegistroPorData(selectedDate) || { data: selectedDate };
-    updateFn(reg);
+    
+    // Flag to mark that this was a quick entry and can be enriched later
+    reg.can_be_enriched_later = true;
+    reg.completion_level = 'basic';
+
+    saveAction(reg);
     storage.actualizarRegistro(reg);
 
     setTimeout(() => {
@@ -111,54 +155,54 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
       setSucesso(true);
       setTimeout(() => {
         onSaveSuccess();
+        showAlert('Registro rápido salvo!', 'sucesso', 'registro');
         onClose();
-      }, 600);
-    }, 300);
+      }, 700);
+    }, 400);
   };
 
-  const handleSalvarSono = () => {
-    performSaveAndClose((reg) => {
-      reg.sono = sono;
-      reg.sonoQualidade = sonoQualidade;
+  const handleSalvarQuickSono = () => {
+    executeQuickSave((reg) => {
+       reg.sono = sono;
+       reg.sonoQualidade = sonoQualidade;
     });
   };
 
-  const handleSalvarHumor = () => {
-    performSaveAndClose((reg) => {
-      reg.humor = humor;
-      reg.estresse = estresse;
-      reg.ansiedade = ansiedade;
-      reg.foco = foco;
+  const handleSalvarQuickHumor = () => {
+    executeQuickSave((reg) => {
+       reg.humor = humor;
+       reg.estresse = estresse;
+       reg.ansiedade = ansiedade;
+       reg.foco = foco;
     });
   };
 
-  const handleSalvarTreino = () => {
-    if (!treinoNome.trim()) return;
-    performSaveAndClose((reg) => {
-      reg.treinoNome = treinoNome.trim();
-      reg.treinoDuracao = treinoDuracao;
-      reg.treinoEsforco = treinoEsforco;
-    });
-  };
-
-  const handleSalvarRefeicao = () => {
-    performSaveAndClose((reg) => {
+  const handleSalvarQuickRefeicao = () => {
+    executeQuickSave((reg) => {
       if (novaRefeicao.trim()) {
         const refs = reg.refeicoes || [];
-        refs.push(novaRefeicao.trim());
+        refs.push(novaRefeicao.trim() + ' (Rápido)');
         reg.refeicoes = refs;
       }
       reg.hidratacao = hidratacao;
     });
   };
 
-  const handleSalvarTarefa = () => {
+  const handleSalvarQuickTreino = () => {
+    if (!treinoNome.trim()) return;
+    executeQuickSave((reg) => {
+      reg.treinoNome = treinoNome.trim() + ' (Rápido)';
+      reg.treinoDuracao = treinoDuracao;
+      reg.treinoEsforco = 5; // Default middle value for quick
+    });
+  };
+
+  const handleSalvarQuickTarefa = () => {
     if (!tarefaNome.trim()) return;
     setSalvando(true);
     const nova: Tarefa = {
       id: 't-quick-' + Date.now(),
       nome: tarefaNome.trim(),
-      projetoId: tarefaProjId || undefined,
       prioridade: tarefaPrioridade,
       prazo: selectedDate,
       concluida: false,
@@ -173,12 +217,13 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
       setSucesso(true);
       setTimeout(() => {
         onSaveSuccess();
+        showAlert('Missão rápida configurada!', 'sucesso', 'operacional');
         onClose();
-      }, 600);
-    }, 300);
+      }, 700);
+    }, 450);
   };
 
-  const handleSalvarGasto = () => {
+  const handleSalvarQuickGasto = () => {
     if (!gastoValor || parseFloat(gastoValor) <= 0) return;
     setSalvando(true);
     const valorNum = parseFloat(gastoValor);
@@ -195,7 +240,7 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
     todosFinancas.push(transacao);
     storage.saveFinancas(todosFinancas);
 
-    // Atualiza cumulativos do dia no registro
+    // Save corresponding daily record updates
     const reg = storage.getRegistroPorData(selectedDate) || { data: selectedDate };
     if (gastoTipo === 'despesa') {
       reg.despesasTotais = (reg.despesasTotais || 0) + valorNum;
@@ -209,33 +254,32 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
       setSucesso(true);
       setTimeout(() => {
         onSaveSuccess();
+        showAlert('Fluxo de caixa registrado!', 'sucesso', 'financeiro');
         onClose();
-      }, 600);
-    }, 300);
+      }, 700);
+    }, 450);
   };
 
-  const handleSalvarJournal = () => {
-    performSaveAndClose((reg) => {
-      reg.diario = diarioText.trim() || undefined;
+  const handleSalvarQuickJournal = () => {
+    executeQuickSave((reg) => {
+       reg.diario = diarioText.trim() || undefined;
     });
   };
 
-  const handleSalvarEvento = () => {
-    if (!eventoNome.trim()) return;
-    performSaveAndClose((reg) => {
-      const evs = reg.eventos || [];
-      evs.push(eventoNome.trim());
-      reg.eventos = evs;
-    });
-  };
-
-  const handleSalvarIdeia = () => {
-    if (!ideiaNome.trim()) return;
-    performSaveAndClose((reg) => {
-      const ids = reg.ideias || [];
-      ids.push(ideiaNome.trim());
-      reg.ideias = ids;
-    });
+  const handleSalvarQuickHabito = () => {
+    if (!selectedHabitId) return;
+    setSalvando(true);
+    (storage as any).completarHabito(selectedHabitId, selectedDate);
+    
+    setTimeout(() => {
+      setSalvando(false);
+      setSucesso(true);
+      setTimeout(() => {
+        onSaveSuccess();
+        showAlert('Frequência de hábito efetuada!', 'sucesso', 'habito');
+        onClose();
+      }, 700);
+    }, 450);
   };
 
   const formattedDate = new Date(selectedDate + 'T12:00:00').toLocaleDateString('pt-BR', {
@@ -244,20 +288,19 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
     month: 'short'
   });
 
-  const menuItems = [
-    { id: 'sono', label: 'Sono/Noite', desc: 'Duração e qualidade', icon: Moon, color: 'text-indigo-500 bg-indigo-50' },
-    { id: 'humor', label: 'Humor/Foco', desc: 'Energias, estresse', icon: Smile, color: 'text-teal-600 bg-teal-50' },
-    { id: 'treino', label: 'Treino Físico', desc: 'Atividades e esforço', icon: Flame, color: 'text-amber-600 bg-amber-50' },
-    { id: 'refeicao', label: 'Refeição & Água', desc: 'Nutriação e copos', icon: Utensils, color: 'text-emerald-600 bg-emerald-50' },
-    { id: 'tarefa', label: 'Criar Tarefa', desc: 'Foco para hoje', icon: CheckSquare, color: 'text-sky-500 bg-sky-50' },
-    { id: 'gasto', label: 'Finanças/Gasto', desc: 'Gasto ou receita', icon: DollarSign, color: 'text-yellow-600 bg-yellow-50' },
-    { id: 'journal', label: 'Escrever Diário', desc: 'Reflexões e textos', icon: FileText, color: 'text-violet-500 bg-violet-50' },
-    { id: 'evento', label: 'Registrar Evento', desc: 'Fatos importantes', icon: Calendar, color: 'text-rose-500 bg-rose-50' },
-    { id: 'ideia', label: 'Salvar Ideia', desc: 'Pensamento, insights', icon: Lightbulb, color: 'text-indigo-600 bg-indigo-50' },
+  const entryTypeOptions = [
+    { id: 'sono', label: 'Sono & Noite', desc: 'Ciclo circadiano', icon: Moon, color: 'text-indigo-500 bg-indigo-50 border-indigo-100' },
+    { id: 'humor', label: 'Humor & Foco', desc: 'Energias mentais', icon: Smile, color: 'text-teal-600 bg-teal-50 border-teal-100' },
+    { id: 'treino', label: 'Atividade Física', desc: 'Treinos e esforços', icon: Flame, color: 'text-amber-600 bg-amber-50 border-amber-100' },
+    { id: 'refeicao', label: 'Refeição & Água', desc: 'Suprimento biológico', icon: Utensils, color: 'text-emerald-600 bg-emerald-50 border-emerald-100' },
+    { id: 'tarefa', label: 'Criar Missão', desc: 'Planejamento ágil', icon: CheckSquare, color: 'text-sky-500 bg-sky-50 border-sky-100' },
+    { id: 'gasto', label: 'Lançar Finança', desc: 'Fluxo econômico', icon: DollarSign, color: 'text-yellow-600 bg-yellow-50 border-yellow-100' },
+    { id: 'journal', label: 'Escrever Diário', desc: 'Insights reflexivos', icon: FileText, color: 'text-violet-500 bg-violet-50 border-violet-100' },
+    { id: 'habito', label: 'Repetir Hábito', desc: 'Tethering de rotina', icon: Lightbulb, color: 'text-pink-500 bg-pink-50 border-pink-100' },
   ];
 
   return (
-    <div className="fixed inset-0 bg-neutral-900/30 backdrop-blur-2xs flex items-end sm:items-center justify-center z-50 p-0 sm:p-4 animate-fade-in">
+    <div className="fixed inset-0 bg-neutral-900/35 backdrop-blur-xs flex items-end sm:items-center justify-center z-50 p-0 sm:p-4 animate-fade-in text-charcoal">
       {/* Clique fora fecha */}
       <div className="absolute inset-0" onClick={onClose} />
 
@@ -265,398 +308,403 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
-        transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-        className="bg-canvas w-full max-w-md rounded-t-[24px] sm:rounded-xl border-t sm:border border-hairline flex flex-col shadow-xl overflow-hidden relative z-10 text-charcoal pb-[calc(1rem+env(safe-area-inset-bottom,0px))]"
-        style={{ maxHeight: '88vh' }}
+        transition={{ type: 'spring', damping: 26, stiffness: 220 }}
+        className="bg-canvas w-full max-w-md rounded-t-[32px] sm:rounded-[24px] border-t sm:border border-hairline flex flex-col shadow-2xl overflow-hidden relative z-10 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]"
+        style={{ maxHeight: '90vh' }}
       >
-        {/* Draw Handle para visual confortável de Drawer em Mobile */}
-        <div className="w-full flex justify-center pt-2.5 pb-0.5 sm:hidden bg-surface-soft">
-          <div className="w-9 h-1 bg-stone/40 rounded-full" />
+        {/* Mobile Pull Indicator */}
+        <div className="w-full flex justify-center pt-3 pb-1 sm:hidden">
+          <div className="w-10 h-1 bg-stone/40 rounded-full" />
         </div>
 
         {/* Header estático */}
-        <div className="px-5 py-3 border-b border-hairline flex items-center justify-between bg-surface-soft">
-          <div>
-            <span className="text-[10px] font-mono font-bold text-slate uppercase tracking-wider block">CAPTURAR INTENÇÃO</span>
-            <h3 className="text-sm font-bold text-ink">Registrar em {formattedDate}</h3>
+        <div className="px-5 py-4 border-b border-hairline flex items-center justify-between bg-surface-soft">
+          <div className="flex items-center gap-1.5">
+            {currentStep !== 'entry_picker' && (
+              <button 
+                onClick={() => {
+                  if (currentStep === 'mode_picker') setCurrentStep('entry_picker');
+                  else if (currentStep === 'quick_capture') setCurrentStep('mode_picker');
+                }}
+                className="p-1 -ml-1 rounded-md hover:bg-neutral-200 transition-colors mr-1 cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4 text-slate" />
+              </button>
+            )}
+            <div>
+              <span className="text-[10px] font-mono font-black text-[#6D5DD3] uppercase tracking-wider block">HUB DE INTEGRAÇÃO</span>
+              <h3 className="text-sm font-black text-ink">Registrar em {formattedDate}</h3>
+            </div>
           </div>
           <button 
             onClick={onClose}
-            className="p-1 px-1.5 rounded-md hover:bg-neutral-200 text-slate transition-colors active-tap cursor-pointer"
+            className="p-1.5 px-2 rounded-md hover:bg-neutral-200 text-slate transition-colors active-tap cursor-pointer"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4.5 h-4.5" />
           </button>
         </div>
 
         {/* Corpo dinâmico */}
-        <div className="overflow-y-auto p-4 sm:p-5" style={{ maxHeight: '66vh' }}>
+        <div className="overflow-y-auto p-5" style={{ maxHeight: '64vh' }}>
           
-          {mode === 'grid' && (
-            <div className="space-y-4">
-              <p className="text-[11px] text-slate font-medium">O que você gostaria de registrar instantaneamente?</p>
-              
-              <div className="grid grid-cols-3 gap-2">
-                {menuItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => setMode(item.id as ModeType)}
-                      className="border border-hairline hover:border-slate hover:bg-surface-soft p-3 rounded-md flex flex-col items-center justify-center text-center transition-all active-tap cursor-pointer group"
-                    >
-                      <div className={`w-8 h-8 rounded-md flex items-center justify-center mb-1.5 ${item.color} group-hover:scale-105 transition-transform`}>
-                        <Icon className="w-4.5 h-4.5" />
-                      </div>
-                      <span className="text-[11px] font-bold text-ink tracking-tight truncate w-full">{item.label}</span>
-                      <span className="text-[8px] font-mono text-slate leading-none mt-0.5 truncate w-full">{item.desc}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Form SONO */}
-          {mode === 'sono' && (
-            <div className="space-y-5">
-              <div className="flex items-center gap-2 mb-2 pb-2 border-b border-hairline-soft">
-                <Moon className="w-4 h-4 text-indigo-500" />
-                <h4 className="text-xs font-bold text-ink">LOG DE SONO</h4>
-              </div>
-
-              <div className="space-y-4 bg-surface-soft p-4 border border-hairline rounded-md">
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs">
-                    <span className="font-semibold">Horas de Sono</span>
-                    <span className="font-mono font-bold">{sono.toFixed(1)}h</span>
-                  </div>
-                  <input 
-                    type="range" min="3" max="12" step="0.5" value={sono} 
-                    onChange={(e) => setSono(parseFloat(e.target.value))}
-                    className="w-full accent-primary cursor-pointer"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs">
-                    <span className="font-semibold">Qualidade subjetiva</span>
-                    <span className="font-mono font-bold">{sonoQualidade}/10</span>
-                  </div>
-                  <input 
-                    type="range" min="1" max="10" step="1" value={sonoQualidade} 
-                    onChange={(e) => setSonoQualidade(parseInt(e.target.value))}
-                    className="w-full accent-primary cursor-pointer"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-2 justify-end pt-2">
-                <button onClick={() => setMode('grid')} className="text-xs px-3 py-1.5 text-steel hover:text-ink font-semibold">Voltar</button>
-                <button onClick={handleSalvarSono} disabled={salvando} className="bg-primary text-white text-xs font-bold px-4 py-1.5 rounded-md hover:bg-primary-pressed cursor-pointer flex items-center gap-1">
-                  {salvando ? 'Salvando...' : 'Confirmar'}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Form HUMOR */}
-          {mode === 'humor' && (
-            <div className="space-y-5">
-              <div className="flex items-center gap-2 mb-2 pb-2 border-b border-hairline-soft">
-                <Smile className="w-4 h-4 text-teal-600" />
-                <h4 className="text-xs font-bold text-ink">HUMOR & ESTADO EMOCIONAL</h4>
-              </div>
-
-              <div className="space-y-4 bg-surface-soft p-4 border border-hairline rounded-md">
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs">
-                    <span className="font-semibold">Nível de Humor</span>
-                    <span className="font-mono font-bold">{humor}/10</span>
-                  </div>
-                  <input 
-                    type="range" min="1" max="10" value={humor} 
-                    onChange={(e) => setHumor(parseInt(e.target.value))}
-                    className="w-full accent-brand-teal cursor-pointer"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 pt-2">
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-medium text-slate">Estresse ({estresse}/10)</span>
-                    <input type="range" min="1" max="10" value={estresse} onChange={(e) => setEstresse(parseInt(e.target.value))} className="w-full accent-brand-teal h-1 cursor-pointer" />
-                  </div>
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-medium text-slate">Ansiedade ({ansiedade}/10)</span>
-                    <input type="range" min="1" max="10" value={ansiedade} onChange={(e) => setAnsiedade(parseInt(e.target.value))} className="w-full accent-brand-teal h-1 cursor-pointer" />
-                  </div>
-                </div>
-
-                <div className="space-y-1 pt-2 border-t border-hairline">
-                  <div className="flex justify-between text-xs">
-                    <span className="font-medium">Foco / Produtividade</span>
-                    <span className="font-mono font-bold">{foco}/10</span>
-                  </div>
-                  <input type="range" min="1" max="10" value={foco} onChange={(e) => setFoco(parseInt(e.target.value))} className="w-full accent-brand-teal h-1.5 cursor-pointer" />
-                </div>
-              </div>
-
-              <div className="flex gap-2 justify-end pt-2">
-                <button onClick={() => setMode('grid')} className="text-xs px-3 py-1.5 text-steel hover:text-ink font-semibold">Voltar</button>
-                <button onClick={handleSalvarHumor} disabled={salvando} className="bg-primary text-white text-xs font-bold px-4 py-1.5 rounded-md hover:bg-primary-pressed cursor-pointer">
-                  Confirmar
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Form TREINO */}
-          {mode === 'treino' && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-2 pb-2 border-b border-hairline-soft">
-                <Flame className="w-4 h-4 text-amber-600" />
-                <h4 className="text-xs font-bold text-ink">LOG DE ATIVIDADE FÍSICA</h4>
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <label className="text-[11px] font-mono font-medium text-slate">Nome do Exercício / Esporte</label>
-                  <input 
-                    type="text" value={treinoNome} placeholder="Ex: Musculação Peito, Corrida 5km, Natação" 
-                    onChange={(e) => setTreinoNome(e.target.value)}
-                    className="w-full text-xs border border-hairline rounded-md p-2 mt-1 bg-canvas text-charcoal focus:border-primary focus:outline-hidden"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 pt-1">
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-mono text-slate">Duração: {treinoDuracao} min</span>
-                    <input type="range" min="15" max="180" step="5" value={treinoDuracao} onChange={(e) => setTreinoDuracao(parseInt(e.target.value))} className="w-full accent-brand-orange cursor-pointer" />
-                  </div>
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-mono text-slate">Esforço: {treinoEsforco}/10</span>
-                    <input type="range" min="1" max="10" value={treinoEsforco} onChange={(e) => setTreinoEsforco(parseInt(e.target.value))} className="w-full accent-brand-orange cursor-pointer" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-2 justify-end pt-2.5">
-                <button onClick={() => setMode('grid')} className="text-xs px-3 py-1.5 text-steel hover:text-ink font-semibold">Voltar</button>
-                <button onClick={handleSalvarTreino} disabled={salvando || !treinoNome.trim()} className="bg-primary text-white text-xs font-bold px-4 py-1.5 rounded-md hover:bg-primary-pressed disabled:bg-stone cursor-pointer">
-                  Salvar Treino
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Form REFEIÇÃO */}
-          {mode === 'refeicao' && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-2 pb-2 border-b border-hairline-soft">
-                <Utensils className="w-4 h-4 text-emerald-600" />
-                <h4 className="text-xs font-bold text-ink">REFEIÇÕES & HIDRATAÇÃO</h4>
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <label className="text-[11px] font-mono font-medium text-slate">O que você comeu?</label>
-                  <input 
-                    type="text" value={novaRefeicao} placeholder="Ex: Almoço saudável com salada e carnes, whey, etc." 
-                    onChange={(e) => setNovaRefeicao(e.target.value)}
-                    className="w-full text-xs border border-hairline rounded-md p-2 mt-1 bg-canvas text-charcoal focus:border-primary focus:outline-hidden"
-                  />
-                </div>
-
-                <div className="pt-2">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-[11px] font-mono font-semibold text-slate">Hidratação do Dia</span>
-                    <span className="text-xs font-mono font-bold">{hidratacao.toFixed(1)}L</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => setHidratacao(prev => Math.min(5, prev + 0.25))} className="flex-1 bg-surface border border-hairline hover:border-slate p-2 rounded-md text-xs font-medium cursor-pointer">+250ml 🥛</button>
-                    <button onClick={() => setHidratacao(prev => Math.min(5, prev + 0.5))} className="flex-1 bg-surface border border-hairline hover:border-slate p-2 rounded-md text-xs font-medium cursor-pointer">+500ml 🍶</button>
-                    <button onClick={() => setHidratacao(0)} className="bg-surface-soft border border-hairline-soft p-2 rounded-md text-xs text-brand-pink font-semibold cursor-pointer">Limpar</button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-2 justify-end pt-3">
-                <button onClick={() => setMode('grid')} className="text-xs px-3 py-1.5 text-steel hover:text-ink font-semibold">Voltar</button>
-                <button onClick={handleSalvarRefeicao} disabled={salvando} className="bg-primary text-white text-xs font-bold px-4 py-1.5 rounded-md hover:bg-primary-pressed cursor-pointer">
-                  Registrar
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Form TAREFA */}
-          {mode === 'tarefa' && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-2 pb-2 border-b border-hairline-soft">
-                <CheckSquare className="w-4 h-4 text-sky-500" />
-                <h4 className="text-xs font-bold text-ink">ADICIONAR TAREFA</h4>
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <label className="text-[11px] font-mono font-medium text-slate">Qual a sua meta operacional?</label>
-                  <input 
-                    type="text" value={tarefaNome} placeholder="Ex: Estudar SOLID em TS, Ligar para cliente..." 
-                    onChange={(e) => setTarefaNome(e.target.value)}
-                    className="w-full text-xs border border-hairline rounded-md p-2 mt-1 bg-canvas text-charcoal focus:border-primary focus:outline-hidden"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-mono font-medium text-slate">Prioridade</label>
-                  <div className="grid grid-cols-3 gap-2 mt-1">
-                    {['baixa', 'media', 'alta'].map((prio) => (
+          <AnimatePresence mode="wait">
+            {/* STEP 1: ENTRY PICKER */}
+            {currentStep === 'entry_picker' && (
+              <motion.div 
+                key="picker"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="space-y-4"
+              >
+                <p className="text-xs font-bold text-slate uppercase font-mono tracking-wider">O que deseja sincronizar agora?</p>
+                
+                <div className="grid grid-cols-2 gap-2.5">
+                  {entryTypeOptions.map((item) => {
+                    const Icon = item.icon;
+                    return (
                       <button
-                        key={prio} type="button" onClick={() => setTarefaPrioridade(prio as any)}
-                        className={`text-[10px] py-2 border rounded-md capitalize font-bold cursor-pointer select-none transition-all ${
-                          tarefaPrioridade === prio ? 'bg-primary text-white border-primary' : 'bg-surface border-hairline text-charcoal'
-                        }`}
+                        key={item.id}
+                        type="button"
+                        onClick={() => handleSelectType(item.id as EntryType)}
+                        className={`border border-hairline hover:border-[#6D5DD3]/50 bg-white p-3.5 rounded-xl flex flex-col items-start text-left transition-all active-tap cursor-pointer hover:shadow-2xs group`}
                       >
-                        {prio}
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-2.5 ${item.color} border group-hover:scale-105 transition-transform`}>
+                          <Icon className="w-5 h-5 animate-pulse-slow" />
+                        </div>
+                        <span className="text-xs font-black text-ink tracking-tight w-full">{item.label}</span>
+                        <span className="text-[9px] font-medium text-slate leading-none mt-1 truncate w-full">{item.desc}</span>
                       </button>
-                    ))}
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+
+            {/* STEP 2: CAPTURE MODE PICKER */}
+            {currentStep === 'mode_picker' && selectedType && (
+              <motion.div 
+                key="mode_decision"
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                className="space-y-4 text-center py-2"
+              >
+                <span className="text-2xl filter saturate-125 mb-1 block">
+                  {selectedType === 'sono' ? '🌙' : selectedType === 'refeicao' ? '🥗' : selectedType === 'treino' ? '⚡' : selectedType === 'gasto' ? '💰' : selectedType === 'humor' ? '🧠' : selectedType === 'journal' ? '📓' : selectedType === 'tarefa' ? '🎯' : '💡'}
+                </span>
+                <h4 className="text-sm font-black text-ink uppercase tracking-tight">COMO DESEJA REGISTRAR ESTE RETROSPECTO?</h4>
+                <p className="text-xs text-slate max-w-xs mx-auto leading-relaxed">Selecione o nível de profundidade analítica para essa entrada cognitiva.</p>
+
+                <div className="grid grid-cols-1 gap-3 pt-3 text-left">
+                  {/* Quick capture button */}
+                  <button
+                    type="button"
+                    onClick={() => handleSelectMode('quick')}
+                    className="border border-hairline hover:border-nexus-border bg-white p-4 rounded-xl flex items-center justify-between active-tap cursor-pointer hover:shadow-xs group transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-indigo-50 border border-indigo-100 rounded-lg flex items-center justify-center text-indigo-600">
+                        <Zap className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h5 className="text-xs font-black text-ink">Registro rápido</h5>
+                        <p className="text-[10px] text-slate font-medium mt-0.5">Preencha apenas o dado essencial.</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-slate group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+
+                  {/* Detailed capture button */}
+                  <button
+                    type="button"
+                    onClick={() => handleSelectMode('detailed')}
+                    className="border border-hairline hover:border-[#6D5DD3] bg-white p-4 rounded-xl flex items-center justify-between active-tap cursor-pointer hover:shadow-xs group transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-violet-100 border border-violet-150 rounded-lg flex items-center justify-center text-violet-650 animate-pulse">
+                        <Compass className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h5 className="text-xs font-black text-ink">Registro detalhado</h5>
+                        <p className="text-[10px] text-slate font-medium mt-0.5">Fluxo de alta fidelidade e enriquecimento futuro.</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-slate group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* STEP 3: QUICK CAPTURE FORM CONTROLS */}
+            {currentStep === 'quick_capture' && selectedType && (
+              <motion.div
+                key="quick_form"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-4"
+              >
+                <div className="pb-1 border-b border-hairline flex items-center justify-between">
+                  <span className="text-[10px] font-mono font-bold text-slate uppercase tracking-wider">MODO LANÇAMENTO RÁPIDO</span>
+                  <span className="text-[9px] font-sans font-black bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full uppercase">Basic Log</span>
+                </div>
+
+                {/* Form SONO */}
+                {selectedType === 'sono' && (
+                  <div className="space-y-4">
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs font-semibold">
+                        <span>Horas de Sono do Ciclo</span>
+                        <span className="font-mono font-extrabold text-[#6D5DD3]">{sono.toFixed(1)}h</span>
+                      </div>
+                      <input 
+                        type="range" min="3" max="12" step="0.5" value={sono} 
+                        onChange={(e) => setSono(parseFloat(e.target.value))}
+                        className="w-full accent-[#6D5DD3] cursor-pointer"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs font-semibold">
+                        <span>Fator de Restauro (Qualidade)</span>
+                        <span className="font-mono font-extrabold text-[#6D5DD3]">{sonoQualidade}/10</span>
+                      </div>
+                      <input 
+                        type="range" min="1" max="10" step="1" value={sonoQualidade} 
+                        onChange={(e) => setSonoQualidade(parseInt(e.target.value))}
+                        className="w-full accent-[#6D5DD3] cursor-pointer"
+                      />
+                    </div>
+
+                    <button onClick={handleSalvarQuickSono} disabled={salvando} className="w-full bg-primary hover:bg-primary-pressed text-white text-xs font-black py-2.5 rounded-xl cursor-pointer mt-3 flex items-center justify-center gap-1.5 shadow-xs">
+                      <Save className="w-4 h-4" />
+                      <span>{salvando ? 'Computando...' : 'Lançar Record de Sono'}</span>
+                    </button>
                   </div>
-                </div>
-              </div>
+                )}
 
-              <div className="flex gap-2 justify-end pt-3">
-                <button onClick={() => setMode('grid')} className="text-xs px-3 py-1.5 text-steel hover:text-ink font-semibold">Voltar</button>
-                <button onClick={handleSalvarTarefa} disabled={salvando || !tarefaNome.trim()} className="bg-primary text-white text-xs font-bold px-4 py-1.5 rounded-md hover:bg-primary-pressed disabled:bg-stone cursor-pointer">
-                  Criar Tarefa
-                </button>
-              </div>
-            </div>
-          )}
+                {/* Form HUMOR */}
+                {selectedType === 'humor' && (
+                  <div className="space-y-4 animate-fade-in">
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs font-semibold">
+                        <span>Grau de Humor Primal</span>
+                        <span className="font-mono font-extrabold text-teal-600">{humor}/10</span>
+                      </div>
+                      <input 
+                        type="range" min="1" max="10" value={humor} 
+                        onChange={(e) => setHumor(parseInt(e.target.value))}
+                        className="w-full accent-teal-500 cursor-pointer"
+                      />
+                    </div>
 
-          {/* Form GASTO */}
-          {mode === 'gasto' && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-2 pb-2 border-b border-hairline-soft">
-                <DollarSign className="w-4 h-4 text-yellow-600" />
-                <h4 className="text-xs font-bold text-ink">REGISTRAR TRANSAÇÃO FINANCEIRA</h4>
-              </div>
+                    <div className="grid grid-cols-2 gap-3 pt-1">
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-mono font-bold text-slate uppercase">Estresse ({estresse}/10)</span>
+                        <input type="range" min="1" max="10" value={estresse} onChange={(e) => setEstresse(parseInt(e.target.value))} className="w-full accent-teal-500 h-1 cursor-pointer" />
+                      </div>
+                      <span className="hidden"></span>
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-mono font-bold text-slate uppercase">Ansiedade ({ansiedade}/10)</span>
+                        <input type="range" min="1" max="10" value={ansiedade} onChange={(e) => setAnsiedade(parseInt(e.target.value))} className="w-full accent-teal-500 h-1 cursor-pointer" />
+                      </div>
+                    </div>
 
-              <div className="space-y-3">
-                <div className="flex bg-surface rounded-md p-1 border border-hairline">
-                  <button type="button" onClick={() => setGastoTipo('despesa')} className={`flex-1 text-[11px] py-1 font-bold rounded-sm select-none cursor-pointer ${gastoTipo === 'despesa' ? 'bg-canvas text-brand-pink border border-hairline-soft' : 'text-slate'}`}>Despesa (Gasto)</button>
-                  <button type="button" onClick={() => setGastoTipo('receita')} className={`flex-1 text-[11px] py-1 font-bold rounded-sm select-none cursor-pointer ${gastoTipo === 'receita' ? 'bg-canvas text-brand-teal border border-hairline-soft' : 'text-slate'}`}>Receita (Renda)</button>
-                </div>
+                    <div className="space-y-1 pt-2 border-t border-hairline">
+                      <div className="flex justify-between text-xs font-semibold">
+                        <span>Coeficiente cognitivo (Foco)</span>
+                        <span className="font-mono font-extrabold text-teal-500">{foco}/10</span>
+                      </div>
+                      <input type="range" min="1" max="10" value={foco} onChange={(e) => setFoco(parseInt(e.target.value))} className="w-full accent-teal-500 h-1 curso-pointer" />
+                    </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <span className="text-[11px] font-mono text-slate">Valor (R$)</span>
-                    <input type="number" placeholder="0.00" value={gastoValor} onChange={(e) => setGastoValor(e.target.value)} className="w-full text-xs mt-1 border border-hairline rounded-md p-2 bg-canvas text-charcoal focus:outline-hidden" />
+                    <button onClick={handleSalvarQuickHumor} disabled={salvando} className="w-full bg-primary hover:bg-primary-pressed text-white text-xs font-black py-2.5 rounded-xl cursor-pointer mt-3 flex items-center justify-center gap-1.5 shadow-xs">
+                      <Save className="w-4 h-4" />
+                      <span>{salvando ? 'Codificando...' : 'Confirmar Estado Emocional'}</span>
+                    </button>
                   </div>
-                  <div>
-                    <span className="text-[11px] font-mono text-slate">Categoria</span>
-                    <select value={gastoCat} onChange={(e) => setGastoCat(e.target.value)} className="w-full text-xs mt-1 border border-hairline bg-canvas rounded-md p-2 text-charcoal">
-                      <option value="Alimentação">Alimentação</option>
-                      <option value="Lazer">Lazer / Restaurantes</option>
-                      <option value="Lotação">Transporte / Uber</option>
-                      <option value="Saúde">Saúde / Farmácia</option>
-                      <option value="Moradia">Assinaturas / Casa</option>
-                      <option value="Salário">Salário / Receita</option>
-                      <option value="Outros">Outros</option>
-                    </select>
+                )}
+
+                {/* Form ATIVIDADE FISICA */}
+                {selectedType === 'treino' && (
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-mono text-slate uppercase">O que você treinou hoje?</label>
+                      <input 
+                        type="text" value={treinoNome} placeholder="Ex: Musculação Peito, Corrida rápida" 
+                        onChange={(e) => setTreinoNome(e.target.value)}
+                        className="w-full text-xs border border-hairline rounded-lg p-2.5 mt-0.5 bg-canvas focus:border-[#6D5DD3] focus:outline-hidden"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-mono text-slate uppercase">Duração estimada: {treinoDuracao} min</span>
+                      <input type="range" min="15" max="120" step="5" value={treinoDuracao} onChange={(e) => setTreinoDuracao(parseInt(e.target.value))} className="w-full accent-[#6D5DD3] cursor-pointer" />
+                    </div>
+
+                    <button onClick={handleSalvarQuickTreino} disabled={salvando || !treinoNome.trim()} className="w-full bg-primary disabled:bg-stone hover:bg-primary-pressed text-white text-xs font-black py-2.5 rounded-xl cursor-pointer mt-3 flex items-center justify-center gap-1.5 shadow-xs">
+                      <Save className="w-4 h-4" />
+                      <span>Lançar Atividade Rápida</span>
+                    </button>
                   </div>
-                </div>
+                )}
 
-                <div>
-                  <span className="text-[11px] font-mono text-slate">Breve Descrição</span>
-                  <input type="text" placeholder="Ex: Mercado da semana, Uber aeroporto" value={gastoDescr} onChange={(e) => setGastoDescr(e.target.value)} className="w-full text-xs mt-1 border border-hairline rounded-md p-2 bg-canvas text-charcoal focus:outline-hidden" />
-                </div>
-              </div>
+                {/* Form REFEIÇÃO */}
+                {selectedType === 'refeicao' && (
+                  <div className="space-y-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-mono text-slate uppercase">O que você comeu?</label>
+                      <input 
+                        type="text" value={novaRefeicao} placeholder="Ex: Almoço limpo com frango e salada" 
+                        onChange={(e) => setNovaRefeicao(e.target.value)}
+                        className="w-full text-xs border border-hairline rounded-lg p-2.5 mt-0.5 bg-canvas focus:border-[#6D5DD3] focus:outline-hidden"
+                      />
+                    </div>
 
-              <div className="flex gap-2 justify-end pt-3">
-                <button onClick={() => setMode('grid')} className="text-xs px-3 py-1.5 text-steel hover:text-ink font-semibold">Voltar</button>
-                <button onClick={handleSalvarGasto} disabled={salvando || !gastoValor || parseFloat(gastoValor) <= 0} className="bg-primary text-white text-xs font-bold px-4 py-1.5 rounded-md hover:bg-primary-pressed disabled:bg-stone cursor-pointer">
-                  Lançar Contabilidade
-                </button>
-              </div>
-            </div>
-          )}
+                    <div className="pt-2 border-t border-hairline">
+                      <div className="flex justify-between items-center mb-1.5">
+                        <span className="text-[10px] font-mono font-bold text-slate uppercase">Suprimento Hídrico do Dia</span>
+                        <span className="text-xs font-mono font-black text-emerald-650">{hidratacao.toFixed(1)} Litros</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => setHidratacao(prev => Math.min(5, prev + 0.25))} className="flex-1 bg-white border border-hairline hover:border-slate p-2 rounded-lg text-xs font-medium cursor-pointer transition-all active-tap">+250ml 🥛</button>
+                        <button onClick={() => setHidratacao(prev => Math.min(5, prev + 0.5))} className="flex-1 bg-white border border-hairline hover:border-slate p-2 rounded-lg text-xs font-medium cursor-pointer transition-all active-tap">+500ml 🍶</button>
+                        <button onClick={() => setHidratacao(0)} className="bg-red-50 hover:bg-red-100 p-2 rounded-lg text-xs text-red-500 font-bold cursor-pointer transition-all active-tap">Zerar</button>
+                      </div>
+                    </div>
 
-          {/* Form JOURNAL */}
-          {mode === 'journal' && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-2 pb-2 border-b border-hairline-soft">
-                <FileText className="w-4 h-4 text-violet-500" />
-                <h4 className="text-xs font-bold text-ink">DIÁRIO PESSOAL / JOURNAL</h4>
-              </div>
+                    <button onClick={handleSalvarQuickRefeicao} disabled={salvando} className="w-full bg-primary hover:bg-primary-pressed text-white text-xs font-black py-2.5 rounded-xl cursor-pointer mt-2 flex items-center justify-center gap-1.5 shadow-xs">
+                      <Save className="w-4 h-4" />
+                      <span>Confirmar Dieta Rápida</span>
+                    </button>
+                  </div>
+                )}
 
-              <div>
-                <span className="text-[11px] font-mono text-slate">Desabafe e registre suas memórias, reflexões subjetivas do dia</span>
-                <textarea 
-                  value={diarioText} onChange={(e) => setDiarioText(e.target.value)}
-                  placeholder="Hoje refleti sobre a autonomia pessoal e como pequenas escolhas constroem nossa biologia..."
-                  className="w-full h-28 text-xs border border-hairline rounded-md p-2 mt-2 bg-canvas focus:border-primary focus:outline-hidden resize-none placeholder-stone"
-                />
-              </div>
+                {/* Form TAREFA */}
+                {selectedType === 'tarefa' && (
+                  <div className="space-y-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-mono text-slate uppercase">Qual a sua meta operacional?</label>
+                      <input 
+                        type="text" value={tarefaNome} placeholder="Ex: Refatorar componente de roteamento em TS" 
+                        onChange={(e) => setTarefaNome(e.target.value)}
+                        className="w-full text-xs border border-hairline rounded-lg p-2.5 mt-0.5 bg-canvas focus:border-[#6D5DD3] focus:outline-hidden"
+                      />
+                    </div>
 
-              <div className="flex gap-2 justify-end pt-2">
-                <button onClick={() => setMode('grid')} className="text-xs px-3 py-1.5 text-steel hover:text-ink font-semibold">Voltar</button>
-                <button onClick={handleSalvarJournal} disabled={salvando} className="bg-primary text-white text-xs font-bold px-4 py-1.5 rounded-md hover:bg-primary-pressed cursor-pointer">
-                  Gravar Diário
-                </button>
-              </div>
-            </div>
-          )}
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-mono font-bold text-slate uppercase">Impacto Operacional</label>
+                      <div className="grid grid-cols-3 gap-2 mt-1">
+                        {['baixa', 'media', 'alta'].map((prio) => (
+                          <button
+                            key={prio} type="button" onClick={() => setTarefaPrioridade(prio as any)}
+                            className={`text-[10px] py-2 border rounded-lg capitalize font-bold cursor-pointer transition-all ${
+                              tarefaPrioridade === prio ? 'bg-[#6D5DD3] text-white border-[#6D5DD3]' : 'bg-white border-hairline text-charcoal hover:border-slate'
+                            }`}
+                          >
+                            {prio}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
 
-          {/* Form EVENTO */}
-          {mode === 'evento' && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-2 pb-2 border-b border-hairline-soft">
-                <Calendar className="w-4 h-4 text-rose-500" />
-                <h4 className="text-xs font-bold text-ink">REGISTRAR EVENTO NOTÁVEL</h4>
-              </div>
+                    <button onClick={handleSalvarQuickTarefa} disabled={salvando || !tarefaNome.trim()} className="w-full bg-primary disabled:bg-stone hover:bg-primary-pressed text-white text-xs font-black py-2.5 rounded-xl cursor-pointer mt-3 flex items-center justify-center gap-1.5 shadow-xs">
+                      <Check className="w-4 h-4" />
+                      <span>Estabelecer Missão</span>
+                    </button>
+                  </div>
+                )}
 
-              <div>
-                <label className="text-[11px] font-mono text-slate">Ocorreu algum evento ou fato marcante hoje?</label>
-                <input 
-                  type="text" value={eventoNome} placeholder="Ex: Reunião geral de metas, jantei fora com amigos, cortei o cabelo..." 
-                  onChange={(e) => setEventoNome(e.target.value)}
-                  className="w-full text-xs border border-hairline rounded-md p-2 mt-2 bg-canvas text-charcoal focus:border-primary focus:outline-hidden"
-                />
-              </div>
+                {/* Form COMPTABILIDADE */}
+                {selectedType === 'gasto' && (
+                  <div className="space-y-3">
+                    <div className="flex bg-surface rounded-xl p-1 border border-hairline">
+                      <button type="button" onClick={() => setGastoTipo('despesa')} className={`flex-1 text-[11px] py-1.5 font-bold rounded-lg cursor-pointer ${gastoTipo === 'despesa' ? 'bg-white text-brand-pink border border-hairline-soft shadow-3xs' : 'text-slate'}`}>Despesa (Gasto)</button>
+                      <button type="button" onClick={() => setGastoTipo('receita')} className={`flex-1 text-[11px] py-1.5 font-bold rounded-lg cursor-pointer ${gastoTipo === 'receita' ? 'bg-white text-brand-teal border border-hairline-soft shadow-3xs' : 'text-slate'}`}>Receita (Renda)</button>
+                    </div>
 
-              <div className="flex gap-2 justify-end pt-3">
-                <button onClick={() => setMode('grid')} className="text-xs px-3 py-1.5 text-steel hover:text-ink font-semibold">Voltar</button>
-                <button onClick={handleSalvarEvento} disabled={salvando || !eventoNome.trim()} className="bg-primary text-white text-xs font-bold px-4 py-1.5 rounded-md hover:bg-primary-pressed disabled:bg-stone cursor-pointer">
-                  Salvar Evento
-                </button>
-              </div>
-            </div>
-          )}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-0.5">
+                        <span className="text-[10px] font-mono text-slate uppercase font-bold">Valor (R$)</span>
+                        <input type="number" placeholder="0.00" value={gastoValor} onChange={(e) => setGastoValor(e.target.value)} className="w-full text-xs border border-hairline rounded-lg p-2 bg-canvas text-charcoal focus:outline-hidden font-mono" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-[10px] font-mono text-slate uppercase font-bold">Categoria</span>
+                        <select value={gastoCat} onChange={(e) => setGastoCat(e.target.value)} className="w-full text-xs border border-hairline bg-canvas rounded-lg p-2 text-charcoal">
+                          <option value="Alimentação">Alimentação</option>
+                          <option value="Lazer">Lazer / Restaurantes</option>
+                          <option value="Transporte">Transporte / Uber</option>
+                          <option value="Saúde">Saúde / Farmácia</option>
+                          <option value="Moradia">Assinaturas / Casa</option>
+                          <option value="Salário">Salário / Receita</option>
+                          <option value="Outros">Outros</option>
+                        </select>
+                      </div>
+                    </div>
 
-          {/* Form IDEIA */}
-          {mode === 'ideia' && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-2 pb-2 border-b border-hairline-soft">
-                <Lightbulb className="w-4 h-4 text-indigo-600" />
-                <h4 className="text-xs font-bold text-ink">CAPTURAR IDEIA</h4>
-              </div>
+                    <div className="space-y-0.5">
+                      <span className="text-[10px] font-mono text-slate uppercase font-bold">Nota explicativa</span>
+                      <input type="text" placeholder="Ex: Café Starbucks, Restaurante de almoço" value={gastoDescr} onChange={(e) => setGastoDescr(e.target.value)} className="w-full text-xs border border-hairline rounded-lg p-2 bg-canvas text-charcoal focus:outline-hidden" />
+                    </div>
 
-              <div>
-                <label className="text-[11px] font-mono text-slate">O que passou pela sua mente?</label>
-                <input 
-                  type="text" value={ideiaNome} placeholder="Ex: Nova funcionalidade para o SaaS, livro que quero ler..." 
-                  onChange={(e) => setIdeiaNome(e.target.value)}
-                  className="w-full text-xs border border-hairline rounded-md p-2 mt-2 bg-canvas text-charcoal focus:border-primary focus:outline-hidden"
-                />
-              </div>
+                    <button onClick={handleSalvarQuickGasto} disabled={salvando || !gastoValor || parseFloat(gastoValor) <= 0} className="w-full bg-primary disabled:bg-stone hover:bg-primary-pressed text-white text-xs font-black py-2.5 rounded-xl cursor-pointer mt-3 flex items-center justify-center gap-1.5 shadow-xs">
+                      <Save className="w-4 h-4" />
+                      <span>Confirmar Lançamento</span>
+                    </button>
+                  </div>
+                )}
 
-              <div className="flex gap-2 justify-end pt-3">
-                <button onClick={() => setMode('grid')} className="text-xs px-3 py-1.5 text-steel hover:text-ink font-semibold">Voltar</button>
-                <button onClick={handleSalvarIdeia} disabled={salvando || !ideiaNome.trim()} className="bg-primary text-white text-xs font-bold px-4 py-1.5 rounded-md hover:bg-primary-pressed disabled:bg-stone cursor-pointer">
-                  Capturar Ideia
-                </button>
-              </div>
-            </div>
-          )}
+                {/* Form JOURNAL */}
+                {selectedType === 'journal' && (
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-mono text-slate uppercase font-bold">Desabafo Mental / Diário do Dia</span>
+                      <textarea 
+                        value={diarioText} onChange={(e) => setDiarioText(e.target.value)}
+                        placeholder="Hoje refleti sobre a autonomia pessoal e como pequenas escolhas constroem nossa biologia..."
+                        className="w-full h-24 text-xs border border-hairline rounded-lg p-2 bg-canvas focus:border-primary focus:outline-hidden resize-none placeholder-stone mt-1"
+                      />
+                    </div>
+
+                    <button onClick={handleSalvarQuickJournal} disabled={salvando} className="w-full bg-primary hover:bg-primary-pressed text-white text-xs font-black py-2.5 rounded-xl cursor-pointer mt-2 flex items-center justify-center gap-1.5 shadow-xs">
+                      <Save className="w-4 h-4" />
+                      <span>Sincronizar Texto</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* Form HABITO */}
+                {selectedType === 'habito' && (
+                  <div className="space-y-4">
+                    {habitsList.length > 0 ? (
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-mono text-slate uppercase font-bold">Selecione o Hábito Ativo</label>
+                        <select 
+                          value={selectedHabitId} onChange={(e) => setSelectedHabitId(e.target.value)}
+                          className="w-full text-xs border border-hairline bg-canvas rounded-lg p-2 text-charcoal mt-1"
+                        >
+                          {habitsList.map(h => (
+                            <option key={h.id} value={h.id}>🔹 {h.nome}</option>
+                          ))}
+                        </select>
+                      </div>
+                    ) : (
+                      <div className="p-3 bg-red-50 text-red-700 text-xs rounded-xl border border-red-100">
+                        Nenhum hábito cadastrado no sistema. Vá no fluxo completo de engenharia de hábitos do módulo saúde para criar habits primeiro!
+                      </div>
+                    )}
+
+                    <button onClick={handleSalvarQuickHabito} disabled={salvando || !selectedHabitId} className="w-full bg-primary disabled:bg-stone hover:bg-primary-pressed text-white text-xs font-black py-2.5 rounded-xl cursor-pointer mt-3 flex items-center justify-center gap-1.5 shadow-xs">
+                      <Plus className="w-4 h-4" />
+                      <span>Computar Repetição</span>
+                    </button>
+                  </div>
+                )}
+
+              </motion.div>
+            )}
+          </AnimatePresence>
 
         </div>
 
@@ -664,13 +712,13 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
         <AnimatePresence>
           {sucesso && (
             <motion.div 
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              className="absolute inset-x-0 bottom-0 bg-brand-teal text-white p-4 flex items-center justify-center gap-2 z-20 font-sans font-bold text-xs"
+              exit={{ opacity: 0, y: 12 }}
+              className="absolute inset-x-0 bottom-0 bg-brand-teal text-white p-4.5 flex items-center justify-center gap-2.5 z-20 font-sans font-bold text-xs"
             >
-              <Check className="w-4 h-4" />
-              <span>Registro processado e salvo no Nexus!</span>
+              <Check className="w-4.5 h-4.5" />
+              <span>Sincronização imediata gravada no Nexus!</span>
             </motion.div>
           )}
         </AnimatePresence>

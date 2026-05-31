@@ -1,56 +1,88 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export type TabId = 'home' | 'hoje' | 'insights' | 'modulos' | 'perfil';
+export type WizardType = 'sono' | 'refeicao' | 'treino' | 'gasto' | 'humor' | 'journal' | 'tarefa' | 'habito' | null;
 
 interface ParsedRoute {
   pathname: string;
   baseTab: TabId;
   isRegisterModal: boolean;
+  wizardType: WizardType;
 }
 
-// Map pathnames to base tabs
+// Map pathnames to base tabs and wizards
 export function parseCurrentRoute(path: string): ParsedRoute {
   const cleanPath = path.toLowerCase().replace(/\/$/, '') || '/';
 
-  if (cleanPath === '/' || cleanPath === '/home') {
-    return { pathname: '/home', baseTab: 'home', isRegisterModal: false };
+  // Check Wizard paths
+  if (cleanPath === '/register/sleep' || cleanPath === '/register/sono') {
+    return { pathname: cleanPath, baseTab: 'hoje', isRegisterModal: false, wizardType: 'sono' };
   }
+  if (cleanPath === '/register/meal' || cleanPath === '/register/refeicao') {
+    return { pathname: cleanPath, baseTab: 'hoje', isRegisterModal: false, wizardType: 'refeicao' };
+  }
+  if (cleanPath === '/register/workout' || cleanPath === '/register/treino') {
+    return { pathname: cleanPath, baseTab: 'hoje', isRegisterModal: false, wizardType: 'treino' };
+  }
+  if (cleanPath === '/register/expense' || cleanPath === '/register/gasto') {
+    return { pathname: cleanPath, baseTab: 'home', isRegisterModal: false, wizardType: 'gasto' };
+  }
+  if (cleanPath === '/register/mood' || cleanPath === '/register/humor') {
+    return { pathname: cleanPath, baseTab: 'hoje', isRegisterModal: false, wizardType: 'humor' };
+  }
+  if (cleanPath === '/register/journal' || cleanPath === '/register/diario') {
+    return { pathname: cleanPath, baseTab: 'hoje', isRegisterModal: false, wizardType: 'journal' };
+  }
+  if (cleanPath === '/register/task' || cleanPath === '/register/tarefa') {
+    return { pathname: cleanPath, baseTab: 'hoje', isRegisterModal: false, wizardType: 'tarefa' };
+  }
+  if (cleanPath === '/register/habit' || cleanPath === '/register/habito') {
+    return { pathname: cleanPath, baseTab: 'hoje', isRegisterModal: false, wizardType: 'habito' };
+  }
+
+  // Check register modals on active base tabs
   if (cleanPath === '/register' || cleanPath === '/home/register') {
-    return { pathname: cleanPath, baseTab: 'home', isRegisterModal: true };
-  }
-  if (cleanPath === '/today' || cleanPath === '/hoje') {
-    return { pathname: '/today', baseTab: 'hoje', isRegisterModal: false };
+    return { pathname: cleanPath, baseTab: 'home', isRegisterModal: true, wizardType: null };
   }
   if (cleanPath === '/today/register' || cleanPath === '/hoje/register') {
-    return { pathname: cleanPath, baseTab: 'hoje', isRegisterModal: true };
-  }
-  if (cleanPath === '/insights') {
-    return { pathname: '/insights', baseTab: 'insights', isRegisterModal: false };
+    return { pathname: cleanPath, baseTab: 'hoje', isRegisterModal: true, wizardType: null };
   }
   if (cleanPath === '/insights/register') {
-    return { pathname: cleanPath, baseTab: 'insights', isRegisterModal: true };
-  }
-  if (cleanPath === '/modules' || cleanPath === '/modulos') {
-    return { pathname: '/modules', baseTab: 'modulos', isRegisterModal: false };
+    return { pathname: cleanPath, baseTab: 'insights', isRegisterModal: true, wizardType: null };
   }
   if (cleanPath === '/modules/register' || cleanPath === '/modulos/register') {
-    return { pathname: cleanPath, baseTab: 'modulos', isRegisterModal: true };
-  }
-  if (cleanPath === '/profile' || cleanPath === '/perfil') {
-    return { pathname: '/profile', baseTab: 'perfil', isRegisterModal: false };
+    return { pathname: cleanPath, baseTab: 'modulos', isRegisterModal: true, wizardType: null };
   }
   if (cleanPath === '/profile/register' || cleanPath === '/perfil/register') {
-    return { pathname: cleanPath, baseTab: 'perfil', isRegisterModal: true };
+    return { pathname: cleanPath, baseTab: 'perfil', isRegisterModal: true, wizardType: null };
+  }
+
+  // Base tabs
+  if (cleanPath === '/' || cleanPath === '/home') {
+    return { pathname: '/home', baseTab: 'home', isRegisterModal: false, wizardType: null };
+  }
+  if (cleanPath === '/today' || cleanPath === '/hoje') {
+    return { pathname: '/today', baseTab: 'hoje', isRegisterModal: false, wizardType: null };
+  }
+  if (cleanPath === '/insights') {
+    return { pathname: '/insights', baseTab: 'insights', isRegisterModal: false, wizardType: null };
+  }
+  if (cleanPath === '/modules' || cleanPath === '/modulos') {
+    return { pathname: '/modules', baseTab: 'modulos', isRegisterModal: false, wizardType: null };
+  }
+  if (cleanPath === '/profile' || cleanPath === '/perfil') {
+    return { pathname: '/profile', baseTab: 'perfil', isRegisterModal: false, wizardType: null };
   }
 
   // Fallback for unmatched routes
-  return { pathname: '/home', baseTab: 'home', isRegisterModal: false };
+  return { pathname: '/home', baseTab: 'home', isRegisterModal: false, wizardType: null };
 }
 
 interface RouterContextType {
   path: string;
   baseTab: TabId;
   isRegisterModal: boolean;
+  wizardType: WizardType;
   navigate: (toPath: string) => void;
   openRegisterModal: () => void;
   closeRegisterModal: () => void;
@@ -125,6 +157,7 @@ export function RouterProvider({ children }: RouterProviderProps) {
         path: currentPath,
         baseTab: parsed.baseTab,
         isRegisterModal: parsed.isRegisterModal,
+        wizardType: parsed.wizardType,
         navigate,
         openRegisterModal,
         closeRegisterModal,

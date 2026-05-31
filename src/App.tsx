@@ -17,6 +17,7 @@ import RegistrarSheet from './components/RegistrarSheet';
 import InsightsView from './components/InsightsView';
 import ModulesView from './components/ModulesView';
 import { useRouter } from './components/RouterContext';
+import RegistrationWizards from './components/RegistrationWizards';
 
 export default function App() {
   const [selectedDate, setSelectedDate] = useState<string>('2026-05-29'); // Tempo atual de referência local
@@ -24,7 +25,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [refreshCount, setRefreshCount] = useState<number>(0);
 
-  const { path, baseTab, isRegisterModal, navigate, openRegisterModal, closeRegisterModal } = useRouter();
+  const { path, baseTab, isRegisterModal, wizardType, navigate, openRegisterModal, closeRegisterModal } = useRouter();
   const mainRef = useRef<HTMLElement>(null);
 
   // Inicializa o banco local ao iniciar o app
@@ -199,111 +200,122 @@ export default function App() {
       {/* Device Emulation wrapping canvas for premium mobile preview */}
       <div className="w-full h-screen sm:h-[844px] sm:max-w-[390px] sm:rounded-[40px] sm:border-[8px] sm:border-[#20201D] sm:shadow-2xl bg-nexus-bg flex flex-col relative overflow-hidden transition-all duration-300">
         
-        {/* Top Header Barra Sólida estilo Notion */}
-        <header className="bg-nexus-bg border-b border-nexus-border sticky top-0 z-40 px-4 pt-4 pb-3 shadow-none shrink-0">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <h1 className="text-sm font-black tracking-tight text-[#20201D] font-sans">
-                Nexus
-              </h1>
-              <span className="text-[9px] font-mono tracking-wider font-bold text-white bg-[#6D5DD3] border border-[#6D5DD3]/10 px-1 py-0.2 rounded-xs uppercase">
-                V2 INTEL
-              </span>
-            </div>
-
-            {/* Ações do Header: Lupa de Busca e Foto de Perfil */}
-            <div className="flex items-center gap-2">
-              <button 
-                onClick={() => { setIsSearchOpen(true); setSearchQuery(''); }}
-                className="w-8 h-8 rounded-full border border-nexus-border bg-white flex items-center justify-center hover:bg-nexus-soft active-tap cursor-pointer text-[#77736B] hover:text-[#20201D] transition-colors"
-                title="Buscar comandos (Ctrl+K)"
-              >
-                <Search className="w-4 h-4" />
-              </button>
-
-              <button 
-                onClick={() => navigate('/profile')}
-                className={`w-8 h-8 rounded-full overflow-hidden border cursor-pointer active-tap transition-all ${
-                  baseTab === 'perfil' ? 'border-[#6D5DD3] ring-2 ring-[#6D5DD3]/25' : 'border-nexus-border'
-                }`}
-                title="Meu Perfil"
-              >
-                <img 
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" 
-                  alt="Avatar"
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover" 
-                />
-              </button>
-            </div>
-          </div>
-        </header>
-
-        {/* Conteúdo Central Móvel de Container Estilo App */}
-        <main 
-          ref={mainRef}
-          className="flex-1 w-full px-4 pt-4 pb-28 sm:pb-24 overflow-y-auto no-scrollbar scroll-smooth bg-nexus-bg relative"
-        >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={baseTab}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.16, ease: 'easeInOut' }}
-              className="w-full"
-            >
-              {renderActiveTabContent()}
-            </motion.div>
-          </AnimatePresence>
-        </main>
-
-        {/* Barra de Navegação Inferior Fixa no mobile / Absoluta no simulador */}
-        <nav className="fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-4 sm:left-3.5 sm:right-3.5 h-[64px] bg-[rgba(255,255,255,0.92)] backdrop-blur-md border-t sm:border border-nexus-border rounded-none sm:rounded-[999px] z-40 shadow-xs flex items-center justify-around px-3 py-1 pb-[calc(env(safe-area-inset-bottom,0px)+4px)] sm:pb-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isRegistrar = item.id === 'registrar';
-            const active = baseTab === item.id;
-            
-            return (
-              <button
-                key={item.id}
-                onClick={() => {
-                  if (isRegistrar) {
-                    openRegisterModal();
-                  } else {
-                    if (item.id === 'home') navigate('/home');
-                    else if (item.id === 'hoje') navigate('/today');
-                    else if (item.id === 'insights') navigate('/insights');
-                    else if (item.id === 'modulos') navigate('/modules');
-                    triggerRefresh();
-                  }
-                }}
-                className={`flex flex-col items-center gap-0.5 flex-1 relative transition-all active-tap cursor-pointer select-none rounded-[999px] min-h-[46px] justify-center ${
-                  isRegistrar 
-                    ? 'text-[#6D5DD3] font-bold scale-102 bg-[#EEEAFD] max-h-[48px] max-w-[48px] rounded-[999px] border border-[#d3caf7] sm:scale-100' 
-                    : active 
-                      ? 'text-[#20201D] font-bold py-1 bg-[#F0EFEB]/50 rounded-[999px]' 
-                      : 'text-[#77736B] hover:text-[#20201D]'
-                }`}
-              >
-                <div className="shrink-0">
-                  <Icon className={`${isRegistrar ? 'w-4.5 h-4.5 text-[#6D5DD3] stroke-[2.7]' : 'w-4.5 h-4.5'}`} />
+        {wizardType ? (
+          <RegistrationWizards 
+            wizardType={wizardType}
+            selectedDate={selectedDate}
+            onClose={() => navigate('/home')}
+            onSaveSuccess={triggerRefresh}
+          />
+        ) : (
+          <>
+            {/* Top Header Barra Sólida estilo Notion */}
+            <header className="bg-nexus-bg border-b border-nexus-border sticky top-0 z-40 px-4 pt-4 pb-3 shadow-none shrink-0">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <h1 className="text-sm font-black tracking-tight text-[#20201D] font-sans">
+                    Nexus
+                  </h1>
+                  <span className="text-[9px] font-mono tracking-wider font-bold text-white bg-[#6D5DD3] border border-[#6D5DD3]/10 px-1 py-0.2 rounded-xs uppercase">
+                    V2 INTEL
+                  </span>
                 </div>
-                {!isRegistrar && (
-                  <span className={`text-[9.5px] font-bold tracking-tight ${active ? 'text-[#20201D]' : 'text-[#77736B]'}`}>
-                    {item.label}
-                  </span>
-                )}
-                {isRegistrar && (
-                  <span className="text-[7.5px] font-extrabold tracking-tight text-[#6D5DD3]">
-                    Criar
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
+
+                {/* Ações do Header: Lupa de Busca e Foto de Perfil */}
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => { setIsSearchOpen(true); setSearchQuery(''); }}
+                    className="w-8 h-8 rounded-full border border-nexus-border bg-white flex items-center justify-center hover:bg-nexus-soft active-tap cursor-pointer text-[#77736B] hover:text-[#20201D] transition-colors"
+                    title="Buscar comandos (Ctrl+K)"
+                  >
+                    <Search className="w-4 h-4" />
+                  </button>
+
+                  <button 
+                    onClick={() => navigate('/profile')}
+                    className={`w-8 h-8 rounded-full overflow-hidden border cursor-pointer active-tap transition-all ${
+                      baseTab === 'perfil' ? 'border-[#6D5DD3] ring-2 ring-[#6D5DD3]/25' : 'border-nexus-border'
+                    }`}
+                    title="Meu Perfil"
+                  >
+                    <img 
+                      src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" 
+                      alt="Avatar"
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover" 
+                    />
+                  </button>
+                </div>
+              </div>
+            </header>
+
+            {/* Conteúdo Central Móvel de Container Estilo App */}
+            <main 
+              ref={mainRef}
+              className="flex-1 w-full px-4 pt-4 pb-28 sm:pb-24 overflow-y-auto no-scrollbar scroll-smooth bg-nexus-bg relative"
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={baseTab}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.16, ease: 'easeInOut' }}
+                  className="w-full"
+                >
+                  {renderActiveTabContent()}
+                </motion.div>
+              </AnimatePresence>
+            </main>
+
+            {/* Barra de Navegação Inferior Fixa no mobile / Absoluta no simulador */}
+            <nav className="absolute bottom-0 left-0 right-0 sm:bottom-4 sm:left-3.5 sm:right-3.5 h-[64px] bg-[rgba(255,255,255,0.92)] backdrop-blur-md border-t sm:border border-nexus-border rounded-none sm:rounded-[999px] z-40 shadow-xs flex items-center justify-around px-3 py-1 pb-[calc(env(safe-area-inset-bottom,0px)+4px)] sm:pb-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isRegistrar = item.id === 'registrar';
+                const active = baseTab === item.id;
+                
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      if (isRegistrar) {
+                        openRegisterModal();
+                      } else {
+                        if (item.id === 'home') navigate('/home');
+                        else if (item.id === 'hoje') navigate('/today');
+                        else if (item.id === 'insights') navigate('/insights');
+                        else if (item.id === 'modulos') navigate('/modules');
+                        triggerRefresh();
+                      }
+                    }}
+                    className={`flex flex-col items-center gap-0.5 flex-1 relative transition-all active-tap cursor-pointer select-none rounded-[999px] min-h-[46px] justify-center ${
+                      isRegistrar 
+                        ? 'text-[#6D5DD3] font-bold scale-102 bg-[#EEEAFD] max-h-[48px] max-w-[48px] rounded-[999px] border border-[#d3caf7] sm:scale-100' 
+                        : active 
+                          ? 'text-[#20201D] font-bold py-1 bg-[#F0EFEB]/50 rounded-[999px]' 
+                          : 'text-[#77736B] hover:text-[#20201D]'
+                    }`}
+                  >
+                    <div className="shrink-0">
+                      <Icon className={`${isRegistrar ? 'w-4.5 h-4.5 text-[#6D5DD3] stroke-[2.7]' : 'w-4.5 h-4.5'}`} />
+                    </div>
+                    {!isRegistrar && (
+                      <span className={`text-[9.5px] font-bold tracking-tight ${active ? 'text-[#20201D]' : 'text-[#77736B]'}`}>
+                        {item.label}
+                      </span>
+                    )}
+                    {isRegistrar && (
+                      <span className="text-[7.5px] font-extrabold tracking-tight text-[#6D5DD3]">
+                        Criar
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+          </>
+        )}
 
       </div>
 

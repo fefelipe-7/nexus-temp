@@ -7,6 +7,8 @@ export type AreaVida = 'saúde' | 'mente' | 'execução' | 'recursos' | 'relaç�
 
 export interface RegistroDiario {
   data: string; // Formato YYYY-MM-DD
+  can_be_enriched_later?: boolean;
+  completion_level?: 'basic' | 'complete';
   // Saúde
   sono?: number; // horas dormidas
   sonoQualidade?: number; // 1 a 10
@@ -84,6 +86,7 @@ export interface Tarefa {
   dataCriacao: string;
   dataConclusao?: string;
   periodo?: 'manha' | 'tarde' | 'noite';
+  checklist?: { id: string; texto: string; concluida: boolean }[];
 }
 
 export interface TransacaoFinanceira {
