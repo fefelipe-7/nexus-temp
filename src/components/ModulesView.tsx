@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   HeartHandshake, Brain, Activity, Zap, DollarSign, Wallet,
   Search, Sliders, ChevronRight, ArrowLeft, ArrowRight, CheckSquare, Sparkles,

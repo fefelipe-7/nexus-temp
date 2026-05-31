@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Moon, Utensils, Flame, DollarSign, Smile, FileText, CheckSquare, 
   Lightbulb, ArrowRight, ArrowLeft, Check, Plus, AlertCircle, Info 

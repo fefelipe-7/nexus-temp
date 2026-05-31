@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Flame, Droplets, Moon, Shield, Sparkles, Plus, AlertCircle, Dumbbell } from 'lucide-react';
 import { RegistroDiario } from '../types';
 import { storage } from '../lib/storage';

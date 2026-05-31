@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { 
   Heart, Activity, Moon, Droplet, Smile, Brain, BookOpen, Compass, 
   Zap, CheckSquare, Target, Wallet, TrendingDown, TrendingUp, Coins, 

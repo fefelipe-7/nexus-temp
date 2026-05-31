@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Moon, Smile, Flame, Droplets, CheckSquare, 
   DollarSign, FileText, Calendar, Lightbulb, Save, Check, Plus, Utensils,

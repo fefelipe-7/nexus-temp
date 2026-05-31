@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Award, FolderKanban, CheckSquare, Flame, Plus, Target, Trash2, Calendar, ClipboardList } from 'lucide-react';
 import { Meta, Projeto, Tarefa, Habito } from '../types';
 import { storage } from '../lib/storage';

@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Brain, Smile, Activity, ShieldAlert, Sparkles, FileText, CheckCircle, Clock } from 'lucide-react';
 import { RegistroDiario } from '../types';
 import { storage } from '../lib/storage';

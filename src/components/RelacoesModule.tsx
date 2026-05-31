@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { HeartHandshake, Users, PhoneCall, Plus, Trash2, Calendar, UserCheck, CheckCircle } from 'lucide-react';
 import { ConnectionPessoa } from '../types';
 import { storage } from '../lib/storage';

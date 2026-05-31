@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { 
   Search, Droplet, Smile, Pen, CheckSquare, 
   Moon, Heart, Brain, Star, ChevronRight, Activity, Globe, Compass 

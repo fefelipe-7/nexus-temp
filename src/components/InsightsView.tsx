@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Compass, Eye, Heart, Brain, Search, Sparkles, Activity,
   Moon, Smile, TrendingUp, Sliders, ChevronRight, Droplet, ArrowRight, ShieldAlert, Target, ShoppingBag,

@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Home as HomeIcon, ClipboardList, Plus, Lightbulb, LayoutGrid, 
   ShieldCheck, Search, X, CheckSquare, Smile, HelpCircle, ArrowRight

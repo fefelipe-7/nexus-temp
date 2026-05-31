@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { DollarSign, Wallet, TrendingUp, TrendingDown, Plus, Trash2, Calendar, Clock } from 'lucide-react';
 import { TransacaoFinanceira } from '../types';
 import { storage } from '../lib/storage';
