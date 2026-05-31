@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Moon, Smile, Flame, Utensils, CheckSquare, DollarSign, FileText, Lightbulb, Zap, Compass, ArrowLeft, ChevronRight } from 'lucide-react';
-import { useRouter } from '../app/router/RouterProvider';
-import { QuickSleep, QuickMood, QuickWorkout, QuickMeal, QuickTask, QuickExpense, QuickJournal, QuickHabit } from '../features/register/quick';
+import { useRouter } from '../../app/router/RouterProvider';
+import { QuickSleep, QuickMood, QuickWorkout, QuickMeal, QuickTask, QuickExpense, QuickJournal, QuickHabit } from './quick';
 
 interface RegistrarSheetProps {
   isOpen: boolean;

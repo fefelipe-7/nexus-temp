@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { DollarSign, Wallet, TrendingUp, TrendingDown, Plus, Trash2, Calendar, Clock } from 'lucide-react';
 import { FinanceTransaction } from '../../domain/entities';
 import { storage } from '../../lib/storage';
-import { useNexusAlert } from '../../components/NexusAlertContext';
+import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
 
 interface ResourcesModulePageProps {
   selectedDate: string;

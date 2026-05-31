@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { storage } from '../../lib/storage';
 import { Habit, Task, DailyRecord } from '../../domain/entities';
-import { useNexusAlert } from '../../components/NexusAlertContext';
+import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
 import { generateWeekDays, getTimelineItems, getSugestaoAgora } from './helpers';
 import { TodayHeader } from './TodayHeader';
 import { WeekDayPicker } from './WeekDayPicker';

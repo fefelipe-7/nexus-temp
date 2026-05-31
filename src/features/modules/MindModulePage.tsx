@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Brain, Smile, Activity, ShieldAlert, Sparkles, FileText, CheckCircle, Clock } from 'lucide-react';
 import { DailyRecord } from '../../domain/entities';
 import { storage } from '../../lib/storage';
-import { useNexusAlert } from '../../components/NexusAlertContext';
+import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
 
 interface MindModulePageProps {
   selectedDate: string;

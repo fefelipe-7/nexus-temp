@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { storage, calculateInsights } from '../../lib/storage';
 import { Insight, DailyRecord } from '../../domain/entities';
-import { useNexusAlert } from '../../components/NexusAlertContext';
+import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
 import { HomeHeader } from './HomeHeader';
 import { HomeHeroCard } from './HomeHeroCard';
 import { HomeMetricsRow } from './HomeMetricsRow';

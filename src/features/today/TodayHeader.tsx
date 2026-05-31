@@ -1,6 +1,6 @@
 import React from 'react';
 import { CalendarDays } from 'lucide-react';
-import { useNexusAlert } from '../../components/NexusAlertContext';
+import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
 
 interface TodayHeaderProps {
   formattedDate: string;

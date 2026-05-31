@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Save } from 'lucide-react';
 import { storage } from '../../../lib/storage';
-import { useNexusAlert } from '../../../components/NexusAlertContext';
+import { useNexusAlert } from '../../../app/providers/NexusAlertProvider';
 
 interface QuickJournalProps {
   selectedDate: string;

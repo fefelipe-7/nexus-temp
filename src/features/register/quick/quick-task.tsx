@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Check } from 'lucide-react';
 import { storage } from '../../../lib/storage';
 import { Task } from '../../../domain/entities';
-import { useNexusAlert } from '../../../components/NexusAlertContext';
+import { useNexusAlert } from '../../../app/providers/NexusAlertProvider';
 
 interface QuickTaskProps {
   selectedDate: string;

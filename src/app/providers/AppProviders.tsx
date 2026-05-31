@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { RouterProvider } from '../router/RouterProvider';
-import { NexusAlertProvider } from '../../components/NexusAlertContext';
+import { NexusAlertProvider } from './NexusAlertProvider';
 
 interface AppProvidersProps {
   children: ReactNode;

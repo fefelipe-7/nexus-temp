@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { HeartHandshake, Users, PhoneCall, Plus, Trash2, Calendar, UserCheck, CheckCircle } from 'lucide-react';
 import { Person } from '../../domain/entities';
 import { storage } from '../../lib/storage';
-import { useNexusAlert } from '../../components/NexusAlertContext';
+import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
 
 interface RelationsModulePageProps {
   selectedDate: string;

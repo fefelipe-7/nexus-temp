@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Smile } from 'lucide-react';
 import { storage } from '../../../lib/storage';
-import { useNexusAlert } from '../../../components/NexusAlertContext';
+import { useNexusAlert } from '../../../app/providers/NexusAlertProvider';
 import { WizardShell } from '../WizardShell';
 
 interface MoodWizardProps {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Save } from 'lucide-react';
 import { storage } from '../../../lib/storage';
 import { FinanceTransaction } from '../../../domain/entities';
-import { useNexusAlert } from '../../../components/NexusAlertContext';
+import { useNexusAlert } from '../../../app/providers/NexusAlertProvider';
 
 interface QuickExpenseProps {
   selectedDate: string;

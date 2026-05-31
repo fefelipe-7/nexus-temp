@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { storage } from '../../../lib/storage';
 import { Habit } from '../../../domain/entities';
-import { useNexusAlert } from '../../../components/NexusAlertContext';
+import { useNexusAlert } from '../../../app/providers/NexusAlertProvider';
 
 interface QuickHabitProps {
   selectedDate: string;

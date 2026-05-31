@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNexusAlert, NexusModule } from '../../components/NexusAlertContext';
+import { useNexusAlert, NexusModule } from '../../app/providers/NexusAlertProvider';
 import { AREAS_LIST, ActiveModuleType } from './constants';
 import { ModulesHeader } from './ModulesHeader';
 import { ModulesIntroCard } from './ModulesIntroCard';

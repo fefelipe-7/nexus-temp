@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { storage } from '../../lib/storage';
 import { DailyRecord } from '../../domain/entities';
-import { useNexusAlert, NexusModule } from '../../components/NexusAlertContext';
+import { useNexusAlert, NexusModule } from '../../app/providers/NexusAlertProvider';
 import { CompareMetrics, FilterCategory, ALL_INSIGHTS } from './constants';
 import { InsightsHeader } from './InsightsHeader';
 import { VariableSelectors } from './VariableSelectors';

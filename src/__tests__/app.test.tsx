@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import App from '../App';
 import { RouterProvider } from '../app/router/RouterProvider';
-import { NexusAlertProvider } from '../components/NexusAlertContext';
+import { NexusAlertProvider } from '../app/providers/NexusAlertProvider';
 
 describe('App renderizacao', () => {
   beforeEach(() => {

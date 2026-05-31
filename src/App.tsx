@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { inicializarStorage } from './lib/storage';
 import HomeView from './features/home/HomeView';
 import HojeView from './features/today/HojeView';
-import RegistrarSheet from './components/RegistrarSheet';
+import RegistrarSheet from './features/register/RegistrarSheet';
 import InsightsView from './features/insights/InsightsView';
 import ModulesView from './features/modules/ModulesView';
 import { SleepWizard, MealWizard, WorkoutWizard, ExpenseWizard, MoodWizard, JournalWizard, TaskWizard, HabitWizard } from './features/register';
