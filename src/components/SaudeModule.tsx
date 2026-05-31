@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Flame, Droplets, Moon, Shield, Sparkles, Plus, AlertCircle, Dumbbell } from 'lucide-react';
-import { RegistroDiario } from '../types';
+import { DailyRecord } from '../domain/entities';
 import { storage } from '../lib/storage';
 import { useNexusAlert } from './NexusAlertContext';
 
@@ -109,7 +109,7 @@ export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleP
             <div className="text-xl font-bold font-mono text-ink">
               {(hojeReg.hidratacao || 0).toFixed(1)} Litros
             </div>
-            <p className="text-[10px] text-slate">Meta recomendada: 2.5L de água por ciclo diurno.</p>
+            <p className="text-[10px] text-slate">Goal recomendada: 2.5L de água por ciclo diurno.</p>
           </div>
         </div>
 

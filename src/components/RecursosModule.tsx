@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { DollarSign, Wallet, TrendingUp, TrendingDown, Plus, Trash2, Calendar, Clock } from 'lucide-react';
-import { TransacaoFinanceira } from '../types';
+import { FinanceTransaction } from '../domain/entities';
 import { storage } from '../lib/storage';
 import { useNexusAlert } from './NexusAlertContext';
 
@@ -23,7 +23,7 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
   const [novaDescr, setNovaDescr] = useState<string>('');
   const { showAlert } = useNexusAlert();
 
-  const financas = storage.getFinancas()
+  const financas = storage.getFinances()
     .sort((a, b) => b.data.localeCompare(a.data));
 
   const handleLancarTransacao = () => {
@@ -33,7 +33,7 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
     }
     const valorNum = parseFloat(novoValor);
     
-    const nova: TransacaoFinanceira = {
+    const nova: FinanceTransaction = {
       id: 'f-inst-' + Date.now(),
       tipo: novoTipo,
       valor: valorNum,
@@ -42,9 +42,9 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
       descricao: novaDescr.trim() || `${novoTipo === 'despesa' ? 'Gasto' : 'Ganho'} sem descrição`,
     };
 
-    const todos = storage.getFinancas();
+    const todos = storage.getFinances();
     todos.push(nova);
-    storage.saveFinancas(todos);
+    storage.saveFinances(todos);
 
     // Ajusta o registro diário correspondente se necessário
     const reg = storage.getRegistroPorData(selectedDate);
@@ -63,9 +63,9 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
     showAlert('Transação lançada com sucesso!', 'recursos', 'financas');
   };
 
-  const handleDeletarTransacao = (id: string, transacao: TransacaoFinanceira) => {
-    const todos = storage.getFinancas().filter(f => f.id !== id);
-    storage.saveFinancas(todos);
+  const handleDeletarTransacao = (id: string, transacao: FinanceTransaction) => {
+    const todos = storage.getFinances().filter(f => f.id !== id);
+    storage.saveFinances(todos);
 
     // Ajusta o registro diário correspondente se necessário
     const reg = storage.getRegistroPorData(transacao.data);

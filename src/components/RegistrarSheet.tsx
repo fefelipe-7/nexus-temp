@@ -11,7 +11,7 @@ import {
   Zap, Compass, ArrowLeft, ChevronRight
 } from 'lucide-react';
 import { storage } from '../lib/storage';
-import { RegistroDiario, Tarefa, TransacaoFinanceira, Habito } from '../types';
+import { DailyRecord, Task, FinanceTransaction, Habit } from '../domain/entities';
 import { useRouter } from './RouterContext';
 import { useNexusAlert } from './NexusAlertContext';
 
@@ -60,7 +60,7 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
   const [diarioText, setDiarioText] = useState<string>('');
 
   // Quick Habit Toggle States
-  const [habitsList, setHabitsList] = useState<Habito[]>([]);
+  const [habitsList, setHabitsList] = useState<Habit[]>([]);
   const [selectedHabitId, setSelectedHabitId] = useState<string>('');
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
       setSalvando(false);
 
       // Load habits
-      const loadedHabits = storage.getHabitos();
+      const loadedHabits = storage.getHabits();
       setHabitsList(loadedHabits);
       if (loadedHabits.length > 0) {
         setSelectedHabitId(loadedHabits[0].id);
@@ -139,7 +139,7 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
     }
   };
 
-  const executeQuickSave = (saveAction: (reg: RegistroDiario) => void) => {
+  const executeQuickSave = (saveAction: (reg: DailyRecord) => void) => {
     setSalvando(true);
     const reg = storage.getRegistroPorData(selectedDate) || { data: selectedDate };
     
@@ -200,7 +200,7 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
   const handleSalvarQuickTarefa = () => {
     if (!tarefaNome.trim()) return;
     setSalvando(true);
-    const nova: Tarefa = {
+    const nova: Task = {
       id: 't-quick-' + Date.now(),
       nome: tarefaNome.trim(),
       prioridade: tarefaPrioridade,
@@ -208,9 +208,9 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
       concluida: false,
       dataCriacao: selectedDate,
     };
-    const todos = storage.getTarefas();
+    const todos = storage.getTasks();
     todos.push(nova);
-    storage.saveTarefas(todos);
+    storage.saveTasks(todos);
 
     setTimeout(() => {
       setSalvando(false);
@@ -227,7 +227,7 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
     if (!gastoValor || parseFloat(gastoValor) <= 0) return;
     setSalvando(true);
     const valorNum = parseFloat(gastoValor);
-    const transacao: TransacaoFinanceira = {
+    const transacao: FinanceTransaction = {
       id: 'f-quick-' + Date.now(),
       tipo: gastoTipo,
       valor: valorNum,
@@ -236,9 +236,9 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
       descricao: gastoDescr.trim() || `${gastoTipo === 'despesa' ? 'Gasto' : 'Receita'} rápida`,
     };
 
-    const todosFinancas = storage.getFinancas();
+    const todosFinancas = storage.getFinances();
     todosFinancas.push(transacao);
-    storage.saveFinancas(todosFinancas);
+    storage.saveFinances(todosFinancas);
 
     // Save corresponding daily record updates
     const reg = storage.getRegistroPorData(selectedDate) || { data: selectedDate };

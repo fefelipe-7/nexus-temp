@@ -10,7 +10,7 @@ import {
   Search, Sliders, ChevronRight, ArrowLeft, ArrowRight, CheckSquare, Sparkles,
   Smile, Moon, Droplet, Coins, Info, Compass, HelpCircle, AlertCircle
 } from 'lucide-react';
-import { storage, calcularLifeInsights } from '../lib/storage';
+import { storage, calculateInsights } from '../lib/storage';
 import { useNexusAlert, NexusModule } from './NexusAlertContext';
 
 // Import existing robust modular submenus to preserve full-fidelity interaction!
@@ -33,7 +33,7 @@ export default function ModulesView({ selectedDate, refreshCount, triggerRefresh
   const [isStructureOpen, setIsStructureOpen] = useState(false);
   const { showAlert } = useNexusAlert();
 
-  const insights = calcularLifeInsights(selectedDate);
+  const insights = calculateInsights(selectedDate);
 
   const areasList = [
     {

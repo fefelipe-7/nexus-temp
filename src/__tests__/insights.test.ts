@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { inicializarStorage, calcularLifeInsights } from '../lib/storage';
+import { inicializarStorage, calculateInsights } from '../lib/storage';
 
-describe('calcularLifeInsights', () => {
+describe('calculateInsights', () => {
   beforeEach(() => {
     localStorage.clear();
     inicializarStorage();
@@ -9,7 +9,7 @@ describe('calcularLifeInsights', () => {
 
   it('retorna saida valida para data de hoje', () => {
     const hoje = new Date().toISOString().split('T')[0];
-    const insights = calcularLifeInsights(hoje);
+    const insights = calculateInsights(hoje);
 
     expect(insights).toBeDefined();
     expect(insights).toHaveProperty('fadigaScore');
@@ -39,7 +39,7 @@ describe('calcularLifeInsights', () => {
 
   it('retorna diagnosticos como array de strings', () => {
     const hoje = new Date().toISOString().split('T')[0];
-    const insights = calcularLifeInsights(hoje);
+    const insights = calculateInsights(hoje);
     insights.diagnosticos.forEach(d => {
       expect(typeof d).toBe('string');
     });

@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Brain, Smile, Activity, ShieldAlert, Sparkles, FileText, CheckCircle, Clock } from 'lucide-react';
-import { RegistroDiario } from '../types';
+import { DailyRecord } from '../domain/entities';
 import { storage } from '../lib/storage';
 import { useNexusAlert } from './NexusAlertContext';
 

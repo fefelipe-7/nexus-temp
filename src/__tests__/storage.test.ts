@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { describe, it, expect, beforeEach } from 'vitest';
 import { inicializarStorage, storage } from '../lib/storage';
 
 describe('storage seed', () => {
@@ -11,12 +10,12 @@ describe('storage seed', () => {
     inicializarStorage();
 
     const registros = storage.getRegistros();
-    const habitos = storage.getHabitos();
-    const tarefas = storage.getTarefas();
-    const financas = storage.getFinancas();
-    const metas = storage.getMetas();
-    const projetos = storage.getProjetos();
-    const pessoas = storage.getPessoas();
+    const habitos = storage.getHabits();
+    const tarefas = storage.getTasks();
+    const financas = storage.getFinances();
+    const metas = storage.getGoals();
+    const projetos = storage.getProjects();
+    const pessoas = storage.getPeople();
 
     expect(registros.length).toBeGreaterThan(0);
     expect(habitos.length).toBeGreaterThan(0);

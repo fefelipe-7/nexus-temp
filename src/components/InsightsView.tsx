@@ -11,7 +11,7 @@ import {
   Info, BarChart2, RefreshCw
 } from 'lucide-react';
 import { storage } from '../lib/storage';
-import { RegistroDiario } from '../types';
+import { DailyRecord } from '../domain/entities';
 import { useNexusAlert, NexusModule } from './NexusAlertContext';
 
 interface InsightsViewProps {
@@ -31,7 +31,7 @@ const METRIC_DETAILS = {
 };
 
 export default function InsightsView({ selectedDate, refreshCount }: InsightsViewProps) {
-  const [registros, setRegistros] = useState<RegistroDiario[]>([]);
+  const [registros, setRegistros] = useState<DailyRecord[]>([]);
   const [activeFilter, setActiveFilter] = useState<'Todos' | 'Saúde' | 'Mente' | 'Ação' | 'Finanças' | 'Vida'>('Todos');
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const { showAlert } = useNexusAlert();

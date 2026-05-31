@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { RegistroDiario, Habito, Meta, Projeto, Tarefa, TransacaoFinanceira, ConnectionPessoa, LifeInsights } from '../types';
+import { DailyRecord, Habit, Goal, Project, Task, FinanceTransaction, Person, Insight } from '../domain/entities';
 
 const STORAGE_KEYS = {
   REGISTROS: 'nexus_registros',
@@ -17,35 +17,35 @@ const STORAGE_KEYS = {
 
 // Gera dados fictícios realistas dos últimos 10 dias para demonstrar o poder das correlações
 function gerarDadosIniciais(): {
-  registros: RegistroDiario[];
-  habitos: Habito[];
-  metas: Meta[];
-  projetos: Projeto[];
-  tarefas: Tarefa[];
-  financas: TransacaoFinanceira[];
-  pessoas: ConnectionPessoa[];
+  registros: DailyRecord[];
+  habitos: Habit[];
+  metas: Goal[];
+  projetos: Project[];
+  tarefas: Task[];
+  financas: FinanceTransaction[];
+  pessoas: Person[];
 } {
   const hoje = new Date();
-  const registros: RegistroDiario[] = [];
-  const habitos: Habito[] = [
+  const registros: DailyRecord[] = [];
+  const habitos: Habit[] = [
     { id: 'h1', nome: 'Meditação Matinal', area: 'mente', frequencia: 'diario', historicoCheckins: [], dataCriacao: '' },
     { id: 'h2', nome: 'Treino Físico', area: 'saúde', frequencia: 'diario', historicoCheckins: [], dataCriacao: '' },
     { id: 'h3', nome: 'Estudo de Programação', area: 'execução', frequencia: 'diario', historicoCheckins: [], dataCriacao: '' },
     { id: 'h4', nome: 'Beba 2.5L de Água', area: 'saúde', frequencia: 'diario', historicoCheckins: [], dataCriacao: '' },
   ];
 
-  const metas: Meta[] = [
+  const metas: Goal[] = [
     { id: 'm1', nome: 'Lançar MVP do nexus', area: 'execução', status: 'em_andamento', prazo: '', progresso: 65, valorAlvo: 100, valorAtual: 65, dataCriacao: '' },
     { id: 'm2', nome: 'Reduzir percentual de gordura e ganhar tônus', area: 'saúde', status: 'em_andamento', prazo: '', progresso: 40, valorAlvo: 12, valorAtual: 15, dataCriacao: '' },
     { id: 'm3', nome: 'Poupar reserva de emergência', area: 'recursos', status: 'em_andamento', prazo: '', progresso: 80, valorAlvo: 10000, valorAtual: 8000, dataCriacao: '' },
   ];
 
-  const projetos: Projeto[] = [
+  const projetos: Project[] = [
     { id: 'p1', nome: 'Codificar UI no React', metaId: 'm1', status: 'ativo', progresso: 70, dataCriacao: '' },
     { id: 'p2', nome: 'Montar Core de Persistência', metaId: 'm1', status: 'concluido', progresso: 100, dataCriacao: '' },
   ];
 
-  const tarefas: Tarefa[] = [
+  const tarefas: Task[] = [
     { id: 't1', nome: 'Criar tipos globais em src/types.ts', projetoId: 'p2', prioridade: 'alta', prazo: '', concluida: true, dataCriacao: '' },
     { id: 't2', nome: 'Desenhar tela de Entrada Rápida de dados', projetoId: 'p1', prioridade: 'alta', prazo: '', concluida: false, dataCriacao: '' },
     { id: 't3', nome: 'Desenvolver algoritmos de cálculo de fadiga e energia', projetoId: 'p1', prioridade: 'media', prazo: '', concluida: true, dataCriacao: '' },
@@ -53,8 +53,8 @@ function gerarDadosIniciais(): {
     { id: 't5', nome: 'Comprar frutas e legumes da semana', prioridade: 'baixa', prazo: '', concluida: true, dataCriacao: '' },
   ];
 
-  const financas: TransacaoFinanceira[] = [];
-  const pessoas: ConnectionPessoa[] = [
+  const financas: FinanceTransaction[] = [];
+  const pessoas: Person[] = [
     { id: 'pe1', nome: 'Sarah (Mãe)', vinculo: 'familia', frequenciaDiasAlvo: 3, historicoInteracoes: [], dataCriacao: '' },
     { id: 'pe2', nome: 'Lucas (Nutricionista)', vinculo: 'networking', frequenciaDiasAlvo: 15, historicoInteracoes: [], dataCriacao: '' },
     { id: 'pe3', nome: 'Daniel (Amigo)', vinculo: 'amizades', frequenciaDiasAlvo: 7, historicoInteracoes: [], dataCriacao: '' },
@@ -227,13 +227,13 @@ export function saveData<T>(key: string, data: T[]) {
 // Métodos específicos
 export const storage = {
   // Registros Diários
-  getRegistros: (): RegistroDiario[] => loadData<RegistroDiario>(STORAGE_KEYS.REGISTROS),
-  saveRegistros: (data: RegistroDiario[]) => saveData<RegistroDiario>(STORAGE_KEYS.REGISTROS, data),
-  getRegistroPorData: (data: string): RegistroDiario | null => {
+  getRegistros: (): DailyRecord[] => loadData<DailyRecord>(STORAGE_KEYS.REGISTROS),
+  saveRegistros: (data: DailyRecord[]) => saveData<DailyRecord>(STORAGE_KEYS.REGISTROS, data),
+  getRegistroPorData: (data: string): DailyRecord | null => {
     const todos = storage.getRegistros();
     return todos.find(r => r.data === data) || null;
   },
-  actualizarRegistro: (reg: RegistroDiario) => {
+  actualizarRegistro: (reg: DailyRecord) => {
     const todos = storage.getRegistros();
     const index = todos.findIndex(r => r.data === reg.data);
     if (index >= 0) {
@@ -245,10 +245,10 @@ export const storage = {
   },
 
   // Hábitos
-  getHabitos: (): Habito[] => loadData<Habito>(STORAGE_KEYS.HABITOS),
-  saveHabitos: (data: Habito[]) => saveData<Habito>(STORAGE_KEYS.HABITOS, data),
-  toggleHabito: (id: string, data: string): boolean => {
-    const todos = storage.getHabitos();
+  getHabits: (): Habit[] => loadData<Habit>(STORAGE_KEYS.HABITOS),
+  saveHabits: (data: Habit[]) => saveData<Habit>(STORAGE_KEYS.HABITOS, data),
+  toggleHabit: (id: string, data: string): boolean => {
+    const todos = storage.getHabits();
     const index = todos.findIndex(h => h.id === id);
     let check = false;
     if (index >= 0) {
@@ -260,49 +260,49 @@ export const storage = {
         todos[index].historicoCheckins.push(data);
         check = true;
       }
-      storage.saveHabitos(todos);
+      storage.saveHabits(todos);
     }
     return check;
   },
-  completarHabito: (id: string, data: string): void => {
-    const todos = storage.getHabitos();
+  completarHabit: (id: string, data: string): void => {
+    const todos = storage.getHabits();
     const index = todos.findIndex(h => h.id === id);
     if (index >= 0) {
       if (!todos[index].historicoCheckins.includes(data)) {
         todos[index].historicoCheckins.push(data);
-        storage.saveHabitos(todos);
+        storage.saveHabits(todos);
       }
     }
   },
 
   // Metas
-  getMetas: (): Meta[] => loadData<Meta>(STORAGE_KEYS.METAS),
-  saveMetas: (data: Meta[]) => saveData<Meta>(STORAGE_KEYS.METAS, data),
+  getGoals: (): Goal[] => loadData<Goal>(STORAGE_KEYS.METAS),
+  saveGoals: (data: Goal[]) => saveData<Goal>(STORAGE_KEYS.METAS, data),
 
   // Projetos
-  getProjetos: (): Projeto[] => loadData<Projeto>(STORAGE_KEYS.PROJETOS),
-  saveProjetos: (data: Projeto[]) => saveData<Projeto>(STORAGE_KEYS.PROJETOS, data),
+  getProjects: (): Project[] => loadData<Project>(STORAGE_KEYS.PROJETOS),
+  saveProjects: (data: Project[]) => saveData<Project>(STORAGE_KEYS.PROJETOS, data),
 
   // Tarefas
-  getTarefas: (): Tarefa[] => loadData<Tarefa>(STORAGE_KEYS.TAREFAS),
-  saveTarefas: (data: Tarefa[]) => saveData<Tarefa>(STORAGE_KEYS.TAREFAS, data),
+  getTasks: (): Task[] => loadData<Task>(STORAGE_KEYS.TAREFAS),
+  saveTasks: (data: Task[]) => saveData<Task>(STORAGE_KEYS.TAREFAS, data),
 
   // Finanças
-  getFinancas: (): TransacaoFinanceira[] => loadData<TransacaoFinanceira>(STORAGE_KEYS.FINANCAS),
-  saveFinancas: (data: TransacaoFinanceira[]) => saveData<TransacaoFinanceira>(STORAGE_KEYS.FINANCAS, data),
+  getFinances: (): FinanceTransaction[] => loadData<FinanceTransaction>(STORAGE_KEYS.FINANCAS),
+  saveFinances: (data: FinanceTransaction[]) => saveData<FinanceTransaction>(STORAGE_KEYS.FINANCAS, data),
 
   // Relações / Pessoas
-  getPessoas: (): ConnectionPessoa[] => loadData<ConnectionPessoa>(STORAGE_KEYS.PESSOAS),
-  savePessoas: (data: ConnectionPessoa[]) => saveData<ConnectionPessoa>(STORAGE_KEYS.PESSOAS, data),
+  getPeople: (): Person[] => loadData<Person>(STORAGE_KEYS.PESSOAS),
+  savePeople: (data: Person[]) => saveData<Person>(STORAGE_KEYS.PESSOAS, data),
 };
 
 // MOTOR ANALÍTICO - Cálculos de Estados Derivados / Visualizações
-export function calcularLifeInsights(dataAlvoStr: string): LifeInsights {
+export function calculateInsights(dataAlvoStr: string): Insight {
   const registros = storage.getRegistros();
-  const habitos = storage.getHabitos();
-  const tarefas = storage.getTarefas();
-  const financas = storage.getFinancas();
-  const pessoas = storage.getPessoas();
+  const habitos = storage.getHabits();
+  const tarefas = storage.getTasks();
+  const financas = storage.getFinances();
+  const pessoas = storage.getPeople();
 
   // 1. Busca registro do dia atual
   const registroHoje = registros.find(r => r.data === dataAlvoStr);
@@ -365,25 +365,25 @@ export function calcularLifeInsights(dataAlvoStr: string): LifeInsights {
     ultimos7Dias.push(temp.toISOString().split('T')[0]);
   }
 
-  let totalHabitoOportunidades = 0;
-  let totalHabitoConclusos = 0;
+  let totalHabitOportunidades = 0;
+  let totalHabitConclusos = 0;
   habitos.forEach(h => {
     ultimos7Dias.forEach(dia => {
-      totalHabitoOportunidades++;
+      totalHabitOportunidades++;
       if (h.historicoCheckins.includes(dia)) {
-        totalHabitoConclusos++;
+        totalHabitConclusos++;
       }
     });
   });
 
-  const taxaAdersaoHabito = totalHabitoOportunidades > 0 ? (totalHabitoConclusos / totalHabitoOportunidades) * 100 : 80;
+  const taxaAdersaoHabit = totalHabitOportunidades > 0 ? (totalHabitConclusos / totalHabitOportunidades) * 100 : 80;
 
   // Conclusão de tarefas nos últimos 7 dias
   const tarefasRecentes = tarefas.filter(t => t.concluida || t.prazo >= ultimos7Dias[6]);
   const tarefasConcluidasRecentes = tarefasRecentes.filter(t => t.concluida).length;
   const taxaConclusaoTarefas = tarefasRecentes.length > 0 ? (tarefasConcluidasRecentes / tarefasRecentes.length) * 100 : 85;
 
-  const consistenciaScore = Math.round((taxaAdersaoHabito * 0.6) + (taxaConclusaoTarefas * 0.4));
+  const consistenciaScore = Math.round((taxaAdersaoHabit * 0.6) + (taxaConclusaoTarefas * 0.4));
 
   // --- D. CLAREZA MENTAL (0 a 100) ---
   // Calculado a partir de humor do dia, nível reduzido de estresse e estresse mental, e horas de foco

@@ -10,8 +10,8 @@ import {
   Droplet, Moon, Smile, CheckSquare, Sparkles, Utensils,
   Sunrise, Sun, CalendarDays, X, ChevronDown, ChevronUp, Eye
 } from 'lucide-react';
-import { storage, calcularLifeInsights } from '../lib/storage';
-import { Habito, Tarefa, RegistroDiario } from '../types';
+import { storage, calculateInsights } from '../lib/storage';
+import { Habit, Task, DailyRecord } from '../domain/entities';
 import { useNexusAlert } from './NexusAlertContext';
 
 interface HojeViewProps {
@@ -27,9 +27,9 @@ export default function HojeView({
   refreshCount, 
   triggerRefresh 
 }: HojeViewProps) {
-  const [habitos, setHabitos] = useState<Habito[]>([]);
-  const [tarefas, setTarefas] = useState<Tarefa[]>([]);
-  const [registroHoje, setRegistroHoje] = useState<RegistroDiario | null>(null);
+  const [habitos, setHabitos] = useState<Habit[]>([]);
+  const [tarefas, setTarefas] = useState<Task[]>([]);
+  const [registroHoje, setRegistroHoje] = useState<DailyRecord | null>(null);
   
   // Sheet state
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
@@ -47,27 +47,27 @@ export default function HojeView({
   const [showCompleted, setShowCompleted] = useState(false);
 
   useEffect(() => {
-    setHabitos(storage.getHabitos());
+    setHabitos(storage.getHabits());
     // Load tasks for today, or past uncompleted tasks
-    setTarefas(storage.getTarefas().filter(t => t.prazo === selectedDate || !t.concluida));
+    setTarefas(storage.getTasks().filter(t => t.prazo === selectedDate || !t.concluida));
     setRegistroHoje(storage.getRegistroPorData(selectedDate));
   }, [selectedDate, refreshCount]);
 
   const toggleHabitoCheck = (id: string) => {
-    const isChecked = storage.toggleHabito(id, selectedDate);
+    const isChecked = storage.toggleHabit(id, selectedDate);
     showAlert(isChecked ? "Rotina cumprida com sucesso! ✨" : "Check-in removido.", 'acao', 'habito');
     triggerRefresh();
   };
 
   const handleToggleTarefa = (id: string) => {
-    const todos = storage.getTarefas();
+    const todos = storage.getTasks();
     const index = todos.findIndex(t => t.id === id);
     if (index >= 0) {
       const prevVal = todos[index].concluida;
       todos[index].concluida = !todos[index].concluida;
       todos[index].dataConclusao = todos[index].concluida ? selectedDate : undefined;
-      storage.saveTarefas(todos);
-      showAlert(!prevVal ? "Tarefa concluída! Bom trabalho. ✓" : "Tarefa marcada como pendente.", 'acao', 'tarefa');
+      storage.saveTasks(todos);
+      showAlert(!prevVal ? "Task concluída! Bom trabalho. ✓" : "Task marcada como pendente.", 'acao', 'tarefa');
       triggerRefresh();
     }
   };
@@ -79,7 +79,7 @@ export default function HojeView({
       return;
     }
 
-    const nova: Tarefa = {
+    const nova: Task = {
       id: 't-planner-' + Date.now(),
       nome: novaTarefaNome.trim(),
       prioridade: novaTarefaPrio,
@@ -89,13 +89,13 @@ export default function HojeView({
       periodo: novaTarefaPeriodo
     };
 
-    const todos = storage.getTarefas();
+    const todos = storage.getTasks();
     todos.push(nova);
-    storage.saveTarefas(todos);
+    storage.saveTasks(todos);
 
     setNovaTarefaNome('');
     setIsAddSheetOpen(false);
-    showAlert("Tarefa inserida na sua agenda!", 'acao', 'tarefa');
+    showAlert("Task inserida na sua agenda!", 'acao', 'tarefa');
     triggerRefresh();
   };
 
@@ -132,9 +132,9 @@ export default function HojeView({
   };
 
   const handleDeletarTarefa = (id: string) => {
-    const todos = storage.getTarefas().filter(t => t.id !== id);
-    storage.saveTarefas(todos);
-    showAlert("Tarefa removida.", 'acao', 'tarefa');
+    const todos = storage.getTasks().filter(t => t.id !== id);
+    storage.saveTasks(todos);
+    showAlert("Task removida.", 'acao', 'tarefa');
     triggerRefresh();
   };
 
@@ -185,7 +185,7 @@ export default function HojeView({
     : `${minutosPlanejados} min`;
 
   // Get current energy info from insights
-  const insights = calcularLifeInsights(selectedDate);
+  const insights = calculateInsights(selectedDate);
   const scoreEnergia = insights?.energiaScore ?? 50;
   const energiaLabel = scoreEnergia > 75 ? 'alta' : scoreEnergia > 45 ? 'moderada' : 'baixa';
 
@@ -425,7 +425,7 @@ export default function HojeView({
             className="flex items-center gap-1 text-[11px] text-ink hover:text-primary font-bold active-tap cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5 text-primary stroke-3" />
-            <span>Nova Tarefa</span>
+            <span>Nova Task</span>
           </button>
         </div>
 
@@ -851,7 +851,7 @@ export default function HojeView({
 
               <form onSubmit={handleSalvarNovaTarefa} className="p-5 space-y-4 overflow-y-auto">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold font-mono text-slate uppercase">Descrição da Tarefa</label>
+                  <label className="text-[10px] font-bold font-mono text-slate uppercase">Descrição da Task</label>
                   <input 
                     type="text" 
                     value={novaTarefaNome} 

@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { HeartHandshake, Users, PhoneCall, Plus, Trash2, Calendar, UserCheck, CheckCircle } from 'lucide-react';
-import { ConnectionPessoa } from '../types';
+import { Person } from '../domain/entities';
 import { storage } from '../lib/storage';
 import { useNexusAlert } from './NexusAlertContext';
 
@@ -22,7 +22,7 @@ export default function RelacoesModule({ selectedDate, refreshCount, triggerRefr
   const [novaFreqDias, setNovaFreqDias] = useState<number>(7);
   const { showAlert } = useNexusAlert();
 
-  const pessoas = storage.getPessoas()
+  const pessoas = storage.getPeople()
     .sort((a, b) => {
       // Ordena por prioridade de urgência (frequenciaContatoScore menor primeiro)
       return (a.frequenciaContatoScore || 0) - (b.frequenciaContatoScore || 0);
@@ -31,7 +31,7 @@ export default function RelacoesModule({ selectedDate, refreshCount, triggerRefr
   const handleCadastrarPessoa = () => {
     if (!novaPessoaNome.trim()) return;
     
-    const nova: ConnectionPessoa = {
+    const nova: Person = {
       id: 'pe-inst-' + Date.now(),
       nome: novaPessoaNome.trim(),
       vinculo: novoVinculo,
@@ -41,9 +41,9 @@ export default function RelacoesModule({ selectedDate, refreshCount, triggerRefr
       dataCriacao: selectedDate,
     };
 
-    const todos = storage.getPessoas();
+    const todos = storage.getPeople();
     todos.push(nova);
-    storage.savePessoas(todos);
+    storage.savePeople(todos);
 
     setNovaPessoaNome('');
     setNovaFreqDias(7);
@@ -52,18 +52,18 @@ export default function RelacoesModule({ selectedDate, refreshCount, triggerRefr
   };
 
   const handleDeletarPessoa = (id: string) => {
-    const todos = storage.getPessoas().filter(p => p.id !== id);
-    storage.savePessoas(todos);
+    const todos = storage.getPeople().filter(p => p.id !== id);
+    storage.savePeople(todos);
     triggerRefresh();
   };
 
   const RegistrarConversa = (id: string) => {
-    const todos = storage.getPessoas();
+    const todos = storage.getPeople();
     const index = todos.findIndex(p => p.id === id);
     if (index >= 0) {
       if (!todos[index].historicoInteracoes.includes(selectedDate)) {
         todos[index].historicoInteracoes.push(selectedDate);
-        storage.savePessoas(todos);
+        storage.savePeople(todos);
 
         // Dispara de volta ao registro diário correspondente
         const reg = storage.getRegistroPorData(selectedDate) || { data: selectedDate };

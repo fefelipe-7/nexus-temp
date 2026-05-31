@@ -179,9 +179,9 @@ export default function App() {
 
     const q = searchQuery.toLowerCase();
     
-    const tarefas = storage.getTarefas().filter(t => t.nome.toLowerCase().includes(q));
-    const pessoas = storage.getPessoas().filter(p => p.nome.toLowerCase().includes(q));
-    const habitos = storage.getHabitos().filter(h => h.nome.toLowerCase().includes(q));
+    const tarefas = storage.getTasks().filter(t => t.nome.toLowerCase().includes(q));
+    const pessoas = storage.getPeople().filter(p => p.nome.toLowerCase().includes(q));
+    const habitos = storage.getHabits().filter(h => h.nome.toLowerCase().includes(q));
 
     const acoes = [
       { label: 'Registrar Sono', action: () => { setIsSearchOpen(false); openRegisterModal(); } },

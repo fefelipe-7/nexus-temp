@@ -9,8 +9,8 @@ import {
   Search, Droplet, Smile, Pen, CheckSquare, 
   Moon, Heart, Brain, Star, ChevronRight, Activity, Globe, Compass 
 } from 'lucide-react';
-import { storage, calcularLifeInsights } from '../lib/storage';
-import { LifeInsights, RegistroDiario } from '../types';
+import { storage, calculateInsights } from '../lib/storage';
+import { Insight, DailyRecord } from '../domain/entities';
 import { useNexusAlert } from './NexusAlertContext';
 
 interface HomeViewProps {
@@ -30,13 +30,13 @@ export default function HomeView({
   refreshCount,
   onOpenSearch
 }: HomeViewProps) {
-  const [insights, setInsights] = useState<LifeInsights | null>(null);
-  const [registroHoje, setRegistroHoje] = useState<RegistroDiario | null>(null);
+  const [insights, setInsights] = useState<Insight | null>(null);
+  const [registroHoje, setRegistroHoje] = useState<DailyRecord | null>(null);
   const { showAlert } = useNexusAlert();
   const [waterVolume, setWaterVolume] = useState<number>(1.2);
 
   useEffect(() => {
-    const calc = calcularLifeInsights(selectedDate);
+    const calc = calculateInsights(selectedDate);
     setInsights(calc);
     const reg = storage.getRegistroPorData(selectedDate);
     setRegistroHoje(reg);
@@ -225,13 +225,13 @@ export default function HomeView({
             <span>Diário</span>
           </button>
 
-          {/* Tarefa */}
+          {/* Task */}
           <button 
             onClick={() => setActiveTab('hoje')}
             className="flex items-center gap-1.5 px-4 h-10 rounded-full bg-nexus-surface border border-[#E3E0D8] text-xs font-semibold hover:border-[#77736B] hover:bg-nexus-bg text-[#20201D] active-tap cursor-pointer shrink-0 transition-all shadow-2xs"
           >
             <CheckSquare className="w-3.5 h-3.5 text-nexus-purple" />
-            <span>Tarefa</span>
+            <span>Task</span>
           </button>
 
           {/* Sono */}

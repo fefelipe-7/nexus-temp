@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Award, FolderKanban, CheckSquare, Flame, Plus, Target, Trash2, Calendar, ClipboardList } from 'lucide-react';
-import { Meta, Projeto, Tarefa, Habito } from '../types';
+import { Goal, Project, Task, Habit } from '../domain/entities';
 import { storage } from '../lib/storage';
 
 interface ExecucaoModuleProps {
@@ -30,14 +30,14 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
   const [novaMetaArea, setNovaMetaArea] = useState<string>('execução');
 
   // Dados carregados
-  const metas = storage.getMetas();
-  const projetos = storage.getProjetos();
-  const tarefas = storage.getTarefas();
-  const habitos = storage.getHabitos();
+  const metas = storage.getGoals();
+  const projetos = storage.getProjects();
+  const tarefas = storage.getTasks();
+  const habitos = storage.getHabits();
 
   const handleCriarTarefa = () => {
     if (!novaTarefaNome.trim()) return;
-    const nova: Tarefa = {
+    const nova: Task = {
       id: 't-inst-' + Date.now(),
       nome: novaTarefaNome.trim(),
       projetoId: novaTarefaProjId || undefined,
@@ -46,34 +46,34 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
       concluida: false,
       dataCriacao: selectedDate,
     };
-    const todos = storage.getTarefas();
+    const todos = storage.getTasks();
     todos.push(nova);
-    storage.saveTarefas(todos);
+    storage.saveTasks(todos);
     setNovaTarefaNome('');
     setNovaTarefaProjId('');
     triggerRefresh();
   };
 
   const handleToggleTarefa = (id: string) => {
-    const todos = storage.getTarefas();
+    const todos = storage.getTasks();
     const index = todos.findIndex(t => t.id === id);
     if (index >= 0) {
       todos[index].concluida = !todos[index].concluida;
       todos[index].dataConclusao = todos[index].concluida ? selectedDate : undefined;
-      storage.saveTarefas(todos);
+      storage.saveTasks(todos);
       triggerRefresh();
     }
   };
 
   const handleDeletarTarefa = (id: string) => {
-    const todos = storage.getTarefas().filter(t => t.id !== id);
-    storage.saveTarefas(todos);
+    const todos = storage.getTasks().filter(t => t.id !== id);
+    storage.saveTasks(todos);
     triggerRefresh();
   };
 
   const handleCriarHabito = () => {
     if (!novoHabitoNome.trim()) return;
-    const novo: Habito = {
+    const novo: Habit = {
       id: 'h-inst-' + Date.now(),
       nome: novoHabitoNome.trim(),
       area: novoHabitoArea as any,
@@ -81,22 +81,22 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
       historicoCheckins: [],
       dataCriacao: selectedDate,
     };
-    const todos = storage.getHabitos();
+    const todos = storage.getHabits();
     todos.push(novo);
-    storage.saveHabitos(todos);
+    storage.saveHabits(todos);
     setNovoHabitoNome('');
     triggerRefresh();
   };
 
   const handleDeletarHabito = (id: string) => {
-    const todos = storage.getHabitos().filter(h => h.id !== id);
-    storage.saveHabitos(todos);
+    const todos = storage.getHabits().filter(h => h.id !== id);
+    storage.saveHabits(todos);
     triggerRefresh();
   };
 
   const handleCriarMeta = () => {
     if (!novaMetaNome.trim()) return;
-    const nova: Meta = {
+    const nova: Goal = {
       id: 'm-inst-' + Date.now(),
       nome: novaMetaNome.trim(),
       area: novaMetaArea as any,
@@ -105,9 +105,9 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
       progresso: 10,
       dataCriacao: selectedDate,
     };
-    const todos = storage.getMetas();
+    const todos = storage.getGoals();
     todos.push(nova);
-    storage.saveMetas(todos);
+    storage.saveGoals(todos);
     setNovaMetaNome('');
     triggerRefresh();
   };
@@ -157,7 +157,7 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
       {/* ABA TAREFAS */}
       {subTab === 'tarefas' && (
         <div className="space-y-5">
-          {/* Adicionar Tarefa Rápida */}
+          {/* Adicionar Task Rápida */}
           <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
             <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider">
               NOVA TAREFA DIÁRIA
@@ -196,7 +196,7 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
                 onClick={handleCriarTarefa}
                 className="w-full bg-primary hover:bg-primary-pressed text-white text-xs font-semibold py-2 rounded-md transition-colors cursor-pointer"
               >
-                + Criar Tarefa
+                + Criar Task
               </button>
             </div>
           </div>
@@ -329,7 +329,7 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
                       <div className="flex items-center gap-3">
                         <button 
                           onClick={() => {
-                            storage.toggleHabito(h.id, selectedDate);
+                            storage.toggleHabit(h.id, selectedDate);
                             triggerRefresh();
                           }}
                           className={`text-xs px-3 py-1.5 font-bold rounded-md border select-none transition-all cursor-pointer ${
@@ -357,7 +357,7 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
       {/* ABA METAS E PROJETOS */}
       {subTab === 'metas_projetos' && (
         <div className="space-y-5">
-          {/* Adicionar Meta */}
+          {/* Adicionar Goal */}
           <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
             <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider">
               NOVA META ESTRUTURAL
@@ -376,18 +376,18 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
                 onChange={(e) => setNovaMetaArea(e.target.value)}
                 className="text-xs border border-hairline bg-canvas rounded-md p-2 w-full text-charcoal focus:outline-hidden focus:border-primary focus:ring-1 focus:ring-brand-purple-300"
               >
-                <option value="execução">Meta de Execução</option>
-                <option value="saúde">Meta de Saúde</option>
-                <option value="mente">Meta Emocional</option>
-                <option value="recursos">Meta Financeira</option>
-                <option value="relações">Meta Social</option>
+                <option value="execução">Goal de Execução</option>
+                <option value="saúde">Goal de Saúde</option>
+                <option value="mente">Goal Emocional</option>
+                <option value="recursos">Goal Financeira</option>
+                <option value="relações">Goal Social</option>
               </select>
             </div>
             <button 
               onClick={handleCriarMeta}
               className="w-full bg-primary hover:bg-primary-pressed text-white text-xs font-semibold py-2 rounded-md transition-colors cursor-pointer"
             >
-              + Adicionar Meta Estrutural
+              + Adicionar Goal Estrutural
             </button>
           </div>
 
@@ -430,7 +430,7 @@ export default function ExecucaoModule({ selectedDate, refreshCount, triggerRefr
                         </div>
                       </div>
 
-                      {/* Projetos pertencentes à Meta */}
+                      {/* Projetos pertencentes à Goal */}
                       {projs.length > 0 && (
                         <div className="space-y-2 pt-2.5 border-t border-hairline-soft">
                           <span className="text-[10px] font-mono font-bold text-slate uppercase tracking-wider block">

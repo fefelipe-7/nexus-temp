@@ -5,7 +5,7 @@ import {
   Lightbulb, ArrowRight, ArrowLeft, Check, Plus, AlertCircle, Info 
 } from 'lucide-react';
 import { storage } from '../lib/storage';
-import { RegistroDiario, Tarefa, TransacaoFinanceira, Habito } from '../types';
+import { DailyRecord, Task, FinanceTransaction, Habit } from '../domain/entities';
 import { useNexusAlert } from './NexusAlertContext';
 
 interface RegistrationWizardsProps {
@@ -65,7 +65,7 @@ export default function RegistrationWizards({ wizardType, selectedDate, onClose,
   const [tarefaEstHoras, setTarefaEstHoras] = useState<number>(1);
 
   // States for Habit Wizard
-  const [habitsList, setHabitsList] = useState<Habito[]>([]);
+  const [habitsList, setHabitsList] = useState<Habit[]>([]);
   const [selectedHabitId, setSelectedHabitId] = useState<string>('');
   const [novoHabitoNome, setNovoHabitoNome] = useState<string>('');
   const [habitNota, setHabitNota] = useState<string>('');
@@ -73,7 +73,7 @@ export default function RegistrationWizards({ wizardType, selectedDate, onClose,
   // Pre-load data from current date record if editing
   useEffect(() => {
     const reg = storage.getRegistroPorData(selectedDate);
-    const existingHabits = storage.getHabitos();
+    const existingHabits = storage.getHabits();
     setHabitsList(existingHabits);
     if (existingHabits.length > 0) {
       setSelectedHabitId(existingHabits[0].id);
@@ -180,7 +180,7 @@ export default function RegistrationWizards({ wizardType, selectedDate, onClose,
     
     else if (wizardType === 'gasto') {
       const valorNum = parseFloat(gastoValor);
-      const transacao: TransacaoFinanceira = {
+      const transacao: FinanceTransaction = {
         id: 'f-wizard-' + Date.now(),
         tipo: gastoTipo,
         valor: valorNum,
@@ -189,9 +189,9 @@ export default function RegistrationWizards({ wizardType, selectedDate, onClose,
         descricao: gastoDescr.trim() || `${gastoTipo === 'despesa' ? 'Gasto' : 'Receita'} detalhado (${gastoConta})`,
       };
 
-      const todosFinancas = storage.getFinancas();
+      const todosFinancas = storage.getFinances();
       todosFinancas.push(transacao);
-      storage.saveFinancas(todosFinancas);
+      storage.saveFinances(todosFinancas);
 
       if (gastoTipo === 'despesa') {
         reg.despesasTotais = (reg.despesasTotais || 0) + valorNum;
@@ -219,7 +219,7 @@ export default function RegistrationWizards({ wizardType, selectedDate, onClose,
     } 
     
     else if (wizardType === 'tarefa') {
-      const nova: Tarefa = {
+      const nova: Task = {
         id: 't-wizard-' + Date.now(),
         nome: tarefaNome.trim(),
         prioridade: tarefaPrio,
@@ -230,15 +230,15 @@ export default function RegistrationWizards({ wizardType, selectedDate, onClose,
       if (tarefaDet) {
         nova.checklist = [{ id: 'sub-1', texto: tarefaDet, concluida: false }];
       }
-      const todos = storage.getTarefas();
+      const todos = storage.getTasks();
       todos.push(nova);
-      storage.saveTarefas(todos);
+      storage.saveTasks(todos);
     } 
     
     else if (wizardType === 'habito') {
       let habitIdToUpdate = selectedHabitId;
       if (novoHabitoNome.trim()) {
-        const novo: Habito = {
+        const novo: Habit = {
           id: 'hab-' + Date.now(),
           nome: novoHabitoNome.trim(),
           area: 'saúde',
@@ -246,9 +246,9 @@ export default function RegistrationWizards({ wizardType, selectedDate, onClose,
           historicoCheckins: [],
           dataCriacao: selectedDate
         };
-        const activeHabits = storage.getHabitos();
+        const activeHabits = storage.getHabits();
         activeHabits.push(novo);
-        storage.saveHabitos(activeHabits);
+        storage.saveHabits(activeHabits);
         habitIdToUpdate = novo.id;
       }
 
