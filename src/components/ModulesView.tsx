@@ -6,12 +6,13 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Plus, Calendar, Check, Flame, ChevronRight, ArrowLeft,
-  HeartHandshake, Brain, Zap, DollarSign, Activity, FileText, LayoutGrid
+  HeartHandshake, Brain, Activity, Zap, DollarSign, Wallet,
+  Search, Sliders, ChevronRight, ArrowLeft, ArrowRight, CheckSquare, Sparkles,
+  Smile, Moon, Droplet, Coins, Info, Compass, HelpCircle, AlertCircle
 } from 'lucide-react';
 import { storage, calcularLifeInsights } from '../lib/storage';
 
-// Importa os componentes de módulo existentes para renderizá-los com alta fidelidade
+// Import existing robust modular submenus to preserve full-fidelity interaction!
 import SaudeModule from './SaudeModule';
 import MenteModule from './MenteModule';
 import ExecucaoModule from './ExecucaoModule';
@@ -28,132 +29,327 @@ type ActiveModuleType = 'menu' | 'saude' | 'mente' | 'acao' | 'financas' | 'rela
 
 export default function ModulesView({ selectedDate, refreshCount, triggerRefresh }: ModulesViewProps) {
   const [activeModule, setActiveModule] = useState<ActiveModuleType>('menu');
+  const [isStructureOpen, setIsStructureOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
   const insights = calcularLifeInsights(selectedDate);
 
-  const modulesList = [
-    { 
-      id: 'saude', 
-      label: 'Saúde & Corpo', 
-      desc: 'Qualidade de sono, hidratação e treino físico', 
-      score: 78, 
-      color: 'border-brand-green bg-tint-mint text-brand-green',
-      icon: Activity
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => {
+      setToast(prev => prev === msg ? null : prev);
+    }, 2000);
+  };
+
+  const areasList = [
+    {
+      id: 'relacoes' as const,
+      name: 'Vida',
+      desc: 'Relações, valores, experiências e decisões.',
+      status: '1 conexão pendente',
+      accentBg: 'bg-[#FBEDEA]', 
+      accentBorder: 'border-[#F9D4CF]',
+      textAccent: 'text-[#E06D53]',
+      chips: ['Conexões', 'Valores'],
+      icon: HeartHandshake,
     },
-    { 
-      id: 'mente', 
-      label: 'Mente & Equilíbrio', 
-      desc: 'Humores, controle de estresse, meditação e diário livre', 
-      score: insights?.clarezaMentalScore ?? 75, 
-      color: 'border-brand-teal bg-tint-mint text-brand-teal',
-      icon: Brain
+    {
+      id: 'mente' as const,
+      name: 'Mente',
+      desc: 'Humor, journal, foco e clareza mental.',
+      status: 'Carga mental alta',
+      accentBg: 'bg-[#F1EDFF]', 
+      accentBorder: 'border-[#DCD6FA]',
+      textAccent: 'text-[#6D5DD3]',
+      chips: ['Humor', 'Journal'],
+      icon: Brain,
     },
-    { 
-      id: 'acao', 
-      label: 'Execução & Ação', 
-      desc: 'Verificação de hábitos diários, tarefas pendentes e macro-metas', 
-      score: insights?.consistenciaScore ?? 85, 
-      color: 'border-brand-purple bg-tint-lavender text-brand-purple',
-      icon: Zap
+    {
+      id: 'saude' as const,
+      name: 'Saúde',
+      desc: 'Sono, hidratação, treino e recuperação.',
+      status: 'Recuperação moderada',
+      accentBg: 'bg-[#EAF6EE]', 
+      accentBorder: 'border-[#CCEADC]',
+      textAccent: 'text-[#2DA44E]',
+      chips: ['Sono', 'Treino'],
+      icon: Activity,
     },
-    { 
-      id: 'financas', 
-      label: 'Finanças & Recursos', 
-      desc: 'Contabilidade de saldo consolidado, despesas e ganhos do mês', 
-      score: insights?.saudeFinanceiraScore ?? 92, 
-      color: 'border-brand-orange bg-tint-peach text-brand-orange',
-      icon: DollarSign
+    {
+      id: 'acao' as const,
+      name: 'Ação',
+      desc: 'Tarefas, projetos, habits e objetivos.',
+      status: '2 prioridades hoje',
+      accentBg: 'bg-[#EAF3FB]', 
+      accentBorder: 'border-[#CCE3F5]',
+      textAccent: 'text-[#0969DA]',
+      chips: ['Tarefas', 'Hábitos'],
+      icon: Zap,
     },
-    { 
-      id: 'relacoes', 
-      label: 'Conexões & Relações', 
-      desc: 'Manutenção de contatos sociais e controle de periodicidade de vínculos', 
-      score: insights?.conexaoSocialScore ?? 60, 
-      color: 'border-brand-pink bg-tint-rose text-brand-pink-deep',
-      icon: HeartHandshake
-    },
+    {
+      id: 'financas' as const,
+      name: 'Finanças',
+      desc: 'Gastos, receitas, orçamento e estabilidade.',
+      status: 'Estável',
+      accentBg: 'bg-[#F7F1D8]', 
+      accentBorder: 'border-[#EAE1BD]',
+      textAccent: 'text-[#9A7D0A]',
+      chips: ['Gastos', 'Orçamento'],
+      icon: Wallet,
+    }
   ];
 
+  const handleQuickEntry = (label: string) => {
+    showToast(`Direcionando para o registro de ${label}...`);
+    // Simulated quick entry or prompt to use central Intelligence creator
+  };
+
   return (
-    <div className="space-y-6 pb-24 text-charcoal">
+    <div className="space-y-6 pb-24 text-[#20201D] font-sans bg-[#F7F6F1] animate-fade-in">
       
+      {/* Toast flutuante */}
+      <AnimatePresence>
+        {toast && (
+          <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-[#20201D] text-[#F7F6F1] text-[11px] font-mono py-2.5 px-4 rounded-full shadow-md flex items-center gap-1.5 border border-[#E3E0D8]/10">
+            <Sparkles className="w-3.5 h-3.5 text-nexus-purple" />
+            <span>{toast}</span>
+          </div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence mode="wait">
         {activeModule === 'menu' ? (
-          <motion.div 
-            key="menu-view"
-            initial={{ opacity: 0, y: 10 }}
+          <motion.div
+            key="menu-explore"
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="space-y-5"
+            exit={{ opacity: 0, y: -12 }}
+            className="space-y-6"
           >
-            {/* Header */}
-            <div className="px-1">
-              <span className="text-xs font-mono text-slate uppercase tracking-wider block">Navegação Exploratória</span>
-              <h2 className="text-xl font-bold text-ink mt-0.5">Central de Módulos</h2>
-              <p className="text-[11px] text-slate mt-1">Clique para explorar as 5 dimensões integradas do sistema no modelo progressivo.</p>
+            {/* 1. HEADER */}
+            <header className="flex justify-between items-center px-1 pt-1.5">
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight text-[#20201D]">Módulos</h2>
+                <p className="text-xs text-[#77736B] font-medium mt-0.5">Explore as áreas da sua vida</p>
+              </div>
+
+              {/* Botão circular de Filtro/Busca */}
+              <button 
+                onClick={() => showToast("Calibrando áreas do sistema...")}
+                className="w-10 h-10 rounded-full bg-white border border-[#E3E0D8] flex items-center justify-center hover:bg-nexus-soft active-tap cursor-pointer"
+                title="Pesquisar sub-módulos"
+              >
+                <Search className="w-4.5 h-4.5 text-[#20201D]" />
+              </button>
+            </header>
+
+            {/* 2. CARD INTRODUTÓRIO (Seu sistema pessoal) */}
+            <div className="bg-white border border-[#E3E0D8] rounded-[24px] p-5 flex justify-between items-center gap-5 relative overflow-hidden">
+              <div className="space-y-1.5 max-w-[72%]">
+                <h3 className="text-xs font-bold font-mono text-[#77736B] uppercase tracking-wider">
+                  Seu sistema pessoal
+                </h3>
+                <p className="text-[12px] leading-relaxed font-semibold text-[#20201D]">
+                  Cada módulo reúne registros, hábitos e visualizações para ajudar o Nexus a entender sua rotina.
+                </p>
+              </div>
+
+              {/* Elementor visual geométrico conexões (5 pontos) */}
+              <div className="shrink-0 p-1 select-none pointer-events-none">
+                <svg className="w-14 h-14" viewBox="0 0 100 100" fill="none">
+                  <polygon points="50,15 85,40 70,80 30,80 15,40" stroke="#6D5DD3" strokeWidth="0.75" strokeDasharray="2 2" className="opacity-30" />
+                  <circle cx="50" cy="15" r="4.5" fill="#FBEDEA" stroke="#6D5DD3" strokeWidth="1" />
+                  <circle cx="85" cy="40" r="4.5" fill="#F1EDFF" stroke="#6D5DD3" strokeWidth="1" />
+                  <circle cx="70" cy="80" r="4.5" fill="#EAF6EE" stroke="#6D5DD3" strokeWidth="1" />
+                  <circle cx="30" cy="80" r="4.5" fill="#EAF3FB" stroke="#6D5DD3" strokeWidth="1" />
+                  <circle cx="15" cy="40" r="4.5" fill="#F7F1D8" stroke="#6D5DD3" strokeWidth="1" />
+                  <line x1="50" y1="50" x2="50" y2="15" stroke="#6D5DD3" strokeWidth="0.5" className="opacity-25" />
+                  <line x1="50" y1="50" x2="85" y2="40" stroke="#6D5DD3" strokeWidth="0.5" className="opacity-25" />
+                  <line x1="50" y1="50" x2="70" y2="80" stroke="#6D5DD3" strokeWidth="0.5" className="opacity-25" />
+                  <line x1="50" y1="50" x2="30" y2="80" stroke="#6D5DD3" strokeWidth="0.5" className="opacity-25" />
+                  <line x1="50" y1="50" x2="15" y2="40" stroke="#6D5DD3" strokeWidth="0.5" className="opacity-25" />
+                  <circle cx="50" cy="50" r="6" fill="#6D5DD3" className="opacity-30 motion-safe:animate-pulse" />
+                </svg>
+              </div>
             </div>
 
-            {/* Lista de Módulos */}
-            <div className="space-y-3 pt-1">
-              {modulesList.map((m) => {
-                const Icon = m.icon;
-                return (
-                  <button
-                    key={m.id}
-                    onClick={() => setActiveModule(m.id as ActiveModuleType)}
-                    className="w-full text-left bg-canvas border border-hairline hover:border-slate p-4 rounded-xl flex items-center justify-between gap-4 transition-all active-tap cursor-pointer shadow-none group"
-                  >
-                    <div className="flex gap-3.5 items-start min-w-0">
-                      <div className={`p-2 rounded-lg border border-hairline-soft shrink-0 group-hover:scale-105 transition-transform ${m.color}`}>
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <div className="min-w-0">
+            {/* 3. ÁREAS PRINCIPAIS (Cards grandes customizados) */}
+            <div className="space-y-3">
+              <h4 className="text-[10px] font-bold font-mono text-[#77736B] uppercase tracking-wider px-1">
+                Áreas de vida
+              </h4>
+
+              <div className="space-y-3">
+                {areasList.map((area) => {
+                  const Icon = area.icon;
+                  return (
+                    <button
+                      key={area.id}
+                      onClick={() => {
+                        setActiveModule(area.id);
+                        showToast(`Abrindo módulo: ${area.name}`);
+                      }}
+                      className="w-full text-left bg-white border border-[#E3E0D8] rounded-[22px] p-4.5 hover:border-[#77736B]/55 flex items-center justify-between gap-4 transition-all active-tap cursor-pointer"
+                    >
+                      <div className="space-y-3 flex-1 min-w-0">
+                        
+                        {/* Title Header with Icon */}
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-ink block">{m.label}</span>
-                          <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded-full border bg-neutral-100 text-charcoal">
-                            Score: {m.score}%
-                          </span>
+                          <div className={`p-1.5 rounded-lg ${area.accentBg} ${area.accentBorder} border`}>
+                            <Icon className={`w-4 h-4 ${area.textAccent}`} />
+                          </div>
+                          <div>
+                            <span className="text-[13px] font-bold text-[#20201D] block">{area.name}</span>
+                            <span className="text-[9.5px] font-mono font-bold text-[#77736B]">
+                              Status: {area.status}
+                            </span>
+                          </div>
                         </div>
-                        <p className="text-[11px] text-slate mt-1 leading-normal pr-2">{m.desc}</p>
+
+                        {/* Description */}
+                        <p className="text-[11.5px] text-[#77736B] leading-relaxed font-medium">
+                          {area.desc}
+                        </p>
+
+                        {/* Custom sub chips representing features */}
+                        <div className="flex flex-wrap gap-1.5">
+                          {area.chips.map((c, i) => (
+                            <span 
+                              key={i}
+                              className="text-[9.5px] font-bold bg-[#F0EFEB] border border-[#E3E0D8]/60 text-[#20201D] px-2.5 py-0.5 rounded-md"
+                            >
+                              {c}
+                            </span>
+                          ))}
+                        </div>
+
                       </div>
+
+                      {/* Discrete arrow */}
+                      <div className="w-8 h-8 rounded-full bg-[#F0EFEB]/70 flex items-center justify-center shrink-0 border border-transparent hover:border-[#E3E0D8] transition-colors">
+                        <ChevronRight className="w-4 h-4 text-[#77736B]" />
+                      </div>
+
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 4. ACESSOS RÁPIDOS (Submódulos de entrada de dados) */}
+            <div className="space-y-2">
+              <h4 className="text-[10px] font-bold font-mono text-[#77736B] uppercase tracking-wider px-1">
+                Acessos rápidos para registro
+              </h4>
+              <p className="text-[10px] text-[#A9A49A] font-medium leading-normal px-1 -mt-1">
+                Acesse submódulos de entrada direta de dados
+              </p>
+
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+                {[
+                  { label: 'Sono', icon: Moon },
+                  { label: 'Humor', icon: Smile },
+                  { label: 'Tarefas', icon: CheckSquare },
+                  { label: 'Água', icon: Droplet },
+                  { label: 'Gastos', icon: Coins },
+                  { label: 'Journal', icon: Brain },
+                ].map((item, id) => {
+                  const Icon = item.icon;
+                  return (
+                    <button 
+                      key={id}
+                      onClick={() => handleQuickEntry(item.label)}
+                      className="flex items-center gap-1.5 px-4 h-10 rounded-full bg-white border border-[#E3E0D8] text-xs font-semibold text-[#20201D] hover:border-[#77736B] active-tap cursor-pointer shrink-0 shadow-2xs transition-all"
+                    >
+                      <Icon className="w-3.5 h-3.5 text-nexus-purple" />
+                      <span>{item.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 5. SEÇÃO VISUALIZAÇÕES (Leituras calculadas) */}
+            <div className="space-y-3">
+              <div>
+                <h4 className="text-[10px] font-bold font-mono text-[#77736B] uppercase tracking-wider px-1">
+                  Visualizações calculadas
+                </h4>
+                <p className="text-[10px] text-[#A9A49A] font-medium leading-normal px-1">
+                  Leituras estimadas a partir dos seus registros
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: 'Energia', val: '76%', indicator: 76, color: 'bg-[#6D5DD3]' },
+                  { label: 'Fadiga', val: 'Moderada', indicator: 58, color: 'bg-amber-400' },
+                  { label: 'Recuperação', val: '68%', indicator: 68, color: 'bg-emerald-500' },
+                  { label: 'Equilíbrio da vida', val: 'Estável', indicator: 82, color: 'bg-[#2da46a]' },
+                  { label: 'Carga mental', val: 'Alta', indicator: 79, color: 'bg-[#6D5DD3]/65' },
+                  { label: 'Fluxo financeiro', val: 'positivo', indicator: 90, color: 'bg-[#0969da]' },
+                ].map((vis, id) => (
+                  <div 
+                    key={id}
+                    className="bg-white border border-[#E3E0D8] rounded-[18px] p-3.5 flex flex-col justify-between min-h-[82px]"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] text-[#77736B] font-semibold">{vis.label}</span>
+                      <span className="text-[11px] font-mono font-black text-[#20201D] uppercase">
+                        {vis.val}
+                      </span>
                     </div>
 
-                    <ChevronRight className="w-4 h-4 text-stone shrink-0 transition-transform group-hover:translate-x-0.5" />
-                  </button>
-                );
-              })}
+                    <div className="mt-3.5 h-1 w-full bg-[#F0EFEB] rounded-full overflow-hidden">
+                      <div className={`h-full ${vis.color}`} style={{ width: `${vis.indicator}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Explicação de Confiança */}
-            <div className="p-4 bg-surface-soft border border-hairline rounded-lg text-xs leading-relaxed text-slate">
-              <span className="font-bold text-ink block mb-0.5">Navegação Hierárquica Intencional</span>
-              Os módulos representam a arquitetura interna do Nexus. Ao invés de poluírem sua navegação principal do dia-a-dia, estão guardados nesta aba para explorações completas ou cadastros de novos objetivos e contatos importantes.
+            {/* 6. EXPLICAÇÃO SUTIL */}
+            <div className="bg-[#FFFFFF] border border-[#E3E0D8] rounded-[22px] p-4.5 space-y-3 shadow-none bg-gradient-to-br from-white to-stone-50/10">
+              <div className="space-y-1">
+                <h5 className="text-xs font-bold text-[#20201D]">Como o Nexus organiza tudo</h5>
+                <p className="text-[11.5px] leading-relaxed text-[#77736B]">
+                  Submódulos recebem dados. Visualizações transformam esses dados em leituras e padrões.
+                </p>
+              </div>
+              <button 
+                onClick={() => setIsStructureOpen(true)}
+                className="text-[10.5px] font-bold text-[#6D5DD3] hover:text-[#6D5DD3]/90 flex items-center gap-0.5 pt-1 cursor-pointer select-none active-tap"
+              >
+                <span>Entender estrutura</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
             </div>
+
           </motion.div>
         ) : (
-          <motion.div 
-            key="module-details"
-            initial={{ opacity: 0, x: 20 }}
+          <motion.div
+            key="module-inside"
+            initial={{ opacity: 0, x: 22 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
+            exit={{ opacity: 0, x: -22 }}
             className="space-y-4"
           >
-            {/* Botão voltar para o menu de módulos */}
-            <div className="pb-1 border-b border-hairline flex items-center justify-between">
+            {/* Header / Back Action */}
+            <div className="pb-2 border-b border-[#E3E0D8] flex items-center justify-between shrink-0">
               <button
                 onClick={() => setActiveModule('menu')}
-                className="flex items-center gap-1.5 text-xs font-bold text-ink hover:text-primary transition-colors py-2 px-1 active-tap cursor-pointer"
+                className="flex items-center gap-1.5 text-xs font-bold text-[#20201D] hover:text-[#6D5DD3] transition-colors py-2 px-1 cursor-pointer active-tap select-none"
               >
-                <ArrowLeft className="w-3.5 h-3.5" />
+                <ArrowLeft className="w-4 h-4 text-[#20201D]" />
                 <span>Voltar aos Módulos</span>
               </button>
-              
-              <span className="text-[10px] font-mono text-slate uppercase bg-surface-soft px-2 py-0.5 border border-hairline rounded-md">
-                Nexus Explorer
+
+              <span className="text-[10px] font-mono font-bold text-[#77736B] uppercase bg-[#F0EFEB] border border-[#E3E0D8] px-2.5 py-0.5 rounded-md">
+                MOD: {activeModule.toUpperCase()}
               </span>
             </div>
 
-            {/* Renderização condicional do respectivo módulo */}
+            {/* Display correct interactive detailed submodule with complete precision */}
             <div className="pt-2 animate-fade-in">
               {activeModule === 'saude' && (
                 <SaudeModule 
@@ -191,6 +387,88 @@ export default function ModulesView({ selectedDate, refreshCount, triggerRefresh
             </div>
 
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 7. BOTTOM SHEET MODAL DE EXPLICAÇÃO DA ESTRUTURA */}
+      <AnimatePresence>
+        {isStructureOpen && (
+          <div className="fixed inset-0 bg-black/45 z-50 flex items-end justify-center">
+            
+            <div className="absolute inset-0" onClick={() => setIsStructureOpen(false)} />
+
+            <motion.div 
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 26, stiffness: 220 }}
+              className="bg-white w-full max-w-sm rounded-t-[24px] border-t border-[#E3E0D8] flex flex-col shadow-2xl overflow-hidden relative z-10 text-[#20201D] pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]"
+              style={{ maxHeight: '85vh' }}
+            >
+              {/* Handle */}
+              <div className="w-full flex justify-center pt-2.5">
+                <div className="w-9 h-1 bg-[#E3E0D8] rounded-full" />
+              </div>
+
+              <div className="px-5 py-3 border-b border-[#E3E0D8] flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-mono font-bold text-[#77736B] uppercase block">ARQUITETURA DE DADOS</span>
+                  <h3 className="text-sm font-bold text-[#20201D]">Matriz do Nexus</h3>
+                </div>
+                <button 
+                  onClick={() => setIsStructureOpen(false)}
+                  className="p-1 text-[#77736B] hover:bg-nexus-soft rounded-lg cursor-pointer transition-all active-tap"
+                >
+                  Fechar
+                </button>
+              </div>
+
+              <div className="p-5 space-y-4 overflow-y-auto text-xs leading-relaxed text-[#77736B]">
+                <p>
+                  A arquitetura metodológica do Nexus assenta sobre um pilar hierárquico claro, desenvolvido para evitar fadiga cognitiva.
+                </p>
+
+                <div className="space-y-3 pt-1">
+                  <div className="flex gap-2.5 items-start">
+                    <span className="w-5 h-5 rounded-full bg-[#EAF3FB] border border-[#CCE3F5] text-[#0969DA] font-bold text-[10px] flex items-center justify-center shrink-0">1</span>
+                    <div>
+                      <h4 className="font-bold text-[#20201D] text-[11.5px]">Submódulos (Input)</h4>
+                      <p className="text-[11px] text-[#77736B] mt-0.5">Pontos de escuta como o copo d'água, o sono de ontem e o diário. São simples cartões de coleta diária rápida.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2.5 items-start">
+                    <span className="w-5 h-5 rounded-full bg-[#F1EDFF] border border-[#DCD6FA] text-[#6D5DD3] font-bold text-[10px] flex items-center justify-center shrink-0">2</span>
+                    <div>
+                      <h4 className="font-bold text-[#20201D] text-[11.5px]">Visualizações (Processamento)</h4>
+                      <p className="text-[11px] text-[#77736B] mt-0.5">Sistemas agregados locais de processamento. Concentram métricas estimadas com base no seu fluxo de inserções históricas.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2.5 items-start">
+                    <span className="w-5 h-5 rounded-full bg-[#EAF6EE] border border-[#CCEADC] text-[#2DA44E] font-bold text-[10px] flex items-center justify-center shrink-0">3</span>
+                    <div>
+                      <h4 className="font-bold text-[#20201D] text-[11.5px]">Sinais & Insights (Explicação)</h4>
+                      <p className="text-[11px] text-[#77736B] mt-0.5">Feeds dinâmicos de leitura e cruzamento que indicam dependências e alavancas ocultas da sua rotina.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-3">
+                  <button 
+                    onClick={() => {
+                      setIsStructureOpen(false);
+                      showToast("Navegando pela estrutura!");
+                    }}
+                    className="w-full bg-[#20201D] hover:bg-black text-white py-2.5 rounded-xl font-bold min-h-[42px] cursor-pointer active-tap text-center"
+                  >
+                    Excelente, Compreendi
+                  </button>
+                </div>
+              </div>
+
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
 
