@@ -83,6 +83,52 @@ export default function App() {
             triggerRefresh={triggerRefresh}
           />
         );
+      case 'perfil':
+        return (
+          <div className="space-y-6 pt-4 text-center animate-fade-in text-[#20201D]">
+            <div className="flex flex-col items-center space-y-3.5">
+              <div className="relative">
+                <img 
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" 
+                  alt="Alex Profile Image"
+                  referrerPolicy="no-referrer"
+                  className="w-24 h-24 rounded-full border-2 border-[#6D5DD3] p-1 object-cover" 
+                />
+                <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white animate-pulse" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold">Alex Ferreira</h2>
+                <p className="text-xs text-[#77736B] font-medium mt-0.5">Membro Nexus v2 Intel</p>
+              </div>
+            </div>
+
+            <div className="bg-white border border-[#E3E0D8]/80 rounded-[24px] p-5 text-left max-w-sm mx-auto space-y-4">
+              <div>
+                <h3 className="text-[10px] font-mono font-bold text-[#77736B] uppercase tracking-wider mb-2">
+                  ESTATÍSTICAS DA CONEXÃO
+                </h3>
+                <div className="space-y-2.5 text-xs font-medium">
+                  <div className="flex justify-between border-b border-nexus-soft pb-2 text-[#20201D]">
+                    <span className="text-[#77736B]">Armazenamento</span>
+                    <span>Local Encrypt (100% Offline)</span>
+                  </div>
+                  <div className="flex justify-between border-b border-nexus-soft pb-2 text-[#20201D]">
+                    <span className="text-[#77736B]">Módulos Ativos</span>
+                    <span>5 / 5 Ativados</span>
+                  </div>
+                  <div className="flex justify-between text-[#20201D]">
+                    <span className="text-[#77736B]">Sincronização</span>
+                    <span>Completa</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-[#F7F6F1] border border-[#E3E0D8] p-3.5 rounded-[16px] text-[11px] leading-relaxed text-[#77736B] italic text-center">
+                “Seu espaço de autoaprendizado está ativo. Parâmetros adicionais de perfil serão estruturados nos próximos passos de evolução.”
+              </div>
+            </div>
+          </div>
+        );
       default:
         return null;
     }
@@ -134,7 +180,7 @@ export default function App() {
     <div id="nexus_app" className="min-h-screen bg-[#F0EFEB] sm:py-6 flex items-center justify-center select-none antialiased text-[#20201D]">
       
       {/* Device Emulation wrapping canvas for premium mobile preview */}
-      <div className="w-full sm:max-w-[390px] sm:h-[844px] sm:rounded-[40px] sm:border-[8px] sm:border-[#20201D] sm:shadow-2xl bg-nexus-bg flex flex-col relative overflow-hidden transition-all duration-300">
+      <div className="w-full h-screen sm:h-[844px] sm:max-w-[390px] sm:rounded-[40px] sm:border-[8px] sm:border-[#20201D] sm:shadow-2xl bg-nexus-bg flex flex-col relative overflow-hidden transition-all duration-300">
         
         {/* Top Header Barra Sólida estilo Notion */}
         <header className="bg-nexus-bg border-b border-nexus-border sticky top-0 z-40 px-4 pt-4 pb-3 shadow-none shrink-0">
@@ -148,21 +194,48 @@ export default function App() {
               </span>
             </div>
 
-            {/* Barra de Busca rápida clicável estilo Notion */}
-            <button 
-              onClick={() => { setIsSearchOpen(true); setSearchQuery(''); }}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 border border-nexus-border rounded-lg hover:border-[#77736B] bg-nexus-surface text-[10px] text-[#77736B] font-semibold max-w-[130px] w-full text-left transition-colors cursor-pointer active-tap shrink-0"
-              title="Paleta de Comandos (Ctrl+K)"
-            >
-              <Search className="w-3.5 h-3.5 text-[#77736B] shrink-0" />
-              <span className="truncate flex-1">Buscar comandos</span>
-            </button>
+            {/* Ações do Header: Lupa de Busca e Foto de Perfil */}
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => { setIsSearchOpen(true); setSearchQuery(''); }}
+                className="w-8 h-8 rounded-full border border-nexus-border bg-white flex items-center justify-center hover:bg-nexus-soft active-tap cursor-pointer text-[#77736B] hover:text-[#20201D] transition-colors"
+                title="Buscar comandos (Ctrl+K)"
+              >
+                <Search className="w-4 h-4" />
+              </button>
+
+              <button 
+                onClick={() => setActiveTab('perfil')}
+                className={`w-8 h-8 rounded-full overflow-hidden border cursor-pointer active-tap transition-all ${
+                  activeTab === 'perfil' ? 'border-[#6D5DD3] ring-2 ring-[#6D5DD3]/25' : 'border-nexus-border'
+                }`}
+                title="Meu Perfil"
+              >
+                <img 
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" 
+                  alt="Avatar"
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover" 
+                />
+              </button>
+            </div>
           </div>
         </header>
 
         {/* Conteúdo Central Móvel de Container Estilo App */}
-        <main className="flex-1 w-full px-4 pt-4 pb-24 overflow-y-auto no-scrollbar scroll-smooth bg-nexus-bg">
-          {renderActiveTabContent()}
+        <main className="flex-1 w-full px-4 pt-4 pb-24 overflow-y-auto no-scrollbar scroll-smooth bg-nexus-bg relative">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.16, ease: 'easeInOut' }}
+              className="w-full"
+            >
+              {renderActiveTabContent()}
+            </motion.div>
+          </AnimatePresence>
         </main>
 
         {/* Barra de Navegação Inferior Flutuante em Pílula */}

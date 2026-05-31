@@ -267,7 +267,7 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 220 }}
         className="bg-canvas w-full max-w-md rounded-t-[24px] sm:rounded-xl border-t sm:border border-hairline flex flex-col shadow-xl overflow-hidden relative z-10 text-charcoal pb-[calc(1rem+env(safe-area-inset-bottom,0px))]"
-        style={{ maxHeight: '92vh' }}
+        style={{ maxHeight: '88vh' }}
       >
         {/* Draw Handle para visual confortável de Drawer em Mobile */}
         <div className="w-full flex justify-center pt-2.5 pb-0.5 sm:hidden bg-surface-soft">
@@ -275,7 +275,7 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
         </div>
 
         {/* Header estático */}
-        <div className="px-5 py-3.5 border-b border-hairline flex items-center justify-between bg-surface-soft">
+        <div className="px-5 py-3 border-b border-hairline flex items-center justify-between bg-surface-soft">
           <div>
             <span className="text-[10px] font-mono font-bold text-slate uppercase tracking-wider block">CAPTURAR INTENÇÃO</span>
             <h3 className="text-sm font-bold text-ink">Registrar em {formattedDate}</h3>
@@ -289,7 +289,7 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
         </div>
 
         {/* Corpo dinâmico */}
-        <div className="overflow-y-auto p-5" style={{ maxHeight: '72vh' }}>
+        <div className="overflow-y-auto p-4 sm:p-5" style={{ maxHeight: '66vh' }}>
           
           {mode === 'grid' && (
             <div className="space-y-4">
