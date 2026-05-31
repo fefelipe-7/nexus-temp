@@ -6,7 +6,7 @@ import HojeView from './features/today/HojeView';
 import RegistrarSheet from './components/RegistrarSheet';
 import InsightsView from './features/insights/InsightsView';
 import ModulesView from './features/modules/ModulesView';
-import RegistrationWizards from './components/RegistrationWizards';
+import { SleepWizard, MealWizard, WorkoutWizard, ExpenseWizard, MoodWizard, JournalWizard, TaskWizard, HabitWizard } from './features/register';
 import { useRouter } from './app/router/RouterProvider';
 import { AppHeader } from './app/shell/AppHeader';
 import { BottomNav } from './app/shell/BottomNav';
@@ -42,6 +42,21 @@ export default function App() {
   }, [path]);
 
   const triggerRefresh = () => setRefreshCount(prev => prev + 1);
+
+  const renderWizard = () => {
+    const wizardProps = { selectedDate, onClose: () => navigate('/home'), onSaveSuccess: triggerRefresh };
+    switch (wizardType) {
+      case 'sono': return <SleepWizard {...wizardProps} />;
+      case 'refeicao': return <MealWizard {...wizardProps} />;
+      case 'treino': return <WorkoutWizard {...wizardProps} />;
+      case 'gasto': return <ExpenseWizard {...wizardProps} />;
+      case 'humor': return <MoodWizard {...wizardProps} />;
+      case 'journal': return <JournalWizard {...wizardProps} />;
+      case 'tarefa': return <TaskWizard {...wizardProps} />;
+      case 'habito': return <HabitWizard {...wizardProps} />;
+      default: return null;
+    }
+  };
 
   const handleSetActiveTab = (tab: string) => {
     if (tab === 'home') navigate('/home');
@@ -105,14 +120,7 @@ export default function App() {
         className="w-full sm:h-[844px] sm:max-w-[390px] sm:rounded-[40px] sm:border-[8px] sm:border-[#20201D] sm:shadow-2xl bg-nexus-bg flex flex-col relative overflow-hidden transition-all duration-300"
         style={{ height: 'var(--app-height, 100dvh)' }}
       >
-        {wizardType ? (
-          <RegistrationWizards
-            wizardType={wizardType}
-            selectedDate={selectedDate}
-            onClose={() => navigate('/home')}
-            onSaveSuccess={triggerRefresh}
-          />
-        ) : (
+        {wizardType ? renderWizard() : (
           <>
             <AppHeader onOpenSearch={() => setIsSearchOpen(true)} />
 

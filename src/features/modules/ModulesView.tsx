@@ -10,11 +10,11 @@ import { ModulesVisualizations } from './ModulesVisualizations';
 import { ModulesExplanation } from './ModulesExplanation';
 import { ModuleDetailView } from './ModuleDetailView';
 import { StructureBottomSheet } from './StructureBottomSheet';
-import SaudeModule from '../../components/SaudeModule';
-import MenteModule from '../../components/MenteModule';
-import ExecucaoModule from '../../components/ExecucaoModule';
-import RecursosModule from '../../components/RecursosModule';
-import RelacoesModule from '../../components/RelacoesModule';
+import HealthModulePage from './HealthModulePage';
+import MindModulePage from './MindModulePage';
+import ExecutionModulePage from './ExecutionModulePage';
+import ResourcesModulePage from './ResourcesModulePage';
+import RelationsModulePage from './RelationsModulePage';
 
 interface ModulesViewProps {
   selectedDate: string;
@@ -62,11 +62,11 @@ export default function ModulesView({ selectedDate, refreshCount, triggerRefresh
         ) : (
           <motion.div key="module-inside" initial={{ opacity: 0, x: 22 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -22 }}>
             <ModuleDetailView activeModule={activeModule} onBack={() => setActiveModule('menu')}>
-              {activeModule === 'saude' && <SaudeModule selectedDate={selectedDate} refreshCount={refreshCount} />}
-              {activeModule === 'mente' && <MenteModule selectedDate={selectedDate} refreshCount={refreshCount} />}
-              {activeModule === 'acao' && <ExecucaoModule selectedDate={selectedDate} refreshCount={refreshCount} triggerRefresh={triggerRefresh} />}
-              {activeModule === 'financas' && <RecursosModule selectedDate={selectedDate} refreshCount={refreshCount} triggerRefresh={triggerRefresh} />}
-              {activeModule === 'relacoes' && <RelacoesModule selectedDate={selectedDate} refreshCount={refreshCount} triggerRefresh={triggerRefresh} />}
+              {activeModule === 'saude' && <HealthModulePage selectedDate={selectedDate} refreshCount={refreshCount} />}
+              {activeModule === 'mente' && <MindModulePage selectedDate={selectedDate} refreshCount={refreshCount} />}
+              {activeModule === 'acao' && <ExecutionModulePage selectedDate={selectedDate} refreshCount={refreshCount} triggerRefresh={triggerRefresh} />}
+              {activeModule === 'financas' && <ResourcesModulePage selectedDate={selectedDate} refreshCount={refreshCount} triggerRefresh={triggerRefresh} />}
+              {activeModule === 'relacoes' && <RelationsModulePage selectedDate={selectedDate} refreshCount={refreshCount} triggerRefresh={triggerRefresh} />}
             </ModuleDetailView>
           </motion.div>
         )}

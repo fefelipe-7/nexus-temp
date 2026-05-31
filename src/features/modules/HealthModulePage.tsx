@@ -1,26 +1,21 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Flame, Droplets, Moon, Shield, Sparkles, Plus, AlertCircle, Dumbbell } from 'lucide-react';
-import { DailyRecord } from '../domain/entities';
-import { storage } from '../lib/storage';
-import { useNexusAlert } from './NexusAlertContext';
+import { DailyRecord } from '../../domain/entities';
+import { storage } from '../../lib/storage';
+import { useNexusAlert } from '../../components/NexusAlertContext';
 
-interface SaudeModuleProps {
+interface HealthModulePageProps {
   selectedDate: string;
   refreshCount: number;
 }
 
-export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleProps) {
+export default function HealthModulePage({ selectedDate, refreshCount }: HealthModulePageProps) {
   const [novoTreinoNome, setNovoTreinoNome] = useState<string>('');
   const [novoTreinoEsforco, setNovoTreinoEsforco] = useState<number>(6);
   const [novoTreinoDuracao, setNovoTreinoDuracao] = useState<number>(45);
 
-  const [coposAguaAdd, setCoposAguaAdd] = useState<number>(0.25); // 250ml padrão
+  const [coposAguaAdd, setCoposAguaAdd] = useState<number>(0.25);
   const { showAlert } = useNexusAlert();
 
   const registros = storage.getRegistros()
@@ -49,13 +44,11 @@ export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleP
     showAlert(`Acrescentado +${quantidadeL * 1000}ml de água.`, 'saude', 'hidratacao');
   };
 
-  // Prepara dados do gráfico semanal de Hidratação
   const ultimosRegistrosHidratacao = [...registros]
     .filter(r => r.hidratacao !== undefined)
     .slice(0, 7)
     .reverse();
 
-  // Cálculo heurístico de Prontidão de Treino para hoje
   const calcularProntidaoHoje = () => {
     const sono = hojeReg.sono ?? 7.0;
     const qualidade = hojeReg.sonoQualidade ?? 7;
@@ -71,7 +64,6 @@ export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleP
   return (
     <div className="space-y-6 text-charcoal relative">
       
-      {/* Top Banner de Identidade estilo Notion */}
       <div className="flex items-center gap-3">
         <div className="p-2.5 bg-tint-rose text-brand-pink-deep rounded-md border border-hairline-soft">
           <Dumbbell className="w-5 h-5 animate-pulse" />
@@ -82,10 +74,8 @@ export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleP
         </div>
       </div>
 
-      {/* Grid de Métricas Analíticas */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         
-        {/* Card 1: Sono Médio */}
         <div className="bg-canvas border border-hairline rounded-lg p-4 shadow-none space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate font-semibold">Sono Médio</span>
@@ -99,7 +89,6 @@ export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleP
           </div>
         </div>
 
-        {/* Card 2: Consumidores do Mês (Água) */}
         <div className="bg-canvas border border-hairline rounded-lg p-4 shadow-none space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate font-semibold">Hidratação Hoje</span>
@@ -113,7 +102,6 @@ export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleP
           </div>
         </div>
 
-        {/* Card 3: Prontidão Pro Treino (Calculada) */}
         <div className="bg-canvas border border-hairline rounded-lg p-4 shadow-none space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate font-semibold">Readiness (Prontidão)</span>
@@ -129,7 +117,6 @@ export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleP
 
       </div>
 
-      {/* Seção Gráfica: Registro Semanal de Hidratação */}
       <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
         <div>
           <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider">
@@ -144,7 +131,6 @@ export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleP
           <p className="text-center text-xs text-stone py-6 italic">Não há logs de hidratação gravados.</p>
         ) : (
           <div className="pt-4 pb-2">
-            {/* Gráfico de Barras verticais para Água em SVG */}
             <div className="flex items-end justify-between h-32 gap-2 p-3 bg-surface-soft border border-hairline-soft rounded-md">
               {ultimosRegistrosHidratacao.map((reg, idx) => {
                 const litVal = reg.hidratacao || 0;
@@ -174,7 +160,6 @@ export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleP
         )}
       </div>
 
-      {/* Hidratação Rápida */}
       <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
         <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider pb-1 border-b border-hairline-soft">
           AÇÃO RÁPIDA: HIDRATAÇÃO
@@ -205,7 +190,6 @@ export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleP
         </div>
       </div>
 
-      {/* Cadastrar Nova Sessão de Treino */}
       <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
         <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider pb-1 border-b border-hairline-soft">
           REGISTRAR TREINO FÍSICO DO DIA

@@ -1,22 +1,17 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { DollarSign, Wallet, TrendingUp, TrendingDown, Plus, Trash2, Calendar, Clock } from 'lucide-react';
-import { FinanceTransaction } from '../domain/entities';
-import { storage } from '../lib/storage';
-import { useNexusAlert } from './NexusAlertContext';
+import { FinanceTransaction } from '../../domain/entities';
+import { storage } from '../../lib/storage';
+import { useNexusAlert } from '../../components/NexusAlertContext';
 
-interface RecursosModuleProps {
+interface ResourcesModulePageProps {
   selectedDate: string;
   refreshCount: number;
   triggerRefresh: () => void;
 }
 
-export default function RecursosModule({ selectedDate, refreshCount, triggerRefresh }: RecursosModuleProps) {
+export default function ResourcesModulePage({ selectedDate, refreshCount, triggerRefresh }: ResourcesModulePageProps) {
   const [novoValor, setNovoValor] = useState<string>('');
   const [novoTipo, setNovoTipo] = useState<'despesa' | 'receita'>('despesa');
   const [novaCategoria, setNovaCategoria] = useState<string>('Alimentação');
@@ -46,7 +41,6 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
     todos.push(nova);
     storage.saveFinances(todos);
 
-    // Ajusta o registro diário correspondente se necessário
     const reg = storage.getRegistroPorData(selectedDate);
     if (reg) {
       if (novoTipo === 'despesa') {
@@ -67,7 +61,6 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
     const todos = storage.getFinances().filter(f => f.id !== id);
     storage.saveFinances(todos);
 
-    // Ajusta o registro diário correspondente se necessário
     const reg = storage.getRegistroPorData(transacao.data);
     if (reg) {
       if (transacao.tipo === 'despesa') {
@@ -81,8 +74,7 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
     triggerRefresh();
   };
 
-  // Cálculos do Mês Selecionado para demonstrar saúde financeira
-  const mesAtual = selectedDate.substring(0, 7); // YYYY-MM
+  const mesAtual = selectedDate.substring(0, 7);
   const transacoesMes = financas.filter(f => f.data.startsWith(mesAtual));
   const totalDespesas = transacoesMes.filter(f => f.tipo === 'despesa').reduce((acc, curr) => acc + curr.valor, 0);
   const totalReceitas = transacoesMes.filter(f => f.tipo === 'receita').reduce((acc, curr) => acc + curr.valor, 0);
@@ -91,7 +83,6 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
   return (
     <div className="space-y-6 text-charcoal">
       
-      {/* Top Banner de Identidade estilo Notion */}
       <div className="flex items-center gap-3">
         <div className="p-2.5 bg-tint-green text-brand-green rounded-md border border-hairline-soft">
           <Wallet className="w-5 h-5 animate-pulse" />
@@ -102,10 +93,8 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
         </div>
       </div>
 
-      {/* Grid de Resumo do Mês */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         
-        {/* Receitas */}
         <div className="bg-canvas border border-hairline rounded-lg p-4 shadow-none space-y-2">
           <div className="flex justify-between items-center text-xs text-slate font-semibold">
             <span>Receita Mensal ({mesAtual})</span>
@@ -116,7 +105,6 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
           </div>
         </div>
 
-        {/* Despesas */}
         <div className="bg-canvas border border-hairline rounded-lg p-4 shadow-none space-y-2">
           <div className="flex justify-between items-center text-xs text-slate font-semibold">
             <span>Despesas do Mês</span>
@@ -127,7 +115,6 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
           </div>
         </div>
 
-        {/* Saldo Líquido */}
         <div className="bg-canvas border border-hairline rounded-lg p-4 shadow-none space-y-2">
           <div className="flex justify-between items-center text-xs text-slate font-semibold font-sans">
             <span>Saldo Consolidado</span>
@@ -140,7 +127,6 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
 
       </div>
 
-      {/* Lançamento RÁPIDO */}
       <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
         <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider pb-1 border-b border-hairline-soft">
           LANÇAMENTO DE TRANSAÇÃO FINANCEIRA
@@ -211,7 +197,6 @@ export default function RecursosModule({ selectedDate, refreshCount, triggerRefr
         </div>
       </div>
 
-      {/* Histórico Recente de Transações */}
       <div className="space-y-3">
         <h4 className="text-xs font-bold font-mono text-slate uppercase tracking-wider px-1">
           REGISTRO DETALHADO DE TRANSAÇÕES
