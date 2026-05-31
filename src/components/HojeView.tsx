@@ -309,7 +309,7 @@ export default function HojeView({
   };
 
   return (
-    <div className="space-y-6 pb-24 text-charcoal relative animate-fade-in font-sans">
+    <div className="space-y-6 text-charcoal relative animate-fade-in font-sans">
       
       {/* 1. EDITORIAL HEADER */}
       <header className="flex justify-between items-start px-0.5">
@@ -830,9 +830,8 @@ export default function HojeView({
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 220 }}
               className="bg-canvas w-full max-w-md rounded-t-[24px] border-t border-hairline flex flex-col shadow-xl overflow-hidden relative z-10 text-charcoal pb-[calc(1rem+env(safe-area-inset-bottom,0px))]"
-              style={{ maxHeight: '90vh' }}
+              style={{ maxHeight: 'min(86dvh, 720px)' }}
             >
-              {/* Draw Handle */}
               <div className="w-full flex justify-center pt-2.5 pb-0.5">
                 <div className="w-9 h-1 bg-stone/40 rounded-full" />
               </div>
@@ -918,7 +917,7 @@ export default function HojeView({
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 220 }}
               className="bg-canvas w-full max-w-md rounded-t-[24px] border-t border-hairline flex flex-col shadow-xl overflow-hidden relative z-10 text-charcoal pb-[calc(1rem+env(safe-area-inset-bottom,0px))]"
-              style={{ maxHeight: '90vh' }}
+              style={{ maxHeight: 'min(86dvh, 720px)' }}
             >
               <div className="w-full flex justify-center pt-2.5 pb-0.5">
                 <div className="w-9 h-1 bg-stone/40 rounded-full" />

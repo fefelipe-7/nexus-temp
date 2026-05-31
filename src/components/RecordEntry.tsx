@@ -156,8 +156,8 @@ export default function RecordEntry({ isOpen, onClose, selectedDate, onSaveSucce
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-        className="bg-canvas w-full max-w-lg h-[90vh] sm:h-auto sm:max-h-[85vh] rounded-t-lg sm:rounded-lg flex flex-col shadow-xl border-t sm:border border-hairline overflow-hidden text-charcoal"
-      >
+        className="bg-canvas w-full max-w-lg rounded-t-lg sm:rounded-lg flex flex-col shadow-xl border-t sm:border border-hairline overflow-hidden text-charcoal sm:max-h-[85vh]"
+        style={{ height: 'min(90dvh, 720px)' }}>
         {/* Header do Modal estilo Notion */}
         <div className="px-6 py-4 border-b border-hairline flex items-center justify-between bg-surface">
           <div>

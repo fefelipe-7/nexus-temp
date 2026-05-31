@@ -47,7 +47,7 @@ export default function MenteModule({ selectedDate, refreshCount }: MenteModuleP
     .reverse();
 
   return (
-    <div className="space-y-6 pb-24 text-charcoal">
+    <div className="space-y-6 text-charcoal">
       
       {/* Top Banner de Identidade estilo Notion */}
       <div className="flex items-center gap-3">

@@ -66,7 +66,7 @@ export default function HomeView({
   const sonoVal = registroHoje?.sono ?? 6.2;
 
   return (
-    <div className="space-y-7 pb-20 text-nexus-text font-sans bg-nexus-bg animate-fade-in">
+    <div className="space-y-7 text-nexus-text font-sans bg-nexus-bg animate-fade-in">
       
       {/* 1. HEADER EMOCIONAL */}
       <header className="flex justify-between items-center px-1 pt-1.5">

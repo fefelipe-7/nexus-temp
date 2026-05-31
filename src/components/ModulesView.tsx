@@ -109,7 +109,7 @@ export default function ModulesView({ selectedDate, refreshCount, triggerRefresh
   };
 
   return (
-    <div className="space-y-6 pb-24 text-[#20201D] font-sans bg-[#F7F6F1] animate-fade-in">
+    <div className="space-y-6 text-[#20201D] font-sans bg-[#F7F6F1] animate-fade-in">
       
       <AnimatePresence mode="wait">
         {activeModule === 'menu' ? (
@@ -398,7 +398,7 @@ export default function ModulesView({ selectedDate, refreshCount, triggerRefresh
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 26, stiffness: 220 }}
               className="bg-white w-full max-w-sm rounded-t-[24px] border-t border-[#E3E0D8] flex flex-col shadow-2xl overflow-hidden relative z-10 text-[#20201D] pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]"
-              style={{ maxHeight: '85vh' }}
+              style={{ maxHeight: 'min(86dvh, 720px)' }}
             >
               {/* Handle */}
               <div className="w-full flex justify-center pt-2.5">

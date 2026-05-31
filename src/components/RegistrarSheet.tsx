@@ -310,7 +310,7 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 26, stiffness: 220 }}
         className="bg-canvas w-full max-w-md rounded-t-[32px] sm:rounded-[24px] border-t sm:border border-hairline flex flex-col shadow-2xl overflow-hidden relative z-10 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]"
-        style={{ maxHeight: '90vh' }}
+        style={{ maxHeight: 'min(86dvh, 720px)' }}
       >
         {/* Mobile Pull Indicator */}
         <div className="w-full flex justify-center pt-3 pb-1 sm:hidden">
@@ -345,7 +345,7 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
         </div>
 
         {/* Corpo dinâmico */}
-        <div className="overflow-y-auto p-5" style={{ maxHeight: '64vh' }}>
+        <div className="overflow-y-auto p-5" style={{ maxHeight: 'min(64dvh, 480px)' }}>
           
           <AnimatePresence mode="wait">
             {/* STEP 1: ENTRY PICKER */}

@@ -162,7 +162,7 @@ export default function InsightsView({ selectedDate, refreshCount }: InsightsVie
   }, [selectedDate, refreshCount]);
 
   return (
-    <div className="space-y-6 pb-24 text-[#20201D] font-sans bg-[#F7F6F1] animate-fade-in">
+    <div className="space-y-6 text-[#20201D] font-sans bg-[#F7F6F1] animate-fade-in">
       
       {/* 1. HEADER EDITORIAL */}
       <header className="flex justify-between items-center px-1 pt-1.5">
@@ -567,7 +567,7 @@ export default function InsightsView({ selectedDate, refreshCount }: InsightsVie
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 220 }}
               className="bg-white w-full max-w-md rounded-t-[24px] border-t border-[#E3E0D8] flex flex-col shadow-xl overflow-hidden relative z-10 text-[#20201D] pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]"
-              style={{ maxHeight: '90vh' }}
+              style={{ maxHeight: 'min(86dvh, 720px)' }}
             >
               {/* Handle */}
               <div className="w-full flex justify-center pt-2.5">
@@ -587,7 +587,7 @@ export default function InsightsView({ selectedDate, refreshCount }: InsightsVie
                 </button>
               </div>
 
-              <div className="p-5 space-y-4 overflow-y-auto max-h-[60vh] text-xs leading-relaxed text-[#77736B]">
+              <div className="p-5 space-y-4 overflow-y-auto text-xs leading-relaxed text-[#77736B]" style={{ maxHeight: 'min(60dvh, 500px)' }}>
                 <p>
                   O gráfico de eixos duplos do Nexus agrupa e mapeia as oscilações cotidianas para responder a seguinte metáfora analítica:
                 </p>

@@ -69,7 +69,7 @@ export default function SaudeModule({ selectedDate, refreshCount }: SaudeModuleP
   const prontidaoScore = calcularProntidaoHoje();
 
   return (
-    <div className="space-y-6 pb-24 text-charcoal relative">
+    <div className="space-y-6 text-charcoal relative">
       
       {/* Top Banner de Identidade estilo Notion */}
       <div className="flex items-center gap-3">

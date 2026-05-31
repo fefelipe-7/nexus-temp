@@ -82,11 +82,16 @@
 
   --color-destructive-soft: #FBEDEA;
   --color-destructive-alpha: rgba(224, 109, 83, 0.15);
+
+  --bottom-nav-height: 64px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Otimizações Globais de Mobile UX */
+/* ─── Layout Shell Responsivo ─── */
+
+/* Raiz: altura real dinâmica, sem scroll extra */
 html {
-  min-height: 100dvh;
+  height: 100%;
   background-color: var(--color-surface);
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
@@ -96,13 +101,103 @@ body {
   background-color: var(--color-surface);
   color: var(--color-charcoal);
   font-family: var(--font-sans);
-  min-height: 100dvh;
+  height: 100%;
   margin: 0;
   padding: 0;
-  overscroll-behavior-y: none; /* Desativa bounce vertical irritante no PWA/Navegador */
+  overscroll-behavior-y: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+#root {
+  height: 100%;
+}
+
+/* Shell principal — ocupa a viewport real, sem ultrapassar */
+.app-shell {
+  min-height: var(--app-height, 100dvh);
+  min-height: -webkit-fill-available;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-nexus-bg);
+}
+
+/* Container rolável de cada tela — padding-bottom suficiente para não esconder
+   conteúdo atrás da bottom-nav fixa */
+.mobile-screen {
+  flex: 1;
+  width: 100%;
+  padding: 16px 20px calc(var(--bottom-nav-height) + var(--safe-bottom) + 24px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 360px) {
+  .mobile-screen {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* Bottom navigation fixa no rodapé, fora do fluxo de scroll */
+.bottom-nav {
+  position: fixed;
+  left: 14px;
+  right: 14px;
+  bottom: calc(10px + var(--safe-bottom));
+  height: var(--bottom-nav-height);
+  z-index: 100;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-nexus-border);
+  box-shadow: 0 8px 28px rgba(20, 20, 20, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 4px 12px;
+}
+
+/* Bottom sheet padrão */
+.bottom-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: min(86dvh, 720px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 20px calc(20px + var(--safe-bottom));
+  border-radius: 28px 28px 0 0;
+  background: #FFFFFF;
+  z-index: 200;
+  border-top: 1px solid var(--color-hairline);
+}
+
+/* ─── Box-sizing global ─── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ─── Reset de font em inputs ─── */
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+/* ─── Otimizações Globais de Mobile UX ─── */
 
 /* Remover tap highlight cinza feio nos dispositivos iOS/Android */
 button, 
