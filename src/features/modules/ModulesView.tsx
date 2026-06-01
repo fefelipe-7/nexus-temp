@@ -37,14 +37,14 @@ export default function ModulesView({ selectedDate, refreshCount, triggerRefresh
   };
 
   return (
-    <div className="space-y-6 text-[#20201D] font-sans bg-[#F7F6F1] animate-fade-in">
+    <div className="space-y-6 text-ink font-sans bg-muted animate-fade-in">
       <AnimatePresence mode="wait">
         {activeModule === 'menu' ? (
           <motion.div key="menu-explore" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="space-y-6">
             <ModulesHeader onSearch={() => showAlert('Calibrando áreas do sistema...', 'sistema')} />
             <ModulesIntroCard />
             <div className="space-y-3">
-              <h4 className="text-[10px] font-bold font-mono text-[#77736B] uppercase tracking-wider px-1">Áreas de vida</h4>
+              <h4 className="text-[10px] font-bold font-mono text-subtle uppercase tracking-wider px-1">Áreas de vida</h4>
               <div className="space-y-3">
                 {AREAS_LIST.map((area) => (
                   <ModuleAreaCard key={area.id} area={area} onClick={() => {

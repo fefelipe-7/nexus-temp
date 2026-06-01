@@ -41,10 +41,10 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
     .reverse();
 
   return (
-    <div className="space-y-6 text-charcoal">
+    <div className="space-y-6 text-ink">
       
       <div className="flex items-center gap-3">
-        <div className="p-2.5 bg-tint-teal text-brand-teal rounded-md border border-hairline-soft">
+        <div className="p-2.5 bg-mind-soft text-mind rounded-md border border-hairline-soft">
           <Brain className="w-5 h-5 animate-pulse" />
         </div>
         <div>
@@ -55,44 +55,44 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         
-        <div className="bg-canvas border border-hairline rounded-lg p-4 shadow-none space-y-2">
+        <div className="bg-card border border-line rounded-lg p-4 shadow-none space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate font-semibold">Estabilidade Emocional</span>
-            <Smile className="w-4 h-4 text-brand-teal" />
+            <Smile className="w-4 h-4 text-mind" />
           </div>
           <div className="space-y-1">
             <div className="text-lg font-bold text-ink">Elevada</div>
-            <p className="text-[10px] text-slate">Oscilações mínimas de humor registradas nos últimos 7 dias.</p>
+            <p className="text-[10px] text-subtle">Oscilações mínimas de humor registradas nos últimos 7 dias.</p>
           </div>
         </div>
 
-        <div className="bg-canvas border border-hairline rounded-lg p-4 shadow-none space-y-2">
+        <div className="bg-card border border-line rounded-lg p-4 shadow-none space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate font-semibold">Tempo de Presença (7d)</span>
-            <Clock className="w-4 h-4 text-primary" />
+            <Clock className="w-4 h-4 text-accent" />
           </div>
           <div className="space-y-1">
             <div className="text-lg font-bold font-mono text-ink">
               {registros.reduce((acc, curr) => acc + (curr.meditacaoDuracao || 0), 0)} min
             </div>
-            <p className="text-[10px] text-slate">Tempo dedicado a meditação, respiração guiada ou atenção plena.</p>
+            <p className="text-[10px] text-subtle">Tempo dedicado a meditação, respiração guiada ou atenção plena.</p>
           </div>
         </div>
 
-        <div className="bg-canvas border border-hairline rounded-lg p-4 shadow-none space-y-2">
+        <div className="bg-card border border-line rounded-lg p-4 shadow-none space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate font-semibold">Carga Mental Estimada</span>
-            <ShieldAlert className="w-4 h-4 text-brand-orange-deep" />
+            <ShieldAlert className="w-4 h-4 text-warning" />
           </div>
           <div className="space-y-1">
             <div className="text-lg font-bold text-ink">Equilibrada</div>
-            <p className="text-[10px] text-slate">Índices de estresse mantidos sob controle (Média: 3.2/10).</p>
+            <p className="text-[10px] text-subtle">Índices de estresse mantidos sob controle (Média: 3.2/10).</p>
           </div>
         </div>
 
       </div>
 
-      <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
+      <div className="bg-card border border-line rounded-lg p-5 space-y-4 shadow-none">
         <div>
           <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider">
             HISTÓRICO SEMANAL DE HUMOR
@@ -103,10 +103,10 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
         </div>
 
         {ultimosRegistrosHumor.length === 0 ? (
-          <p className="text-center text-xs text-stone py-6 italic">Não há registros de humor cadastrados ainda.</p>
+          <p className="text-center text-xs text-subtle py-6 italic">Não há registros de humor cadastrados ainda.</p>
         ) : (
           <div className="pt-4 pb-2 space-y-4">
-            <div className="flex items-end justify-between h-36 gap-2 pt-2 px-2 bg-surface-soft border border-hairline-soft rounded-lg p-3">
+            <div className="flex items-end justify-between h-36 gap-2 pt-2 px-2 bg-muted border border-line/60 rounded-lg p-3">
               {ultimosRegistrosHumor.map((reg, idx) => {
                 const humorVal = reg.humor || 5;
                 const percentHeight = humorVal * 10;
@@ -115,12 +115,12 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
 
                 return (
                   <div key={idx} className="flex flex-col items-center h-full flex-1 group cursor-pointer justify-end">
-                    <span className="text-[9px] font-mono font-bold text-charcoal mb-1 opacity-0 group-hover:opacity-100 transition-opacity bg-canvas border border-hairline px-1 py-0.5 rounded-sm">
+                    <span className="text-[9px] font-mono font-bold text-subtle mb-1 opacity-0 group-hover:opacity-100 transition-opacity bg-muted border border-line px-1 py-0.5 rounded-sm">
                       {humorVal}/10
                     </span>
                     <div 
                       className={`w-full rounded-t-sm transition-all duration-500 max-w-[24px] ${
-                        humorVal > 7 ? 'bg-brand-teal' : humorVal > 4 ? 'bg-brand-yellow' : 'bg-brand-pink'
+                        humorVal > 7 ? 'bg-mind' : humorVal > 4 ? 'bg-accent-soft' : 'bg-accent'
                       }`}
                       style={{ height: `${percentHeight}%` }}
                     />
@@ -147,7 +147,7 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
               <select 
                 value={novoHumor}
                 onChange={(e) => setNovoHumor(parseInt(e.target.value))}
-                className="w-full text-xs border border-hairline rounded-md p-2 bg-canvas text-charcoal focus:outline-hidden focus:border-primary focus:ring-1 focus:ring-brand-purple-300"
+                  className="w-full text-xs border border-line rounded-md p-2 bg-card text-ink focus:outline-hidden focus:border-accent focus:ring-1 focus:ring-accent/30"
               >
                 {[...Array(10)].map((_, i) => (
                   <option key={i+1} value={i+1}>{i+1} - {i+1 === 10 ? 'Excelente' : i+1 === 7 ? 'Estável' : i+1 === 1 ? 'Esgotado' : `Humor ${i+1}`}</option>
@@ -160,7 +160,7 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
               <select 
                 value={novoEstresse}
                 onChange={(e) => setNovoEstresse(parseInt(e.target.value))}
-                className="w-full text-xs border border-hairline rounded-md p-2 bg-canvas text-charcoal focus:outline-hidden focus:border-primary focus:ring-1 focus:ring-brand-purple-300"
+                className="w-full text-xs border border-line rounded-md p-2 bg-card text-ink focus:outline-hidden focus:border-accent focus:ring-1 focus:ring-accent/30"
               >
                 {[...Array(10)].map((_, i) => (
                   <option key={i+1} value={i+1}>{i+1} - {i+1 === 10 ? 'Muito Alto' : i+1 === 3 ? 'Tranquilo' : i+1 === 1 ? 'Zero Estresse' : `Estresse ${i+1}`}</option>
@@ -173,7 +173,7 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
               <select 
                 value={novaMeditacao}
                 onChange={(e) => setNovaMeditacao(parseInt(e.target.value))}
-                className="w-full text-xs border border-hairline rounded-md p-2 bg-canvas text-charcoal focus:outline-hidden focus:border-primary focus:ring-1 focus:ring-brand-purple-300"
+                className="w-full text-xs border border-line rounded-md p-2 bg-card text-ink focus:outline-hidden focus:border-accent focus:ring-1 focus:ring-accent/30"
               >
                 <option value={0}>0 min (sem prática)</option>
                 <option value={5}>5 min</option>
@@ -185,20 +185,20 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
             </div>
           </div>
 
-          <div>
-            <label className="text-[11px] font-mono font-medium text-slate block mb-1">Reflexão Narrativa / Escrever no Diário</label>
+            <div>
+            <label className="text-[11px] font-mono font-medium text-subtle block mb-1">Reflexão Narrativa / Escrever no Diário</label>
             <textarea 
               value={novoJournal}
               onChange={(e) => setNovoJournal(e.target.value)}
               placeholder="Quais foram seus aprendizados hoje? Alguma decisão tomada ou preocupação que queira descarregar em texto?"
-              className="w-full h-20 text-xs border border-hairline rounded-md p-2 mt-1 bg-canvas text-charcoal focus:outline-hidden focus:border-primary focus:ring-1 focus:ring-brand-purple-300 resize-none placeholder-stone"
+                className="w-full h-20 text-xs border border-line rounded-md p-2 mt-1 bg-card text-ink focus:outline-hidden focus:border-accent focus:ring-1 focus:ring-accent/30 resize-none placeholder-subtle"
             />
           </div>
 
           <div className="flex justify-end">
             <button 
               onClick={handleSalvarInputMente}
-              className="bg-primary hover:bg-primary-pressed text-white text-xs font-semibold px-4 py-2 rounded-md transition-colors cursor-pointer"
+              className="bg-mind hover:bg-mind/90 text-white text-xs font-semibold px-4 py-2 rounded-md transition-colors cursor-pointer"
             >
               Registrar Estado Mental
             </button>

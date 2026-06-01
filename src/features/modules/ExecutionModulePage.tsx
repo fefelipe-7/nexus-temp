@@ -106,10 +106,10 @@ export default function ExecutionModulePage({ selectedDate, refreshCount, trigge
   };
 
   return (
-    <div className="space-y-6 text-charcoal">
+    <div className="space-y-6 text-ink">
       
       <div className="flex items-center gap-3">
-        <div className="p-2.5 bg-tint-blue text-brand-blue rounded-md border border-hairline-soft">
+        <div className="p-2.5 bg-action-soft text-action rounded-md border border-hairline-soft">
           <Award className="w-5 h-5 animate-pulse" />
         </div>
         <div>
@@ -118,27 +118,27 @@ export default function ExecutionModulePage({ selectedDate, refreshCount, trigge
         </div>
       </div>
 
-      <div className="flex gap-1 bg-surface-soft border border-hairline p-1 rounded-md">
+      <div className="flex gap-1 bg-muted border border-line p-1 rounded-md">
         <button 
           onClick={() => setSubTab('tarefas')}
-          className={`flex-1 text-xs font-medium py-1.5 rounded-sm transition-all select-none cursor-pointer ${
-            subTab === 'tarefas' ? 'bg-canvas text-ink border border-hairline-soft font-bold' : 'text-slate hover:text-charcoal'
+            className={`flex-1 text-xs font-medium py-1.5 rounded-sm transition-all select-none cursor-pointer ${
+            subTab === 'tarefas' ? 'bg-card text-ink border border-line font-bold' : 'text-subtle hover:text-ink'
           }`}
         >
           Tarefas Ativas ({tarefas.filter(t => !t.concluida).length})
         </button>
         <button 
           onClick={() => setSubTab('habitos')}
-          className={`flex-1 text-xs font-medium py-1.5 rounded-sm transition-all select-none cursor-pointer ${
-            subTab === 'habitos' ? 'bg-canvas text-ink border border-hairline-soft font-bold' : 'text-slate hover:text-charcoal'
+            className={`flex-1 text-xs font-medium py-1.5 rounded-sm transition-all select-none cursor-pointer ${
+            subTab === 'habitos' ? 'bg-card text-ink border border-line font-bold' : 'text-subtle hover:text-ink'
           }`}
         >
           Streak Hábitos ({habitos.length})
         </button>
         <button 
           onClick={() => setSubTab('metas_projetos')}
-          className={`flex-1 text-xs font-medium py-1.5 rounded-sm transition-all select-none cursor-pointer ${
-            subTab === 'metas_projetos' ? 'bg-canvas text-ink border border-hairline-soft font-bold' : 'text-slate hover:text-charcoal'
+            className={`flex-1 text-xs font-medium py-1.5 rounded-sm transition-all select-none cursor-pointer ${
+            subTab === 'metas_projetos' ? 'bg-card text-ink border border-line font-bold' : 'text-subtle hover:text-ink'
           }`}
         >
           Metas & Projetos
@@ -147,24 +147,24 @@ export default function ExecutionModulePage({ selectedDate, refreshCount, trigge
 
       {subTab === 'tarefas' && (
         <div className="space-y-5">
-          <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
+          <div className="bg-card border border-line rounded-lg p-5 space-y-4 shadow-none">
             <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider">
               NOVA TAREFA DIÁRIA
             </h3>
             
             <div className="space-y-3">
-              <input 
+                <input 
                 type="text"
                 value={novaTarefaNome}
                 placeholder="Qual tarefa precisa avançar hoje?"
                 onChange={(e) => setNovaTarefaNome(e.target.value)}
-                className="w-full text-xs border border-hairline rounded-md p-2.5 bg-canvas text-charcoal focus:outline-hidden focus:border-primary focus:ring-1 focus:ring-brand-purple-300 placeholder-stone"
+                className="w-full text-xs border border-line rounded-md p-2.5 bg-card text-ink focus:outline-hidden focus:border-accent focus:ring-1 focus:ring-accent/30 placeholder-subtle"
               />
               <div className="grid grid-cols-2 gap-3">
                 <select 
                   value={novaTarefaPrioridade}
                   onChange={(e) => setNovaTarefaPrioridade(e.target.value as any)}
-                  className="text-xs border border-hairline rounded-md p-2 w-full bg-canvas text-charcoal focus:outline-hidden focus:border-primary focus:ring-1 focus:ring-brand-purple-300"
+                  className="text-xs border border-line rounded-md p-2 w-full bg-card text-ink focus:outline-hidden focus:border-accent focus:ring-1 focus:ring-accent/30"
                 >
                   <option value="baixa">Prioridade Baixa</option>
                   <option value="media">Prioridade Média</option>
@@ -183,14 +183,14 @@ export default function ExecutionModulePage({ selectedDate, refreshCount, trigge
               </div>
               <button 
                 onClick={handleCriarTarefa}
-                className="w-full bg-primary hover:bg-primary-pressed text-white text-xs font-semibold py-2 rounded-md transition-colors cursor-pointer"
+                className="w-full bg-action hover:bg-action/90 text-white text-xs font-semibold py-2 rounded-md transition-colors cursor-pointer"
               >
                 + Criar Task
               </button>
             </div>
           </div>
 
-          <div className="space-y-2">
+                <div className="space-y-2">
             <h4 className="text-xs font-bold font-mono text-slate uppercase tracking-wider px-1">
               CHECKLIST OPERACIONAL
             </h4>
@@ -204,8 +204,8 @@ export default function ExecutionModulePage({ selectedDate, refreshCount, trigge
                   return (
                     <div 
                       key={t.id}
-                      className={`flex items-center justify-between p-3.5 bg-canvas border rounded-lg transition-all ${
-                        t.concluida ? 'border-hairline-soft bg-surface-soft opacity-60' : 'border-hairline hover:border-slate shadow-none'
+                      className={`flex items-center justify-between p-3.5 bg-card border rounded-lg transition-all ${
+                        t.concluida ? 'border-line/60 bg-muted opacity-60' : 'border-line hover:border-subtle shadow-none'
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0 pr-2">
@@ -213,29 +213,29 @@ export default function ExecutionModulePage({ selectedDate, refreshCount, trigge
                           type="checkbox"
                           checked={t.concluida}
                           onChange={() => handleToggleTarefa(t.id)}
-                          className="w-4 h-4 rounded-sm border-hairline accent-primary text-white cursor-pointer"
+                          className="w-4 h-4 rounded-sm border-line accent-accent text-white cursor-pointer"
                         />
                         <div className="min-w-0">
-                          <span className={`text-xs block truncate ${t.concluida ? 'line-through text-slate' : 'font-semibold text-charcoal'}`}>
+                          <span className={`text-xs block truncate ${t.concluida ? 'line-through text-subtle' : 'font-semibold text-ink'}`}>
                             {t.nome}
                           </span>
                           {projVinculado && (
-                            <span className="text-[9px] font-mono text-brand-blue bg-tint-blue border border-hairline-soft px-1.5 py-0.5 rounded-md inline-block mt-0.5">
+                            <span className="text-[9px] font-mono text-action bg-action-soft border border-line/60 px-1.5 py-0.5 rounded-md inline-block mt-0.5">
                               {projVinculado.nome}
                             </span>
                           )}
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center gap-2 shrink-0">
                         <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-md uppercase border ${
-                          t.prioridade === 'alta' ? 'bg-tint-pink text-brand-pink border-hairline-soft' : t.prioridade === 'media' ? 'bg-tint-yellow text-brand-yellow border-hairline-soft' : 'bg-surface-soft text-slate border-hairline-soft'
+                          t.prioridade === 'alta' ? 'bg-accent-soft text-accent border-line/60' : t.prioridade === 'media' ? 'bg-accent/20 text-accent border-line/60' : 'bg-muted text-subtle border-line/60'
                         }`}>
                           {t.prioridade}
                         </span>
                         <button 
                           onClick={() => handleDeletarTarefa(t.id)}
-                          className="p-1 text-slate hover:text-brand-pink transition-colors cursor-pointer"
+                          className="p-1 text-subtle hover:text-accent transition-colors cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>

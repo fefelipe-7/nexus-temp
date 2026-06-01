@@ -62,10 +62,10 @@ export default function HealthModulePage({ selectedDate, refreshCount }: HealthM
   const prontidaoScore = calcularProntidaoHoje();
 
   return (
-    <div className="space-y-6 text-charcoal relative">
+    <div className="space-y-6 text-ink relative">
       
       <div className="flex items-center gap-3">
-        <div className="p-2.5 bg-tint-rose text-brand-pink-deep rounded-md border border-hairline-soft">
+        <div className="p-2.5 bg-health-soft text-health rounded-md border border-hairline-soft">
           <Dumbbell className="w-5 h-5 animate-pulse" />
         </div>
         <div>
@@ -76,48 +76,48 @@ export default function HealthModulePage({ selectedDate, refreshCount }: HealthM
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         
-        <div className="bg-canvas border border-hairline rounded-lg p-4 shadow-none space-y-2">
+        <div className="bg-card border border-line rounded-lg p-4 shadow-none space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate font-semibold">Sono Médio</span>
-            <Moon className="w-4 h-4 text-primary" />
+            <Moon className="w-4 h-4 text-accent" />
           </div>
           <div className="space-y-1">
             <div className="text-xl font-bold font-mono text-ink">
               {(registros.filter(r => r.sono).reduce((acc, curr) => acc + (curr.sono || 0), 0) / (registros.filter(r => r.sono).length || 1)).toFixed(1)}h
             </div>
-            <p className="text-[10px] text-slate">Média ponderada do tempo total recuperado na quinzena.</p>
+            <p className="text-[10px] text-subtle">Média ponderada do tempo total recuperado na quinzena.</p>
           </div>
         </div>
 
-        <div className="bg-canvas border border-hairline rounded-lg p-4 shadow-none space-y-2">
+        <div className="bg-card border border-line rounded-lg p-4 shadow-none space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate font-semibold">Hidratação Hoje</span>
-            <Droplets className="w-4 h-4 text-link-blue" />
+            <Droplets className="w-4 h-4 text-action" />
           </div>
           <div className="space-y-1">
             <div className="text-xl font-bold font-mono text-ink">
               {(hojeReg.hidratacao || 0).toFixed(1)} Litros
             </div>
-            <p className="text-[10px] text-slate">Goal recomendada: 2.5L de água por ciclo diurno.</p>
+            <p className="text-[10px] text-subtle">Goal recomendada: 2.5L de água por ciclo diurno.</p>
           </div>
         </div>
 
-        <div className="bg-canvas border border-hairline rounded-lg p-4 shadow-none space-y-2">
+        <div className="bg-card border border-line rounded-lg p-4 shadow-none space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate font-semibold">Readiness (Prontidão)</span>
-            <Shield className="w-4 h-4 text-brand-teal" />
+            <Shield className="w-4 h-4 text-health" />
           </div>
           <div className="space-y-1">
-            <div className={`text-xl font-bold font-mono ${prontidaoScore > 70 ? 'text-brand-green' : 'text-brand-orange-deep'}`}>
+            <div className={`text-xl font-bold font-mono ${prontidaoScore > 70 ? 'text-health' : 'text-warning'}`}>
               {prontidaoScore}%
             </div>
-            <p className="text-[10px] text-slate">Capacidade física de absorver carga hoje com base no sono atual.</p>
+            <p className="text-[10px] text-subtle">Capacidade física de absorver carga hoje com base no sono atual.</p>
           </div>
         </div>
 
       </div>
 
-      <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
+      <div className="bg-card border border-line rounded-lg p-5 space-y-4 shadow-none">
         <div>
           <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider">
             HISTÓRICO SEMANAL DE HIDRATAÇÃO
@@ -128,10 +128,10 @@ export default function HealthModulePage({ selectedDate, refreshCount }: HealthM
         </div>
 
         {ultimosRegistrosHidratacao.length === 0 ? (
-          <p className="text-center text-xs text-stone py-6 italic">Não há logs de hidratação gravados.</p>
+          <p className="text-center text-xs text-subtle py-6 italic">Não há logs de hidratação gravados.</p>
         ) : (
           <div className="pt-4 pb-2">
-            <div className="flex items-end justify-between h-32 gap-2 p-3 bg-surface-soft border border-hairline-soft rounded-md">
+            <div className="flex items-end justify-between h-32 gap-2 p-3 bg-muted border border-line/60 rounded-md">
               {ultimosRegistrosHidratacao.map((reg, idx) => {
                 const litVal = reg.hidratacao || 0;
                 const percentHeight = Math.min(100, (litVal / 3.0) * 100);
@@ -140,12 +140,12 @@ export default function HealthModulePage({ selectedDate, refreshCount }: HealthM
 
                 return (
                   <div key={idx} className="flex flex-col items-center h-full flex-1 group cursor-pointer justify-end animate-fade-in">
-                    <span className="text-[9px] font-mono font-bold text-charcoal mb-1 opacity-0 group-hover:opacity-100 transition-opacity bg-surface border border-hairline px-1 py-0.5 rounded-sm">
+                    <span className="text-[9px] font-mono font-bold text-subtle mb-1 opacity-0 group-hover:opacity-100 transition-opacity bg-muted border border-line px-1 py-0.5 rounded-sm">
                       {litVal.toFixed(1)}L
                     </span>
                     <div 
                       className={`w-full rounded-t-sm transition-all duration-300 max-w-[20px] ${
-                        litVal >= 2.5 ? 'bg-primary' : 'bg-brand-purple-300'
+                        litVal >= 2.5 ? 'bg-health' : 'bg-accent-soft'
                       }`}
                       style={{ height: `${percentHeight}%` }}
                     />
@@ -160,37 +160,37 @@ export default function HealthModulePage({ selectedDate, refreshCount }: HealthM
         )}
       </div>
 
-      <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
+      <div className="bg-card border border-line rounded-lg p-5 space-y-4 shadow-none">
         <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider pb-1 border-b border-hairline-soft">
           AÇÃO RÁPIDA: HIDRATAÇÃO
         </h3>
         
         <div className="flex flex-wrap items-center gap-3">
-          <button 
+            <button 
             onClick={() => handleAddHidratacao(0.25)}
-            className="flex-1 min-w-[100px] border border-hairline hover:border-primary p-3.5 text-xs font-semibold rounded-lg flex flex-col items-center gap-1 bg-canvas active-tap cursor-pointer select-none transition-all"
+            className="flex-1 min-w-[100px] border border-line hover:border-accent p-3.5 text-xs font-semibold rounded-lg flex flex-col items-center gap-1 bg-card active-tap cursor-pointer select-none transition-all"
           >
             <span className="text-link-blue text-sm">💧</span>
-            <span className="text-charcoal font-medium">Copo (250ml)</span>
+            <span className="text-ink font-medium">Copo (250ml)</span>
           </button>
           <button 
             onClick={() => handleAddHidratacao(0.50)}
-            className="flex-1 min-w-[100px] border border-hairline hover:border-primary p-3.5 text-xs font-semibold rounded-lg flex flex-col items-center gap-1 bg-canvas active-tap cursor-pointer select-none transition-all"
+            className="flex-1 min-w-[100px] border border-line hover:border-accent p-3.5 text-xs font-semibold rounded-lg flex flex-col items-center gap-1 bg-card active-tap cursor-pointer select-none transition-all"
           >
-            <span className="text-link-blue text-base">🥛</span>
-            <span className="text-charcoal font-medium">Garrafa (500ml)</span>
+            <span className="text-action text-base">🥛</span>
+            <span className="text-ink font-medium">Garrafa (500ml)</span>
           </button>
           <button 
             onClick={() => handleAddHidratacao(1.00)}
-            className="flex-1 min-w-[100px] border border-hairline hover:border-primary p-3.5 text-xs font-semibold rounded-lg flex flex-col items-center gap-1 bg-canvas active-tap cursor-pointer select-none transition-all"
+            className="flex-1 min-w-[100px] border border-line hover:border-accent p-3.5 text-xs font-semibold rounded-lg flex flex-col items-center gap-1 bg-card active-tap cursor-pointer select-none transition-all"
           >
-            <span className="text-link-blue text-lg">🧪</span>
-            <span className="text-charcoal font-medium">Garrafa (1L)</span>
+            <span className="text-action text-lg">🧪</span>
+            <span className="text-ink font-medium">Garrafa (1L)</span>
           </button>
         </div>
       </div>
 
-      <div className="bg-canvas border border-hairline rounded-lg p-5 space-y-4 shadow-none">
+      <div className="bg-card border border-line rounded-lg p-5 space-y-4 shadow-none">
         <h3 className="text-xs font-bold font-mono text-slate uppercase tracking-wider pb-1 border-b border-hairline-soft">
           REGISTRAR TREINO FÍSICO DO DIA
         </h3>
@@ -198,13 +198,13 @@ export default function HealthModulePage({ selectedDate, refreshCount }: HealthM
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-2">
-              <label className="text-[11px] font-mono font-medium text-slate block mb-1">Nome da Atividade Realizada</label>
+              <label className="text-[11px] font-mono font-medium text-subtle block mb-1">Nome da Atividade Realizada</label>
               <input 
                 type="text"
                 value={novoTreinoNome}
                 placeholder="Ex: Musculação Peito e Tríceps, HIIT 20min, Ciclismo, etc."
                 onChange={(e) => setNovoTreinoNome(e.target.value)}
-                className="w-full text-xs border border-hairline rounded-md p-2 bg-canvas text-charcoal focus:outline-hidden focus:border-primary focus:ring-1 focus:ring-brand-purple-300 placeholder-stone"
+                className="w-full text-xs border border-line rounded-md p-2 bg-card text-ink focus:outline-hidden focus:border-accent focus:ring-1 focus:ring-accent/30 placeholder-subtle"
               />
             </div>
             <div>
@@ -213,14 +213,14 @@ export default function HealthModulePage({ selectedDate, refreshCount }: HealthM
                 type="number"
                 value={novoTreinoDuracao}
                 onChange={(e) => setNovoTreinoDuracao(parseInt(e.target.value) || 0)}
-                className="w-full text-xs border border-hairline rounded-md p-2 bg-canvas text-charcoal focus:outline-hidden focus:border-primary focus:ring-1 focus:ring-brand-purple-300 placeholder-stone"
+                className="w-full text-xs border border-line rounded-md p-2 bg-card text-ink focus:outline-hidden focus:border-accent focus:ring-1 focus:ring-accent/30 placeholder-subtle"
               />
             </div>
           </div>
 
-          <div className="space-y-2">
+            <div className="space-y-2">
             <div className="flex justify-between items-center text-xs">
-              <span className="font-mono text-slate">Esforço Físico Percebido</span>
+              <span className="font-mono text-subtle">Esforço Físico Percebido</span>
               <span className="font-mono font-bold text-ink">{novoTreinoEsforco}/10</span>
             </div>
             <input 
@@ -237,7 +237,7 @@ export default function HealthModulePage({ selectedDate, refreshCount }: HealthM
           <div className="flex justify-end pt-1">
             <button 
               onClick={handleSalvarTreino}
-              className="bg-primary hover:bg-primary-pressed text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition-colors active-tap cursor-pointer min-h-[44px]"
+              className="bg-accent hover:bg-accent/90 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition-colors active-tap cursor-pointer min-h-[44px]"
             >
               Registrar Aula/Sessão
             </button>
