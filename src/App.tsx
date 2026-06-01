@@ -113,11 +113,11 @@ export default function App() {
   return (
     <div
       id="nexus_app"
-      className="bg-[#F0EFEB] sm:py-6 flex items-center justify-center select-none antialiased text-[#20201D]"
+      className="bg-muted sm:py-6 flex items-center justify-center select-none antialiased text-ink"
       style={{ minHeight: 'var(--app-height, 100dvh)' }}
     >
       <div
-        className="w-full sm:h-[844px] sm:max-w-[390px] sm:rounded-[40px] sm:border-[8px] sm:border-[#20201D] sm:shadow-2xl bg-nexus-bg flex flex-col relative overflow-hidden transition-all duration-300"
+        className="w-full sm:h-[844px] sm:max-w-[390px] sm:rounded-[40px] sm:border-[8px] sm:border-ink sm:shadow-2xl bg-app flex flex-col relative overflow-hidden transition-all duration-300"
         style={{ height: 'var(--app-height, 100dvh)' }}
       >
         {wizardType ? renderWizard() : (

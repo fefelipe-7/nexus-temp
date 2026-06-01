@@ -1,0 +1,28 @@
+export const nexusColors = {
+  app: '#F7F6F1',
+  card: '#FFFFFF',
+  muted: '#F0EFEB',
+  mutedSoft: '#FAFAF9',
+  line: '#E3E0D8',
+  ink: '#20201D',
+  subtle: '#77736B',
+  accent: '#6D5DD3',
+  accentPressed: '#5645D4',
+  accentSoft: '#F1EDFF',
+  accentLine: '#DCD6FA',
+  modules: {
+    mind: '#6D5DD3',
+    health: '#2DA44E',
+    action: '#0969DA',
+    finance: '#9A7D0A',
+    life: '#E06D53',
+  },
+  metrics: {
+    sleep: '#6D5DD3',
+    mood: '#2DA44E',
+    stress: '#E06D53',
+    focus: '#0969DA',
+    water: '#2396F3',
+    anxiety: '#D0355B',
+  },
+} as const;

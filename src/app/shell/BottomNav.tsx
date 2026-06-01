@@ -1,6 +1,7 @@
 import React from 'react';
 import { Home as HomeIcon, ClipboardList, Plus, Lightbulb, LayoutGrid } from 'lucide-react';
 import { useRouter } from '../router/RouterProvider';
+import { cn } from '../../shared/lib/cn';
 import type { TabId } from '../router/routes';
 
 const navItems: { id: TabId | 'registrar'; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
@@ -37,24 +38,25 @@ export function BottomNav() {
                 navigate(pathMap[item.id]);
               }
             }}
-            className={`flex flex-col items-center gap-0.5 flex-1 relative transition-all active-tap cursor-pointer select-none rounded-[999px] min-h-[46px] justify-center ${
+            className={cn(
+              'flex flex-col items-center gap-0.5 flex-1 relative transition-all active-tap cursor-pointer select-none rounded-full min-h-[46px] justify-center',
               isRegistrar
-                ? 'text-[#6D5DD3] font-bold scale-102 bg-[#EEEAFD] max-h-[48px] max-w-[48px] rounded-[999px] border border-[#d3caf7] sm:scale-100'
+                ? 'text-accent font-bold scale-102 bg-accent-soft max-h-[48px] max-w-[48px] rounded-full border border-accent-line sm:scale-100'
                 : active
-                  ? 'text-[#20201D] font-bold py-1 bg-[#F0EFEB]/50 rounded-[999px]'
-                  : 'text-[#77736B] hover:text-[#20201D]'
-            }`}
+                  ? 'text-ink font-bold py-1 bg-muted/50 rounded-full'
+                  : 'text-subtle hover:text-ink'
+            )}
           >
             <div className="shrink-0">
-              <Icon className={`${isRegistrar ? 'w-4.5 h-4.5 text-[#6D5DD3] stroke-[2.7]' : 'w-4.5 h-4.5'}`} />
+              <Icon className={`${isRegistrar ? 'w-4.5 h-4.5 text-accent stroke-[2.7]' : 'w-4.5 h-4.5'}`} />
             </div>
             {!isRegistrar && (
-              <span className={`text-[9.5px] font-bold tracking-tight ${active ? 'text-[#20201D]' : 'text-[#77736B]'}`}>
+              <span className={`text-[9.5px] font-bold tracking-tight ${active ? 'text-ink' : 'text-subtle'}`}>
                 {item.label}
               </span>
             )}
             {isRegistrar && (
-              <span className="text-[7.5px] font-extrabold tracking-tight text-[#6D5DD3]">
+              <span className="text-[7.5px] font-extrabold tracking-tight text-accent">
                 Criar
               </span>
             )}

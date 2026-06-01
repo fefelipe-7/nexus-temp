@@ -140,7 +140,7 @@ export function NexusAlertProvider({ children }: ProviderProps) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.95 }}
               transition={{ type: 'spring', damping: 18, stiffness: 300 }}
-              className="pointer-events-auto shadow-md rounded-lg overflow-hidden border border-[#E3E0D8]/40"
+                className="pointer-events-auto rounded-lg overflow-hidden border border-line/40 shadow-card bg-card"
             >
               <Alert 
                 variant={config.variant} 
@@ -153,10 +153,10 @@ export function NexusAlertProvider({ children }: ProviderProps) {
                   <ActiveIcon />
                 </AlertIcon>
                 <div className="text-left flex-1 min-w-0">
-                  <span className="text-[9.5px] font-mono leading-none tracking-wider text-[#77736B] uppercase block mb-0.5">
+                    <span className="text-[9.5px] font-mono leading-none tracking-wider text-subtle uppercase block mb-0.5">
                     {config.title}
                   </span>
-                  <AlertTitle className="text-[12px] font-bold leading-normal text-[#20201D] break-words">
+                    <AlertTitle className="text-[12px] font-bold leading-normal text-ink break-words">
                     {alert.msg}
                   </AlertTitle>
                 </div>

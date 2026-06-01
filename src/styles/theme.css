@@ -1,0 +1,168 @@
+@theme {
+  /* Base Nexus */
+  --color-app: #F7F6F1;
+  --color-card: #FFFFFF;
+  --color-muted: #F0EFEB;
+  --color-muted-soft: #FAFAF9;
+  --color-line: #E3E0D8;
+  --color-line-soft: #EDE9E4;
+  --color-line-strong: #C8C4BE;
+  --color-surface: #F6F5F4;
+  --color-surface-soft: #FAFAF9;
+  --color-hairline: #E5E3DF;
+  --color-hairline-soft: #EDE9E4;
+  --color-hairline-strong: #C8C4BE;
+
+  --color-ink-deep: #000000;
+  --color-charcoal: #37352F;
+  --color-slate: #5D5B54;
+  --color-steel: #787671;
+  --color-stone: #A4A097;
+
+  --color-ink: #20201D;
+  --color-ink-soft: #37352F;
+  --color-subtle: #77736B;
+  --color-faint: #A9A49A;
+
+  --color-accent: #6D5DD3;
+  --color-accent-pressed: #5645D4;
+  --color-accent-deep: #4534B3;
+  --color-accent-soft: #F1EDFF;
+  --color-accent-line: #DCD6FA;
+
+  /* Shadcn-like semantic compatibility */
+  --color-background: #F7F6F1;
+  --color-foreground: #20201D;
+  --color-primary: #6D5DD3;
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: #F0EFEB;
+  --color-secondary-foreground: #20201D;
+  --color-muted-foreground: #77736B;
+  --color-accent-foreground: #20201D;
+  --color-border: #E3E0D8;
+  --color-input: #E3E0D8;
+  --color-ring: #6D5DD3;
+  --color-destructive: #E06D53;
+  --color-destructive-foreground: #FFFFFF;
+  --color-destructive-soft: #FBEDEA;
+
+  /* Legacy compatibility tokens */
+  --color-canvas: #FFFFFF;
+  --color-surface: #F6F5F4;
+  --color-surface-soft: #FAFAF9;
+  --color-hairline: #E5E3DF;
+  --color-hairline-soft: #EDE9E4;
+  --color-hairline-strong: #C8C4BE;
+  --color-brand-blue: #0075de;
+  --color-brand-orange: #dd5b00;
+  --color-brand-orange-deep: #793400;
+  --color-brand-pink: #ff64c8;
+  --color-brand-pink-deep: #a02e6d;
+  --color-brand-purple: #7b3ff2;
+  --color-brand-purple-300: #d6b6f6;
+  --color-brand-purple-800: #391c57;
+  --color-brand-teal: #2a9d99;
+  --color-brand-green: #1aae39;
+  --color-brand-yellow: #f5d75e;
+  --color-brand-brown: #523410;
+  --color-tint-peach: #ffe8d4;
+  --color-tint-rose: #fde0ec;
+  --color-tint-mint: #d9f3e1;
+  --color-tint-lavender: #e6e0f5;
+  --color-tint-sky: #dcecfa;
+  --color-tint-yellow: #fef7d6;
+  --color-tint-yellow-bold: #f9e79f;
+  --color-tint-cream: #f8f5e8;
+  --color-tint-gray: #f0eeec;
+
+  --color-success: #1aae39;
+  --color-success-foreground: #14802c;
+  --color-success-soft: #EAF6EE;
+  --color-success-alpha: rgba(26, 174, 57, 0.15);
+
+  --color-info: #6D5DD3;
+  --color-info-foreground: #5645d4;
+  --color-info-soft: #F1EDFF;
+  --color-info-alpha: rgba(109, 93, 211, 0.15);
+
+  --color-warning: #f5d75e;
+  --color-warning-foreground: #9a7d0a;
+  --color-warning-soft: #F8F1DE;
+  --color-warning-alpha: rgba(245, 215, 94, 0.15);
+
+  --color-primary-soft: #EAF3FB;
+  --color-primary-alpha: rgba(9, 105, 218, 0.15);
+
+  --color-destructive-alpha: rgba(224, 109, 83, 0.15);
+
+  /* Modules */
+  --color-mind: #6D5DD3;
+  --color-mind-soft: #F1EDFF;
+  --color-mind-line: #DCD6FA;
+
+  --color-health: #2DA44E;
+  --color-health-soft: #EAF6EE;
+  --color-health-line: #CCEADC;
+
+  --color-action: #0969DA;
+  --color-action-soft: #EAF3FB;
+  --color-action-line: #CCE3F5;
+
+  --color-finance: #9A7D0A;
+  --color-finance-soft: #F8F1DE;
+  --color-finance-line: #EAE1BD;
+
+  --color-life: #E06D53;
+  --color-life-soft: #FBEDEA;
+  --color-life-line: #F9D4CF;
+
+  /* Metrics */
+  --color-metric-sleep: #6D5DD3;
+  --color-metric-mood: #2DA44E;
+  --color-metric-stress: #E06D53;
+  --color-metric-focus: #0969DA;
+  --color-metric-water: #2396F3;
+  --color-metric-anxiety: #D0355B;
+
+  /* Typography */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --text-app-title: 0.875rem;
+  --text-card-title: 0.875rem;
+  --text-body: 0.8125rem;
+  --text-caption: 0.6875rem;
+  --text-micro: 0.625rem;
+  --text-nav: 0.59375rem;
+
+  /* Radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 18px;
+  --radius-3xl: 24px;
+  --radius-sheet: 32px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(20, 20, 20, 0.04);
+  --shadow-floating: 0 8px 28px rgba(20, 20, 20, 0.08);
+  --shadow-sheet: 0 -16px 40px rgba(20, 20, 20, 0.12);
+  --shadow-strong: 0 18px 60px rgba(20, 20, 20, 0.18);
+}
+
+@theme inline {
+  --color-nexus-bg: var(--color-app);
+  --color-nexus-surface: var(--color-card);
+  --color-nexus-soft: var(--color-muted);
+  --color-nexus-border: var(--color-line);
+  --color-nexus-text: var(--color-ink);
+  --color-nexus-secondary: var(--color-subtle);
+  --color-nexus-lavender: var(--color-accent-soft);
+  --color-nexus-purple: var(--color-accent);
+  --color-nexus-green: var(--color-health-soft);
+  --color-nexus-blue: var(--color-action-soft);
+  --color-nexus-warm: var(--color-finance-soft);
+}
