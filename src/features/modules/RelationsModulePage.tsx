@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { HeartHandshake, Users, Star, Target, BookOpen, Heart, Sparkles, Plus, ArrowRight, MessageCircle, GraduationCap, ChevronRight, Moon, Dumbbell, Droplets, Brain, Zap, Wallet, TrendingUp } from 'lucide-react';
+import { ExperiencesCard } from '../../shared/cards/ExperiencesCard';
+import { useRotatingVariant } from '../../hooks/useRotatingVariant';
 import { storage } from '../../lib/storage';
 import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
 import ComunidadePage from './ComunidadePage';
@@ -29,6 +31,16 @@ export default function RelationsModulePage({ selectedDate, refreshCount, trigge
   const [showComunidade, setShowComunidade] = useState(false);
   const [showRelacionamentos, setShowRelacionamentos] = useState(false);
   const { showAlert } = useNexusAlert();
+
+  const experienceVariants = [
+    { visualType: 'memoryConstellation' as const, trend: 'up' as const, badgeLabel: 'mês mais vivo', insight: 'Novidade e presença social aparecem como os principais ingredientes das melhores experiências.' },
+    { visualType: 'noveltyOrbit' as const, trend: 'neutral' as const, badgeLabel: 'descobertas sutis', insight: 'Pequenas novidades no dia a dia criam pontos de luz que tornam a semana mais memorável.' },
+    { visualType: 'experienceTrail' as const, trend: 'mixed' as const, badgeLabel: 'altos e baixos', insight: 'A semana teve altos e baixos, mas os momentos de conexão real se destacam no meio do ruído.' },
+    { visualType: 'energySparks' as const, trend: 'up' as const, badgeLabel: 'energia em alta', insight: 'Dias com mais interações sociais geraram picos de energia que alimentaram sua criatividade.' },
+    { visualType: 'routineBreaks' as const, trend: 'down' as const, badgeLabel: 'previsível demais', insight: 'A rotina tomou conta — poucas experiências novas surgiram. Uma pequena mudança pode quebrar o ciclo.' },
+    { visualType: 'memoryDots' as const, trend: 'neutral' as const, badgeLabel: 'memórias dispersas', insight: 'As memórias da semana estão espalhadas como pontos soltos. Revisitar o que marcou pode fazer sentido.' },
+  ];
+  const expVariant = useRotatingVariant(experienceVariants);
 
   if (showComunidade) return <ComunidadePage onBack={() => setShowComunidade(false)} />;
   if (showRelacionamentos) return <RelacionamentosPage onBack={() => setShowRelacionamentos(false)} />;
@@ -240,24 +252,16 @@ export default function RelationsModulePage({ selectedDate, refreshCount, trigge
       </div>
 
       {/* ── Experiências ──────────────────────── */}
-      <div className="bg-card border border-line rounded-2xl p-4 space-y-3">
-        <div className="flex items-start justify-between">
-          <div className="space-y-0.5">
-            <h3 className="text-sm font-bold text-ink">Experiências</h3>
-            <div className="flex items-center gap-1.5">
-              <Star className="w-3.5 h-3.5 text-life" />
-              <span className="text-lg font-bold text-ink font-mono">3</span>
-            </div>
-          </div>
-        </div>
-        <p className="text-[11px] text-subtle leading-relaxed">
-          Você já teve experiências que lhe deram mais confiança ou inspiração?
-        </p>
-        <button className="flex items-center gap-1.5 bg-ink hover:bg-ink/90 text-white text-[11px] font-semibold rounded-xl px-3.5 py-2.5 transition-colors">
-          <Plus className="w-3 h-3" />
-          Adicionar experiência
-        </button>
-      </div>
+      <ExperiencesCard
+        title="Experiências"
+        subtitle="Momentos vividos, memórias e acontecimentos fora da rotina."
+        insight={expVariant.insight}
+        badgeLabel={expVariant.badgeLabel}
+        visualType={expVariant.visualType}
+        trend={expVariant.trend}
+        status="positive"
+        onClick={() => showAlert('Abrindo painel de experiências...', 'relacoes')}
+      />
 
       {/* ── Lazer e hábitos ───────────────────── */}
       <div className="bg-card border border-line rounded-2xl p-4 space-y-3">

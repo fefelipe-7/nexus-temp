@@ -39,6 +39,7 @@ import {
   Eye,
   BookOpen
 } from 'lucide-react';
+import { EmotionMoodCard } from '../../shared/cards/EmotionCard';
 import { storage } from '../../lib/storage';
 import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
 
@@ -292,66 +293,16 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
         </div>
 
         {/* CARD A: Humor e emoções */}
-        <div 
+        <EmotionMoodCard
+          title="Humor e emoções"
+          subtitle="Estado emocional, emoções sentidas e variações ao longo do dia."
+          insight="Seu humor tende a cair no fim da tarde, especialmente em dias de maior esforço mental."
+          badgeLabel="estável com quedas"
+          status="stable"
+          visualType="moodWave"
+          trend="mixed"
           onClick={() => handleSubmoduleClick('Humor e emoções')}
-          className="rounded-[28px] border border-[#E4DCD0]/60 p-5 space-y-4 cursor-pointer hover:border-[#C98C86]/50 transition-all bg-gradient-to-br from-[#FFFDF8] to-[#C98C86]/5"
-        >
-          <div className="flex justify-between items-start">
-            <div className="w-8 h-8 rounded-full bg-[#C98C86]/10 text-[#C98C86] flex items-center justify-center">
-              <Smile className="w-4 h-4 stroke-[2]" />
-            </div>
-            <ChevronRight className="w-4 h-4 text-[#A49D94]" />
-          </div>
-
-          <div className="space-y-1">
-            <h3 className="text-sm font-bold text-[#242320]">Humor e emoções</h3>
-            <p className="text-xs text-[#746F68] leading-relaxed">
-              Estado emocional, emoções sentidas e variações ao longo do dia.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2.5 py-1">
-            <div className="bg-[#FFFDF8]/70 border border-[#E4DCD0]/40 rounded-xl p-2.5">
-              <span className="text-[10px] text-[#A49D94] uppercase tracking-wider block font-semibold">Humor médio</span>
-              <span className="text-base font-bold text-[#242320]">6.8</span>
-            </div>
-            <div className="bg-[#FFFDF8]/70 border border-[#E4DCD0]/40 rounded-xl p-2.5">
-              <span className="text-[10px] text-[#A49D94] uppercase tracking-wider block font-semibold">Emoção dominante</span>
-              <span className="text-base font-bold text-[#242320] truncate block">Cansaço</span>
-            </div>
-          </div>
-
-          {/* Mini visualização: Linha de humor */}
-          <div className="space-y-2 py-1">
-            <svg viewBox="0 0 200 50" className="w-full h-12">
-              <path d="M 10 50 L 10 30 Q 40 28 70 35 T 130 32 T 190 20 L 190 50 Z" fill="#C98C86" fillOpacity="0.05" />
-              <path d="M 10 30 Q 40 28 70 35 T 130 32 T 190 20" fill="none" stroke="#C98C86" strokeWidth="2.5" strokeLinecap="round" />
-              <circle cx="10" cy="30" r="3" fill="#FFFDF8" stroke="#C98C86" strokeWidth="1.5" />
-              <circle cx="40" cy="28" r="3" fill="#FFFDF8" stroke="#C98C86" strokeWidth="1.5" />
-              <circle cx="70" cy="35" r="3" fill="#FFFDF8" stroke="#C98C86" strokeWidth="1.5" />
-              <circle cx="100" cy="42" r="3" fill="#FFFDF8" stroke="#C98C86" strokeWidth="1.5" />
-              <circle cx="130" cy="32" r="3" fill="#FFFDF8" stroke="#C98C86" strokeWidth="1.5" />
-              <circle cx="160" cy="22" r="3" fill="#FFFDF8" stroke="#C98C86" strokeWidth="1.5" />
-              <circle cx="190" cy="20" r="3" fill="#FFFDF8" stroke="#C98C86" strokeWidth="1.5" />
-            </svg>
-            <div className="flex gap-1.5 justify-center">
-              {['calma', 'cansaço', 'irritação leve'].map((chip, i) => (
-                <span key={i} className="text-[9px] bg-[#C98C86]/10 text-[#C98C86] font-bold px-2 py-0.5 rounded-full">
-                  {chip}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <p className="text-xs text-[#746F68] leading-relaxed border-t border-[#E4DCD0]/30 pt-3">
-            “Seu humor tende a cair no fim da tarde, especialmente em dias de maior esforço mental.”
-          </p>
-
-          <div className="flex justify-between items-center text-[10px] font-bold text-[#C98C86] uppercase tracking-wider font-mono pt-1">
-            <span>HUMOR</span>
-            <span className="px-2.5 py-0.5 rounded-md bg-[#C98C86]/10">estável com quedas</span>
-          </div>
-        </div>
+        />
 
         {/* CARD B: Estresse e ansiedade */}
         <div 
