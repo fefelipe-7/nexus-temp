@@ -361,7 +361,7 @@ const ExperiencesCard = forwardRef<HTMLButtonElement, ExperiencesCardProps>(
         ref={ref}
         onClick={onClick}
         className={cn(
-          'w-full max-w-[430px] min-h-[240px] rounded-[32px] p-6 border text-left',
+          'w-full min-h-[240px] rounded-[32px] p-6 border text-left',
           'bg-gradient-to-br from-[#FAF8F4] to-[#F3F7F6]',
           'border-[rgba(103,130,137,0.18)]',
           'shadow-sm hover:shadow-md transition-all duration-300',
@@ -378,10 +378,10 @@ const ExperiencesCard = forwardRef<HTMLButtonElement, ExperiencesCardProps>(
               <Sparkles className="w-5 h-5 text-[#6F8F98]" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-[17px] font-semibold text-[#2F2D2C] mb-1 leading-tight">
+              <h3 className="text-sm font-bold text-[#2F2D2C] mb-1 leading-tight">
                 {title}
               </h3>
-              <p className="text-[13px] text-[#8A8B86] leading-snug">
+              <p className="text-caption text-[#8A8B86] leading-snug">
                 {subtitle}
               </p>
             </div>
@@ -391,11 +391,11 @@ const ExperiencesCard = forwardRef<HTMLButtonElement, ExperiencesCardProps>(
 
         <div className="flex items-end justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <p className="text-[14px] text-[#5F615E] leading-relaxed mb-4">
+            <p className="text-caption text-[#5F615E] leading-relaxed mb-4">
               {insight}
             </p>
             <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-[rgba(111,143,152,0.08)] border border-[rgba(111,143,152,0.18)]">
-              <span className="text-[13px] font-medium text-[#6F8F98]">
+              <span className="text-caption font-medium text-[#6F8F98]">
                 {badgeLabel}
               </span>
             </div>

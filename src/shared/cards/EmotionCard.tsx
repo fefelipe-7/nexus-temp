@@ -270,7 +270,7 @@ const EmotionMoodCard = React.forwardRef<HTMLButtonElement, EmotionMoodCardProps
         ref={ref}
         onClick={onClick}
         className={cn(
-          'w-full max-w-[430px] min-h-[240px]',
+          'w-full min-h-[240px]',
           'rounded-[32px] p-6',
           'border',
           'text-left',
@@ -299,13 +299,13 @@ const EmotionMoodCard = React.forwardRef<HTMLButtonElement, EmotionMoodCardProps
               </div>
               <div className="flex-1 min-w-0">
                 <h3
-                  className="text-[24px] font-[650] leading-tight mb-1"
+                  className="text-sm font-bold leading-tight mb-1"
                   style={{ color: emotionMoodTheme.title }}
                 >
                   {title}
                 </h3>
                 <p
-                  className="text-[15px] leading-relaxed"
+                  className="text-caption leading-relaxed"
                   style={{ color: emotionMoodTheme.subtitle }}
                 >
                   {subtitle}
@@ -320,16 +320,16 @@ const EmotionMoodCard = React.forwardRef<HTMLButtonElement, EmotionMoodCardProps
 
           <div className="flex gap-4 flex-1 items-start">
             <div className="flex-1 flex flex-col justify-between min-h-[120px]">
-              <p
-                className="text-[17px] leading-[1.5] mb-4"
-                style={{ color: emotionMoodTheme.body }}
-              >
-                {insight}
-              </p>
+                <p
+                  className="text-caption leading-relaxed mb-4"
+                  style={{ color: emotionMoodTheme.body }}
+                >
+                  {insight}
+                </p>
 
               <div className="inline-flex self-start">
                 <span
-                  className="px-4 py-1.5 rounded-full text-[14px] font-medium border"
+                  className="px-4 py-1.5 rounded-full text-caption font-medium border"
                   style={{
                     backgroundColor: emotionMoodTheme.badgeBg,
                     borderColor: emotionMoodTheme.badgeBorder,
