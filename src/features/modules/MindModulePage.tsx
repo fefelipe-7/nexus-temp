@@ -142,138 +142,106 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
 
   return (
     <div 
-      className="space-y-7 -mx-5 px-5 -mt-6 pt-5 pb-32 text-[#242320] font-sans" 
-      style={{ backgroundColor: '#F6F3ED' }}
+      className="space-y-7 -mx-5 px-5 -mt-6 pt-5 pb-32 text-ink font-sans bg-app"
     >
       {/* 1. Header superior */}
       <div className="flex justify-between items-start pt-2">
         <div className="space-y-1 max-w-[78%]">
-          <span className="text-[11px] font-semibold tracking-wider text-[#746F68] uppercase font-mono">MÓDULO INTERNO</span>
-          <h1 className="text-[34px] font-bold text-[#242320] tracking-tight leading-none">Mente</h1>
-          <p className="text-sm text-[#746F68] mt-1.5 leading-relaxed">
+          <span className="text-caption font-semibold tracking-wider text-subtle uppercase font-mono">MÓDULO INTERNO</span>
+          <h1 className="text-[34px] font-bold text-ink tracking-tight leading-none">Mente</h1>
+          <p className="text-body text-subtle mt-1.5 leading-relaxed">
             Humor, foco, ansiedade, carga mental e padrões internos.
           </p>
         </div>
         <button 
           onClick={() => showAlert('Opções de visualização filtradas.', 'mente')}
-          className="w-10 h-10 rounded-full bg-[#FFFDF8] border border-[#E4DCD0] flex items-center justify-center shadow-xs active-tap text-[#242320] transition-colors cursor-pointer"
+          className="w-10 h-10 rounded-full bg-card border border-line flex items-center justify-center shadow-xs active-tap text-ink transition-colors cursor-pointer"
         >
           <SlidersHorizontal className="w-4 h-4 stroke-[1.5]" />
         </button>
       </div>
       <div>
-        <span className="inline-flex items-center px-3.5 py-1 rounded-full text-xs font-semibold bg-[#EEE8DD] text-[#746F68] border border-[#E4DCD0]/50">
+        <span className="inline-flex items-center px-3.5 py-1 rounded-full text-caption font-semibold bg-muted text-subtle border border-line/50">
           Últimos 30 dias
         </span>
       </div>
 
       {/* 2. Card principal: “Estado mental recente” */}
-      <div 
-        className="rounded-[30px] border border-[#E4DCD0]/60 p-5 space-y-6 relative overflow-hidden shadow-xs"
-        style={{
-          background: 'linear-gradient(135deg, #FFFDF8 0%, #FFFDF8 60%, rgba(102, 124, 134, 0.08) 100%)'
-        }}
-      >
-        {/* Mancha translúcida */}
-        <div className="absolute top-0 right-0 w-24 h-24 bg-[#667C86]/12 rounded-full blur-2xl pointer-events-none" />
-
+      <div className="rounded-sheet border border-mind-line p-5 space-y-6 relative overflow-hidden shadow-card bg-mind-soft">
         <div className="flex justify-between items-start">
           <div className="space-y-1 max-w-[80%]">
-            <h3 className="text-base font-bold text-[#242320] flex items-center gap-1.5">
-              <Brain className="w-4 h-4 text-[#667C86] animate-pulse" />
+            <h3 className="text-sm font-bold text-ink flex items-center gap-1.5">
+              <Brain className="w-4 h-4 text-mind animate-pulse" />
               Estado mental recente
             </h3>
-            <p className="text-xs text-[#746F68] leading-relaxed">
+            <p className="text-caption text-subtle leading-relaxed">
               Sua mente parece estável em alguns momentos, mas com sinais de carga mental acumulada e foco oscilante.
             </p>
           </div>
-          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#667C86]/10 text-[#667C86]">
+          <span className="text-micro uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-mind/10 text-mind">
             clareza oscilante
           </span>
         </div>
 
         {/* Métrica principal */}
-        <div className="border-t border-[#E4DCD0]/40 pt-4 flex flex-col">
-          <span className="text-[28px] font-bold text-[#242320] leading-none">Moderado</span>
-          <span className="text-[10px] text-[#A49D94] uppercase tracking-wider font-semibold mt-1">equilíbrio mental percebido</span>
+        <div className="border-t border-mind-line/40 pt-4 flex flex-col">
+          <span className="text-[28px] font-bold text-ink leading-none">Moderado</span>
+          <span className="text-micro text-faint uppercase tracking-wider font-semibold mt-1">equilíbrio mental percebido</span>
         </div>
 
         {/* Métricas internas em grade 2x2 */}
-        <div className="grid grid-cols-2 gap-3 border-t border-[#E4DCD0]/40 pt-4">
+        <div className="grid grid-cols-2 gap-3 border-t border-mind-line/40 pt-4">
           <div className="space-y-1">
-            <span className="text-[11px] text-[#746F68] font-medium flex items-center gap-1">
+            <span className="text-caption text-subtle font-medium flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-[#C98C86]" /> Humor
             </span>
-            <div className="text-xl font-bold text-[#242320]">6.8</div>
-            <span className="text-[10px] text-[#A49D94] block">média do período</span>
+            <div className="text-xl font-bold text-ink">6.8</div>
+            <span className="text-micro text-faint block">média do período</span>
           </div>
           <div className="space-y-1">
-            <span className="text-[11px] text-[#746F68] font-medium flex items-center gap-1">
+            <span className="text-caption text-subtle font-medium flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-[#B87961]" /> Estresse
             </span>
-            <div className="text-xl font-bold text-[#242320]">Alto leve</div>
-            <span className="text-[10px] text-[#A49D94] block">picos em dias úteis</span>
+            <div className="text-xl font-bold text-ink">Alto leve</div>
+            <span className="text-micro text-faint block">picos em dias úteis</span>
           </div>
-          <div className="space-y-1 border-t border-[#E4DCD0]/20 pt-3">
-            <span className="text-[11px] text-[#746F68] font-medium flex items-center gap-1">
+          <div className="space-y-1 border-t border-mind-line/20 pt-3">
+            <span className="text-caption text-subtle font-medium flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-[#6F8F98]" /> Foco
             </span>
-            <div className="text-xl font-bold text-[#242320]">Oscilante</div>
-            <span className="text-[10px] text-[#A49D94] block">melhor pela manhã</span>
+            <div className="text-xl font-bold text-ink">Oscilante</div>
+            <span className="text-micro text-faint block">melhor pela manhã</span>
           </div>
-          <div className="space-y-1 border-t border-[#E4DCD0]/20 pt-3">
-            <span className="text-[11px] text-[#746F68] font-medium flex items-center gap-1">
+          <div className="space-y-1 border-t border-mind-line/20 pt-3">
+            <span className="text-caption text-subtle font-medium flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-[#8F8798]" /> Carga mental
             </span>
-            <div className="text-xl font-bold text-[#242320]">74%</div>
-            <span className="text-[10px] text-[#A49D94] block">acúmulo recente</span>
+            <div className="text-xl font-bold text-ink">74%</div>
+            <span className="text-micro text-faint block">acúmulo recente</span>
           </div>
         </div>
 
         {/* Mini visualização: "Mapa mental do período" */}
-        <div className="border-t border-[#E4DCD0]/40 pt-4 flex flex-col items-center">
-          <span className="text-[11px] text-[#A49D94] uppercase tracking-wider font-semibold mb-3">Mapa mental do período</span>
+        <div className="border-t border-mind-line/40 pt-4 flex flex-col items-center">
+          <span className="text-caption text-faint uppercase tracking-wider font-semibold mb-3">Mapa mental do período</span>
           
           <svg viewBox="0 0 200 200" className="w-44 h-44 mx-auto relative z-10">
-            {/* Central glowing background blur */}
             <circle cx="100" cy="100" r="30" fill="#667C86" fillOpacity="0.06" />
-            
-            {/* Carga Mental - Dense outer circle (radius 78) */}
             <circle cx="100" cy="100" r="78" fill="none" stroke="#8F8798" strokeWidth="4.5" strokeOpacity="0.35" />
             <circle cx="100" cy="100" r="82" fill="none" stroke="#8F8798" strokeWidth="1" strokeOpacity="0.5" strokeDasharray="3 3" />
-            
-            {/* Foco - Irregular segmentado (radius 64) */}
             <circle cx="100" cy="100" r="64" fill="none" stroke="#6F8F98" strokeWidth="2.5" strokeDasharray="12 8 4 6 16 10" strokeLinecap="round" strokeOpacity="0.9" />
-            
-            {/* Estresse - 2 peaks (radius 50) */}
             <path 
-              d="M 100 50 
-                 C 120 50, 135 35, 145 55 
-                 C 155 75, 150 90, 150 100 
-                 C 150 110, 165 125, 145 135 
-                 C 125 145, 110 150, 100 150 
-                 C 90 150, 75 145, 65 135 
-                 C 55 125, 50 110, 50 100 
-                 C 50 90, 45 75, 55 65 
-                 C 65 55, 80 50, 100 50 Z" 
-              fill="none" 
-              stroke="#B87961" 
-              strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeOpacity="0.95" 
+              d="M 100 50 C 120 50, 135 35, 145 55 C 155 75, 150 90, 150 100 C 150 110, 165 125, 145 135 C 125 145, 110 150, 100 150 C 90 150, 75 145, 65 135 C 55 125, 50 110, 50 100 C 50 90, 45 75, 55 65 C 65 55, 80 50, 100 50 Z" 
+              fill="none" stroke="#B87961" strokeWidth="2.5" strokeLinecap="round" strokeOpacity="0.95" 
             />
-            
-            {/* Humor - Stable smooth circle (radius 36) */}
             <circle cx="100" cy="100" r="36" fill="none" stroke="#C98C86" strokeWidth="2.2" strokeOpacity="0.9" />
-            
-            {/* Central core node */}
             <circle cx="100" cy="100" r="22" fill="#FFFDF8" stroke="#E4DCD0" strokeWidth="1.5" className="shadow-xs" />
             <circle cx="100" cy="100" r="6" fill="#667C86" />
           </svg>
         </div>
 
         {/* Rodapé do card */}
-        <div className="border-t border-[#E4DCD0]/40 pt-3 text-[11px] text-[#746F68] leading-relaxed italic text-center">
+        <div className="border-t border-mind-line/40 pt-3 text-caption text-subtle leading-relaxed italic text-center">
           “Carga mental e sono irregular parecem ter influenciado sua clareza nos últimos dias.”
         </div>
       </div>
@@ -281,8 +249,8 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
       {/* 3. Seção de entrada rápida: “Registrar estado mental” */}
       <div className="space-y-3">
         <div>
-          <h2 className="text-lg font-bold text-[#242320]">Registrar estado mental</h2>
-          <p className="text-xs text-[#746F68]">Capture emoções, pensamentos e sinais internos antes que eles se misturem.</p>
+          <h2 className="text-lg font-bold text-ink">Registrar estado mental</h2>
+          <p className="text-caption text-subtle">Capture emoções, pensamentos e sinais internos antes que eles se misturem.</p>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -301,9 +269,9 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
               <button
                 key={idx}
                 onClick={() => handleQuickRegisterClick(item.title)}
-                className="bg-[#FFFDF8] border border-[#E4DCD0] rounded-[20px] p-3 text-left relative h-24 flex flex-col justify-between hover:border-[#667C86]/50 active-tap transition-all cursor-pointer shadow-none"
+                className="bg-card border border-line rounded-xl p-3 text-left relative h-24 flex flex-col justify-between hover:border-mind/50 active-tap transition-all cursor-pointer"
               >
-                <span className="absolute top-3 right-3 text-xs font-bold text-[#A49D94]">+</span>
+                <span className="absolute top-3 right-3 text-xs font-bold text-faint">+</span>
                 <div 
                   className="w-7 h-7 rounded-full flex items-center justify-center"
                   style={{ backgroundColor: `${item.color}15`, color: item.color }}
@@ -311,8 +279,8 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
                   <Icon className="w-4 h-4 stroke-[2]" />
                 </div>
                 <div className="min-w-0">
-                  <h4 className="text-xs font-bold text-[#242320] leading-tight">{item.title}</h4>
-                  <p className="text-[10px] text-[#A49D94] truncate">{item.sub}</p>
+                  <h4 className="text-caption font-bold text-ink leading-tight">{item.title}</h4>
+                  <p className="text-micro text-faint truncate">{item.sub}</p>
                 </div>
               </button>
             );
@@ -321,26 +289,23 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
       </div>
 
       {/* 4. Insight contextual destacado */}
-      <div 
-        className="rounded-[24px] border-l-4 border-[#8F8798] p-5 space-y-3.5"
-        style={{ backgroundColor: '#ECEBF0', borderTop: '1px solid #E4DCD0/30', borderRight: '1px solid #E4DCD0/30', borderBottom: '1px solid #E4DCD0/30' }}
-      >
+      <div className="rounded-sheet border border-mind-line bg-mind-soft p-5 space-y-3.5">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-[#8F8798]" />
-          <span className="text-[10px] uppercase font-bold tracking-wider text-[#8F8798] font-mono">INSIGHT</span>
+          <Sparkles className="w-4 h-4 text-mind" />
+          <span className="text-micro uppercase font-bold tracking-wider text-mind font-mono">INSIGHT</span>
         </div>
         <div className="space-y-1">
-          <h4 className="text-sm font-bold text-[#242320]">Carga mental está afetando sua clareza</h4>
-          <p className="text-xs text-[#746F68] leading-relaxed">
+          <h4 className="text-sm font-bold text-ink">Carga mental está afetando sua clareza</h4>
+          <p className="text-caption text-subtle leading-relaxed">
             Nos dias em que você registrou mais esforço percebido, sua clareza mental e motivação apareceram mais instáveis.
           </p>
         </div>
-        <p className="text-[11px] text-[#A49D94] font-medium italic">
+        <p className="text-caption text-faint font-medium italic">
           “3 dos últimos 5 dias tiveram carga mental alta e foco abaixo da média.”
         </p>
         <button 
           onClick={() => showAlert('Exibindo relatórios de sobrecarga...', 'mente')}
-          className="inline-flex items-center px-4 py-1.5 bg-[#FFFDF8] hover:bg-[#FFFDF8]/80 text-[#8F8798] text-[11px] font-bold rounded-full border border-[#E4DCD0] active-tap transition-colors cursor-pointer"
+          className="inline-flex items-center px-4 py-1.5 bg-card hover:bg-accent/5 text-mind hover:text-mind text-caption font-bold rounded-full border border-line active-tap transition-colors cursor-pointer"
         >
           Ver padrões de sobrecarga
         </button>
@@ -349,8 +314,8 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
       {/* 5. Seção: “Mapa da mente” (com cards A-H e insights espalhados) */}
       <div className="space-y-5">
         <div>
-          <h2 className="text-lg font-bold text-[#242320]">Mapa da mente</h2>
-          <p className="text-xs text-[#746F68]">Cada área abaixo mostra um recorte dos seus estados internos, padrões e práticas recentes.</p>
+          <h2 className="text-lg font-bold text-ink">Mapa da mente</h2>
+          <p className="text-caption text-subtle">Cada área abaixo mostra um recorte dos seus estados internos, padrões e práticas recentes.</p>
         </div>
 
         {/* CARD A: Humor e emoções */}
@@ -377,16 +342,13 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
         />
 
         {/* Insight menor 1 (Posicionado entre B e C) */}
-        <div 
-          className="rounded-[20px] p-4 flex gap-3.5 items-start border border-[#B87961]/10"
-          style={{ backgroundColor: 'rgba(184, 121, 97, 0.08)' }}
-        >
+        <div className="rounded-2xl p-4 flex gap-3.5 items-start border border-line bg-card">
           <div className="w-7 h-7 rounded-full bg-[#B87961]/10 flex items-center justify-center shrink-0">
             <Activity className="w-4 h-4 text-[#B87961]" />
           </div>
           <div className="space-y-0.5">
-            <span className="text-[9px] font-bold tracking-wider text-[#B87961] uppercase font-mono">PADRÃO</span>
-            <p className="text-xs text-[#746F68] leading-relaxed font-medium">
+            <span className="text-micro font-bold tracking-wider text-[#B87961] uppercase font-mono">PADRÃO</span>
+            <p className="text-caption text-subtle leading-relaxed font-medium">
               “Quando o estresse sobe pela manhã, o foco da tarde tende a ficar mais fragmentado.”
             </p>
           </div>
@@ -415,16 +377,13 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
         />
 
         {/* Insight menor 2 (Posicionado entre D e E) */}
-        <div 
-          className="rounded-[20px] p-4 flex gap-3.5 items-start border border-[#C9A25D]/10"
-          style={{ backgroundColor: 'rgba(201, 162, 93, 0.08)' }}
-        >
+        <div className="rounded-2xl p-4 flex gap-3.5 items-start border border-line bg-card">
           <div className="w-7 h-7 rounded-full bg-[#C9A25D]/10 flex items-center justify-center shrink-0">
             <Flame className="w-4 h-4 text-[#C9A25D]" />
           </div>
           <div className="space-y-0.5">
-            <span className="text-[9px] font-bold tracking-wider text-[#C9A25D] uppercase font-mono">LEITURA</span>
-            <p className="text-xs text-[#746F68] leading-relaxed font-medium">
+            <span className="text-micro font-bold tracking-wider text-[#C9A25D] uppercase font-mono">LEITURA</span>
+            <p className="text-caption text-subtle leading-relaxed font-medium">
               “Sua motivação parece depender menos de energia alta e mais de clareza sobre o próximo passo.”
             </p>
           </div>
@@ -492,21 +451,18 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
         </div>
 
         {/* Insight menor 3 (Posicionado entre F e G) */}
-        <div 
-          className="rounded-[20px] p-4 flex gap-3.5 items-start border border-[#9B8FB5]/10"
-          style={{ backgroundColor: 'rgba(155, 143, 181, 0.08)' }}
-        >
+        <div className="rounded-2xl p-4 flex gap-3.5 items-start border border-line bg-card">
           <div className="w-7 h-7 rounded-full bg-[#9B8FB5]/10 flex items-center justify-center shrink-0">
             <PenTool className="w-4 h-4 text-[#9B8FB5]" />
           </div>
           <div className="space-y-1">
-            <span className="text-[9px] font-bold tracking-wider text-[#9B8FB5] uppercase font-mono">CONEXÃO</span>
-            <p className="text-xs text-[#746F68] leading-relaxed font-medium">
+            <span className="text-micro font-bold tracking-wider text-[#9B8FB5] uppercase font-mono">CONEXÃO</span>
+            <p className="text-caption text-subtle leading-relaxed font-medium">
               “O journal tem revelado padrões que aparecem depois como gatilhos de autocobrança.”
             </p>
             <button 
               onClick={() => showAlert('Carregando mapa de conexões...', 'mente')}
-              className="text-[10px] font-bold text-[#9B8FB5] hover:underline block pt-1 text-left"
+              className="text-micro font-bold text-[#9B8FB5] hover:underline block pt-1 text-left"
             >
               Ver padrões →
             </button>
@@ -536,16 +492,13 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
         />
 
         {/* Insight menor 4 (Posicionado após H) */}
-        <div 
-          className="rounded-[20px] p-4 flex gap-3.5 items-start border border-[#748E7C]/10"
-          style={{ backgroundColor: 'rgba(116, 142, 120, 0.08)' }}
-        >
+        <div className="rounded-2xl p-4 flex gap-3.5 items-start border border-line bg-card">
           <div className="w-7 h-7 rounded-full bg-[#748E7C]/10 flex items-center justify-center shrink-0">
             <Leaf className="w-4 h-4 text-[#748E7C]" />
           </div>
           <div className="space-y-0.5">
-            <span className="text-[9px] font-bold tracking-wider text-[#748E7C] uppercase font-mono">EFEITO</span>
-            <p className="text-xs text-[#746F68] leading-relaxed font-medium">
+            <span className="text-micro font-bold tracking-wider text-[#748E7C] uppercase font-mono">EFEITO</span>
+            <p className="text-caption text-subtle leading-relaxed font-medium">
               “Práticas curtas parecem funcionar melhor quando feitas antes do pico de ansiedade, não depois.”
             </p>
           </div>
@@ -555,27 +508,27 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
       {/* 7. Seção: “Relações com outros módulos” */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-lg font-bold text-[#242320]">Conexões com sua vida</h2>
-          <p className="text-xs text-[#746F68]">Alguns sinais mentais aparecem ligados a sono, tarefas, relações e hábitos.</p>
+          <h2 className="text-lg font-bold text-ink">Conexões com sua vida</h2>
+          <p className="text-caption text-subtle">Alguns sinais mentais aparecem ligados a sono, tarefas, relações e hábitos.</p>
         </div>
 
         <div className="space-y-3">
           {/* Card 1: Humor vs Sono */}
-          <div className="bg-[#FFFDF8] border border-[#E4DCD0] rounded-[22px] p-4 flex items-center justify-between gap-3 shadow-none">
+          <div className="bg-card border border-line rounded-sheet p-4 flex items-center justify-between gap-3">
             <div className="space-y-1.5 max-w-[62%]">
-              <span className="text-[10px] font-bold text-[#C98C86] uppercase bg-[#C98C86]/10 px-2 py-0.5 rounded-full inline-block">
+              <span className="text-micro font-bold text-[#C98C86] uppercase bg-[#C98C86]/10 px-2 py-0.5 rounded-full inline-block">
                 sono influencia humor
               </span>
-              <h4 className="text-sm font-bold text-[#242320] leading-tight">Humor vs sono</h4>
-              <p className="text-[11px] text-[#746F68] leading-relaxed">
+              <h4 className="text-sm font-bold text-ink leading-tight">Humor vs sono</h4>
+              <p className="text-caption text-subtle leading-relaxed">
                 Seu humor ficou mais instável após noites com sono curto ou irregular.
               </p>
-              <div className="text-xs font-bold text-[#242320]">
+              <div className="text-caption font-bold text-ink">
                 queda média: <span className="text-[#C98C86]">-14%</span>
               </div>
             </div>
             
-            <div className="shrink-0 flex items-center justify-center bg-[#EEE8DD]/30 rounded-xl p-1.5 border border-[#E4DCD0]/30">
+            <div className="shrink-0 flex items-center justify-center bg-muted/50 rounded-xl p-1.5 border border-line/50">
               <svg viewBox="0 0 100 40" className="w-20 h-10">
                 <path d="M 5 10 L 25 8 L 45 30 L 65 12 L 85 10" fill="none" stroke="#6F8F98" strokeWidth="1.5" strokeDasharray="2 2" />
                 <path d="M 5 12 L 25 10 L 45 35 L 65 18 L 85 14" fill="none" stroke="#C98C86" strokeWidth="2" />
@@ -584,21 +537,21 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
           </div>
 
           {/* Card 2: Estresse vs tarefas */}
-          <div className="bg-[#FFFDF8] border border-[#E4DCD0] rounded-[22px] p-4 flex items-center justify-between gap-3 shadow-none">
+          <div className="bg-card border border-line rounded-sheet p-4 flex items-center justify-between gap-3">
             <div className="space-y-1.5 max-w-[62%]">
-              <span className="text-[10px] font-bold text-[#B87961] uppercase bg-[#B87961]/10 px-2 py-0.5 rounded-full inline-block">
+              <span className="text-micro font-bold text-[#B87961] uppercase bg-[#B87961]/10 px-2 py-0.5 rounded-full inline-block">
                 sobrecarga operacional
               </span>
-              <h4 className="text-sm font-bold text-[#242320] leading-tight">Estresse vs tarefas</h4>
-              <p className="text-[11px] text-[#746F68] leading-relaxed">
+              <h4 className="text-sm font-bold text-ink leading-tight">Estresse vs tarefas</h4>
+              <p className="text-caption text-subtle leading-relaxed">
                 Dias com maior carga de tarefas concentraram mais registros de tensão.
               </p>
-              <div className="text-xs font-bold text-[#242320]">
+              <div className="text-caption font-bold text-ink">
                 <span className="text-[#B87961]">3 picos recentes</span>
               </div>
             </div>
 
-            <div className="shrink-0 flex items-center justify-center bg-[#EEE8DD]/30 rounded-xl p-1.5 border border-[#E4DCD0]/30">
+            <div className="shrink-0 flex items-center justify-center bg-muted/50 rounded-xl p-1.5 border border-line/50">
               <svg viewBox="0 0 100 40" className="w-20 h-10">
                 <rect x="15" y="15" width="8" height="25" fill="#8F8798" fillOpacity="0.2" rx="1" />
                 <rect x="35" y="5" width="8" height="35" fill="#8F8798" fillOpacity="0.2" rx="1" />
@@ -610,21 +563,21 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
           </div>
 
           {/* Card 3: Motivação vs propósito */}
-          <div className="bg-[#FFFDF8] border border-[#E4DCD0] rounded-[22px] p-4 flex items-center justify-between gap-3 shadow-none">
+          <div className="bg-card border border-line rounded-sheet p-4 flex items-center justify-between gap-3">
             <div className="space-y-1.5 max-w-[62%]">
-              <span className="text-[10px] font-bold text-[#C9A25D] uppercase bg-[#C9A25D]/10 px-2 py-0.5 rounded-full inline-block">
+              <span className="text-micro font-bold text-[#C9A25D] uppercase bg-[#C9A25D]/10 px-2 py-0.5 rounded-full inline-block">
                 sentido gera impulso
               </span>
-              <h4 className="text-sm font-bold text-[#242320] leading-tight">Motivação vs propósito</h4>
-              <p className="text-[11px] text-[#746F68] leading-relaxed">
+              <h4 className="text-sm font-bold text-ink leading-tight">Motivação vs propósito</h4>
+              <p className="text-caption text-subtle leading-relaxed">
                 A motivação melhora quando as ações do dia parecem conectadas a valores pessoais.
               </p>
-              <div className="text-xs font-bold text-[#242320] text-[#748E7C]">
+              <div className="text-caption font-bold text-ink text-[#748E7C]">
                 impacto positivo
               </div>
             </div>
 
-            <div className="shrink-0 flex items-center justify-center bg-[#EEE8DD]/30 rounded-xl p-1.5 border border-[#E4DCD0]/30">
+            <div className="shrink-0 flex items-center justify-center bg-muted/50 rounded-xl p-1.5 border border-line/50">
               <svg viewBox="0 0 100 40" className="w-20 h-10">
                 <path d="M 20 30 A 30 30 0 0 1 80 30" fill="none" stroke="#C9A25D" strokeWidth="2" strokeDasharray="3 2" />
                 <path d="M 20 30 A 30 30 0 0 1 80 30" fill="none" stroke="#748E7C" strokeWidth="1.5" />
@@ -639,103 +592,102 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
       {/* 8. Seção: “Linha do tempo mental” */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-lg font-bold text-[#242320]">Linha do tempo mental</h2>
-          <p className="text-xs text-[#746F68]">Registros que ajudaram a formar seu estado interno recente.</p>
+          <h2 className="text-lg font-bold text-ink">Linha do tempo mental</h2>
+          <p className="text-caption text-subtle">Registros que ajudaram a formar seu estado interno recente.</p>
         </div>
 
-        <div className="relative pl-6 space-y-4 border-l border-[#E4DCD0]">
+        <div className="relative pl-6 space-y-4 border-l border-line">
           {/* Evento 1 */}
           <div className="relative">
-            {/* Ponto na linha */}
-            <div className="absolute -left-[30px] top-1.5 w-4 h-4 rounded-full border-4 border-[#F6F3ED] bg-[#B87961]" />
+            <div className="absolute -left-[30px] top-1.5 w-4 h-4 rounded-full border-4 border-app bg-[#B87961]" />
             
-            <div className="bg-[#FFFDF8] border-2 border-[#B87961]/30 rounded-2xl p-3.5 space-y-1 shadow-xs">
+            <div className="bg-card border-2 border-[#B87961]/30 rounded-sheet p-3.5 space-y-1 shadow-card">
               <div className="flex justify-between items-start">
-                <span className="text-[10px] text-[#A49D94] uppercase tracking-wider font-semibold">Estresse e ansiedade</span>
-                <span className="text-[10px] text-[#746F68] font-medium font-mono">hoje, 10:20</span>
+                <span className="text-micro text-faint uppercase tracking-wider font-semibold">Estresse e ansiedade</span>
+                <span className="text-micro text-subtle font-medium font-mono">hoje, 10:20</span>
               </div>
-              <h4 className="text-xs font-bold text-[#242320]">Ansiedade por tarefas acumuladas</h4>
-              <p className="text-[11px] text-[#746F68] leading-relaxed">
+              <h4 className="text-caption font-bold text-ink">Ansiedade por tarefas acumuladas</h4>
+              <p className="text-caption text-subtle leading-relaxed">
                 Você associou o pico de ansiedade a prazos e pendências.
               </p>
               <div className="flex justify-end pt-1">
-                <span className="text-[9px] font-bold text-[#B87961] bg-[#B87961]/10 px-2 py-0.5 rounded-md">tensão +</span>
+                <span className="text-micro font-bold text-[#B87961] bg-[#B87961]/10 px-2 py-0.5 rounded-md">tensão +</span>
               </div>
             </div>
           </div>
 
           {/* Evento 2 */}
           <div className="relative">
-            <div className="absolute -left-[30px] top-1.5 w-4 h-4 rounded-full border-4 border-[#F6F3ED] bg-[#6F8F98]" />
+            <div className="absolute -left-[30px] top-1.5 w-4 h-4 rounded-full border-4 border-app bg-[#6F8F98]" />
             
-            <div className="bg-[#FFFDF8] border border-[#E4DCD0] rounded-2xl p-3.5 space-y-1 shadow-none">
+            <div className="bg-card border border-line rounded-sheet p-3.5 space-y-1">
               <div className="flex justify-between items-start">
-                <span className="text-[10px] text-[#A49D94] uppercase tracking-wider font-semibold">Foco e cognição</span>
-                <span className="text-[10px] text-[#746F68] font-medium font-mono">hoje, 08:40</span>
+                <span className="text-micro text-faint uppercase tracking-wider font-semibold">Foco e cognição</span>
+                <span className="text-micro text-subtle font-medium font-mono">hoje, 08:40</span>
               </div>
-              <h4 className="text-xs font-bold text-[#242320]">Foco bom pela manhã</h4>
-              <p className="text-[11px] text-[#746F68] leading-relaxed">
+              <h4 className="text-caption font-bold text-ink">Foco bom pela manhã</h4>
+              <p className="text-caption text-subtle leading-relaxed">
                 Sessão registrada com boa concentração e pouca dispersão.
               </p>
               <div className="flex justify-end pt-1">
-                <span className="text-[9px] font-bold text-[#6F8F98] bg-[#6F8F98]/10 px-2 py-0.5 rounded-md">clareza +</span>
+                <span className="text-micro font-bold text-[#6F8F98] bg-[#6F8F98]/10 px-2 py-0.5 rounded-md">clareza +</span>
               </div>
             </div>
           </div>
 
           {/* Evento 3 */}
           <div className="relative">
-            <div className="absolute -left-[30px] top-1.5 w-4 h-4 rounded-full border-4 border-[#F6F3ED] bg-[#D2AFA1]" />
+            <div className="absolute -left-[30px] top-1.5 w-4 h-4 rounded-full border-4 border-app bg-[#D2AFA1]" />
             
-            <div className="bg-[#FFFDF8] border border-[#E4DCD0] rounded-2xl p-3.5 space-y-1 shadow-none">
+            <div className="bg-card border border-line rounded-sheet p-3.5 space-y-1">
               <div className="flex justify-between items-start">
-                <span className="text-[10px] text-[#A49D94] uppercase tracking-wider font-semibold">Journal</span>
-                <span className="text-[10px] text-[#746F68] font-medium font-mono">ontem, 22:15</span>
+                <span className="text-micro text-faint uppercase tracking-wider font-semibold">Journal</span>
+                <span className="text-micro text-subtle font-medium font-mono">ontem, 22:15</span>
               </div>
-              <h4 className="text-xs font-bold text-[#242320]">Journal sobre pressão interna</h4>
-              <p className="text-[11px] text-[#746F68] leading-relaxed">
+              <h4 className="text-caption font-bold text-ink">Journal sobre pressão interna</h4>
+              <p className="text-caption text-subtle leading-relaxed">
                 O tema principal detectado foi autocobrança.
               </p>
               <div className="flex justify-end pt-1">
-                <span className="text-[9px] font-bold text-[#D2AFA1] bg-[#D2AFA1]/20 px-2 py-0.5 rounded-md">reflexão</span>
+                <span className="text-micro font-bold text-[#D2AFA1] bg-[#D2AFA1]/20 px-2 py-0.5 rounded-md">reflexão</span>
               </div>
             </div>
           </div>
 
           {/* Evento 4 */}
           <div className="relative">
-            <div className="absolute -left-[30px] top-1.5 w-4 h-4 rounded-full border-4 border-[#F6F3ED] bg-[#748E7C]" />
+            <div className="absolute -left-[30px] top-1.5 w-4 h-4 rounded-full border-4 border-app bg-[#748E7C]" />
             
-            <div className="bg-[#FFFDF8] border border-[#E4DCD0] rounded-2xl p-3.5 space-y-1 shadow-none">
+            <div className="bg-card border border-line rounded-sheet p-3.5 space-y-1">
               <div className="flex justify-between items-start">
-                <span className="text-[10px] text-[#A49D94] uppercase tracking-wider font-semibold">Práticas mentais</span>
-                <span className="text-[10px] text-[#746F68] font-medium font-mono">há 2 dias</span>
+                <span className="text-micro text-faint uppercase tracking-wider font-semibold">Práticas mentais</span>
+                <span className="text-micro text-subtle font-medium font-mono">há 2 dias</span>
               </div>
-              <h4 className="text-xs font-bold text-[#242320]">Respiração guiada</h4>
-              <p className="text-[11px] text-[#746F68] leading-relaxed">
+              <h4 className="text-caption font-bold text-ink">Respiração guiada</h4>
+              <p className="text-caption text-subtle leading-relaxed">
                 Prática associada a redução de tensão e aumento de clareza.
               </p>
               <div className="flex justify-end pt-1">
-                <span className="text-[9px] font-bold text-[#748E7C] bg-[#748E7C]/15 px-2 py-0.5 rounded-md">ansiedade -</span>
+                <span className="text-micro font-bold text-[#748E7C] bg-[#748E7C]/15 px-2 py-0.5 rounded-md">ansiedade -</span>
               </div>
             </div>
           </div>
 
           {/* Evento 5 */}
           <div className="relative">
-            <div className="absolute -left-[30px] top-1.5 w-4 h-4 rounded-full border-4 border-[#F6F3ED] bg-[#C9A25D]" />
+            <div className="absolute -left-[30px] top-1.5 w-4 h-4 rounded-full border-4 border-app bg-[#C9A25D]" />
             
-            <div className="bg-[#FFFDF8] border border-[#E4DCD0] rounded-2xl p-3.5 space-y-1 shadow-none">
+            <div className="bg-card border border-line rounded-sheet p-3.5 space-y-1">
               <div className="flex justify-between items-start">
-                <span className="text-[10px] text-[#A49D94] uppercase tracking-wider font-semibold">Motivação</span>
-                <span className="text-[10px] text-[#746F68] font-medium font-mono">há 3 dias</span>
+                <span className="text-micro text-faint uppercase tracking-wider font-semibold">Motivação</span>
+                <span className="text-micro text-subtle font-medium font-mono">há 3 dias</span>
               </div>
-              <h4 className="text-xs font-bold text-[#242320]">Queda de motivação à tarde</h4>
-              <p className="text-[11px] text-[#746F68] leading-relaxed">
+              <h4 className="text-caption font-bold text-ink">Queda de motivação à tarde</h4>
+              <p className="text-caption text-subtle leading-relaxed">
                 Registro ligado a cansaço e falta de próximo passo claro.
               </p>
               <div className="flex justify-end pt-1">
-                <span className="text-[9px] font-bold text-[#C9A25D] bg-[#C9A25D]/10 px-2 py-0.5 rounded-md">vontade -</span>
+                <span className="text-micro font-bold text-[#C9A25D] bg-[#C9A25D]/10 px-2 py-0.5 rounded-md">vontade -</span>
               </div>
             </div>
           </div>
