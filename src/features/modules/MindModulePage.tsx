@@ -44,6 +44,7 @@ import { FocusCognitionCard } from '../../shared/cards/FocusCognitionCard';
 import { MotivationWillpowerCard } from '../../shared/cards/MotivationWillpowerCard';
 import { MentalLoadCard } from '../../shared/cards/MentalLoadCard';
 import { SelfAwarenessCard } from '../../shared/cards/SelfAwarenessCard';
+import { MentalPracticesCard } from '../../shared/cards/MentalPracticesCard';
 import { StressAnxietyCard } from '../../shared/cards/StressAnxietyCard';
 import { useRotatingVariant } from '../../hooks/useRotatingVariant';
 import { storage } from '../../lib/storage';
@@ -102,6 +103,15 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
     { visualType: 'lighthouse' as const, patternsIdentified: 10, newInsights: 3, badgeLabel: 'direção interna', insight: 'Em meio a dúvidas, alguns valores e direções permanecem sólidos — como um farol que orienta suas escolhas.' },
   ];
   const selfAwarenessVariant = useRotatingVariant(selfAwarenessVariants);
+
+  const mentalPracticesVariants = [
+    { visualType: 'zenStones' as const, practiceDays: 18, currentStreak: 7, weeklyConsistency: 82, favoritePractice: 'meditação guiada', badgeLabel: 'presença cultivada', insight: 'Você tem mantido uma rotina relativamente consistente de práticas voltadas ao bem-estar mental.' },
+    { visualType: 'breathingGarden' as const, practiceDays: 24, currentStreak: 12, weeklyConsistency: 90, favoritePractice: 'respiração profunda', badgeLabel: 'jardim interno florido', insight: 'Sua prática de respiração tem sido o alicerce dos dias mais equilibrados — cada sessão fortalece sua calma interior.' },
+    { visualType: 'presenceWaves' as const, practiceDays: 12, currentStreak: 4, weeklyConsistency: 65, favoritePractice: 'body scan', badgeLabel: 'ondas de presença', insight: 'A prática de atenção plena aparece em ondas — alguns dias o foco está aguçado, em outros a mente vagueia mais.' },
+    { visualType: 'mindSeeds' as const, practiceDays: 8, currentStreak: 3, weeklyConsistency: 45, favoritePractice: 'diário de gratidão', badgeLabel: 'sementes plantadas', insight: 'Pequenas práticas diárias estão começando a criar raízes — a consistência ainda é baixa, mas o hábito está se formando.' },
+    { visualType: 'ritualOrbit' as const, practiceDays: 30, currentStreak: 21, weeklyConsistency: 95, favoritePractice: 'meditação noturna', badgeLabel: 'ritual consolidado', insight: 'Suas práticas mentais já fazem parte da rotina — um ciclo virtuoso que sustenta o equilíbrio emocional mesmo em dias difíceis.' },
+  ];
+  const mentalPracticesVariant = useRotatingVariant(mentalPracticesVariants);
   
   // Buscar os dados do storage para fins de contexto ou histórico
   const registros = storage.getRegistros()
@@ -514,65 +524,16 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
         />
 
         {/* CARD H: Práticas mentais */}
-        <div 
+        <MentalPracticesCard
+          visualType={mentalPracticesVariant.visualType}
+          practiceDays={mentalPracticesVariant.practiceDays}
+          currentStreak={mentalPracticesVariant.currentStreak}
+          weeklyConsistency={mentalPracticesVariant.weeklyConsistency}
+          favoritePractice={mentalPracticesVariant.favoritePractice}
+          insight={mentalPracticesVariant.insight}
+          badgeLabel={mentalPracticesVariant.badgeLabel}
           onClick={() => handleSubmoduleClick('Práticas mentais')}
-          className="rounded-[28px] border border-[#E4DCD0]/60 p-5 space-y-4 cursor-pointer hover:border-[#748E7C]/50 transition-all bg-[#EEE8DD]"
-        >
-          <div className="flex justify-between items-start">
-            <div className="w-8 h-8 rounded-full bg-[#748E7C]/10 text-[#748E7C] flex items-center justify-center">
-              <Leaf className="w-4 h-4 stroke-[2]" />
-            </div>
-            <ChevronRight className="w-4 h-4 text-[#A49D94]" />
-          </div>
-
-          <div className="space-y-1">
-            <h3 className="text-sm font-bold text-[#242320]">Práticas mentais</h3>
-            <p className="text-xs text-[#746F68] leading-relaxed">
-              Meditação, respiração, terapia, leitura reflexiva, pausa e regulação mental.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2.5 py-1">
-            <div className="bg-[#FFFDF8]/80 border border-[#E4DCD0]/40 rounded-xl p-2.5">
-              <span className="text-[10px] text-[#A49D94] uppercase tracking-wider block font-semibold">Constância</span>
-              <span className="text-base font-bold text-[#242320]">4x</span>
-            </div>
-            <div className="bg-[#FFFDF8]/80 border border-[#E4DCD0]/40 rounded-xl p-2.5">
-              <span className="text-[10px] text-[#A49D94] uppercase tracking-wider block font-semibold">Melhor efeito</span>
-              <span className="text-base font-bold text-[#242320] truncate block">Respiração</span>
-            </div>
-          </div>
-
-          {/* Mini visualização: Círculos constância */}
-          <div className="flex justify-center items-center gap-2 py-2">
-            {['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].map((day, idx) => {
-              const isFilled = idx === 0 || idx === 2 || idx === 3 || idx === 5;
-              const isGlowing = idx === 3;
-              return (
-                <div key={idx} className="flex flex-col items-center gap-1">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold transition-all ${
-                    isGlowing 
-                      ? 'bg-[#748E7C] text-[#FFFDF8] ring-4 ring-[#748E7C]/25 shadow-xs'
-                      : isFilled 
-                        ? 'bg-[#748E7C] text-[#FFFDF8]' 
-                        : 'bg-[#FFFDF8]/60 text-[#A49D94] border border-[#E4DCD0]'
-                  }`}>
-                    {day}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <p className="text-xs text-[#746F68] leading-relaxed border-t border-[#E4DCD0]/30 pt-3">
-            “Respiração curta teve melhor efeito percebido na redução da ansiedade.”
-          </p>
-
-          <div className="flex justify-between items-center text-[10px] font-bold text-[#748E7C] uppercase tracking-wider font-mono pt-1">
-            <span>AUTO-CUIDADO</span>
-            <span className="px-2.5 py-0.5 rounded-md bg-[#748E7C]/10">regulação presente</span>
-          </div>
-        </div>
+        />
 
         {/* Insight menor 4 (Posicionado após H) */}
         <div 
