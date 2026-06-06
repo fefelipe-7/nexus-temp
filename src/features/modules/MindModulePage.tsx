@@ -40,6 +40,8 @@ import {
   BookOpen
 } from 'lucide-react';
 import { EmotionMoodCard } from '../../shared/cards/EmotionCard';
+import { StressAnxietyCard } from '../../shared/cards/StressAnxietyCard';
+import { useRotatingVariant } from '../../hooks/useRotatingVariant';
 import { storage } from '../../lib/storage';
 import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
 
@@ -51,6 +53,15 @@ interface MindModulePageProps {
 export default function MindModulePage({ selectedDate, refreshCount }: MindModulePageProps) {
   const { showAlert } = useNexusAlert();
   const [percepcaoTexto, setPercepcaoTexto] = useState('');
+
+  const stressVariants = [
+    { visualType: 'breathingRings' as const, trend: 'moderate' as const, status: 'attention' as const, badgeLabel: 'atenção moderada', insight: 'Algumas preocupações aparecem com frequência, mas ainda parecem administráveis.', pressureLevel: 3 },
+    { visualType: 'pressureCloud' as const, trend: 'high' as const, status: 'critical' as const, badgeLabel: 'sobrecarga percebida', insight: 'A pressão mental está elevada hoje — momentos de pausa podem ajudar a dissipar a nuvem de preocupações.', pressureLevel: 5 },
+    { visualType: 'pulseLine' as const, trend: 'moderate' as const, status: 'stable' as const, badgeLabel: 'equilíbrio emocional', insight: 'As oscilações do dia foram dentro do esperado, sem picos abruptos de tensão.', pressureLevel: 3 },
+    { visualType: 'mentalLoadBlocks' as const, trend: 'high' as const, status: 'attention' as const, badgeLabel: 'carga acumulada', insight: 'Tarefas e pendências se acumulam criando blocos de tensão mental que pesam ao longo do dia.', pressureLevel: 4 },
+    { visualType: 'breathingBalance' as const, trend: 'low' as const, status: 'positive' as const, badgeLabel: 'tensão reduzida', insight: 'O ritmo respiratório indica um estado de calma — a ansiedade do dia está sob controle.', pressureLevel: 2 },
+  ];
+  const stressVariant = useRotatingVariant(stressVariants);
   
   // Buscar os dados do storage para fins de contexto ou histórico
   const registros = storage.getRegistros()
@@ -305,66 +316,15 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
         />
 
         {/* CARD B: Estresse e ansiedade */}
-        <div 
+        <StressAnxietyCard
+          status={stressVariant.status}
+          visualType={stressVariant.visualType}
+          trend={stressVariant.trend}
+          insight={stressVariant.insight}
+          badgeLabel={stressVariant.badgeLabel}
+          pressureLevel={stressVariant.pressureLevel}
           onClick={() => handleSubmoduleClick('Estresse e ansiedade')}
-          className="rounded-[28px] border border-[#E4DCD0]/60 p-5 space-y-4 cursor-pointer hover:border-[#B87961]/50 transition-all bg-[#EEE8DD]"
-        >
-          <div className="flex justify-between items-start">
-            <div className="w-8 h-8 rounded-full bg-[#B87961]/10 text-[#B87961] flex items-center justify-center">
-              <Activity className="w-4 h-4 stroke-[2]" />
-            </div>
-            <ChevronRight className="w-4 h-4 text-[#A49D94]" />
-          </div>
-
-          <div className="space-y-1">
-            <h3 className="text-sm font-bold text-[#242320]">Estresse e ansiedade</h3>
-            <p className="text-xs text-[#746F68] leading-relaxed">
-              Sobrecarga emocional, preocupação, tensão e gatilhos mentais.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2.5 py-1">
-            <div className="bg-[#FFFDF8]/80 border border-[#E4DCD0]/40 rounded-xl p-2.5">
-              <span className="text-[10px] text-[#A49D94] uppercase tracking-wider block font-semibold">Estresse</span>
-              <span className="text-base font-bold text-[#242320]">Alto leve</span>
-            </div>
-            <div className="bg-[#FFFDF8]/80 border border-[#E4DCD0]/40 rounded-xl p-2.5">
-              <span className="text-[10px] text-[#A49D94] uppercase tracking-wider block font-semibold">Gatilho principal</span>
-              <span className="text-base font-bold text-[#242320] truncate block">Tarefas</span>
-            </div>
-          </div>
-
-          {/* Mini visualização: Linha de estresse */}
-          <div className="space-y-2 py-1">
-            <svg viewBox="0 0 200 50" className="w-full h-12">
-              <path d="M 10 50 L 10 35 Q 40 15 70 42 T 130 18 T 190 32 L 190 50 Z" fill="#B87961" fillOpacity="0.05" />
-              <path d="M 10 35 Q 40 15 70 42 T 130 18 T 190 32" fill="none" stroke="#B87961" strokeWidth="2.5" strokeLinecap="round" />
-              <circle cx="10" cy="35" r="3" fill="#FFFDF8" stroke="#B87961" strokeWidth="1.5" />
-              <circle cx="40" cy="15" r="3" fill="#FFFDF8" stroke="#B87961" strokeWidth="1.5" />
-              <circle cx="70" cy="42" r="3" fill="#FFFDF8" stroke="#B87961" strokeWidth="1.5" />
-              <circle cx="100" cy="38" r="3" fill="#FFFDF8" stroke="#B87961" strokeWidth="1.5" />
-              <circle cx="130" cy="18" r="3" fill="#FFFDF8" stroke="#B87961" strokeWidth="1.5" />
-              <circle cx="160" cy="30" r="3" fill="#FFFDF8" stroke="#B87961" strokeWidth="1.5" />
-              <circle cx="190" cy="32" r="3" fill="#FFFDF8" stroke="#B87961" strokeWidth="1.5" />
-            </svg>
-            <div className="flex gap-1.5 justify-center">
-              {['prazo', 'acúmulo', 'decisão'].map((chip, i) => (
-                <span key={i} className="text-[9px] bg-[#B87961]/10 text-[#B87961] font-bold px-2 py-0.5 rounded-full">
-                  {chip}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <p className="text-xs text-[#746F68] leading-relaxed border-t border-[#E4DCD0]/30 pt-3">
-            “Tarefas acumuladas aparecem como o gatilho mais frequente de tensão mental.”
-          </p>
-
-          <div className="flex justify-between items-center text-[10px] font-bold text-[#B87961] uppercase tracking-wider font-mono pt-1">
-            <span>ANSIEDADE</span>
-            <span className="px-2.5 py-0.5 rounded-md bg-[#B87961]/10">picos recorrentes</span>
-          </div>
-        </div>
+        />
 
         {/* Insight menor 1 (Posicionado entre B e C) */}
         <div 
