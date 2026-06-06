@@ -41,6 +41,8 @@ import {
 } from 'lucide-react';
 import { EmotionMoodCard } from '../../shared/cards/EmotionCard';
 import { FocusCognitionCard } from '../../shared/cards/FocusCognitionCard';
+import { MotivationWillpowerCard } from '../../shared/cards/MotivationWillpowerCard';
+import { MentalLoadCard } from '../../shared/cards/MentalLoadCard';
 import { StressAnxietyCard } from '../../shared/cards/StressAnxietyCard';
 import { useRotatingVariant } from '../../hooks/useRotatingVariant';
 import { storage } from '../../lib/storage';
@@ -72,6 +74,24 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
     { visualType: 'peakClock' as const, status: 'low' as const, focusScore: 40, peakHour: '11:00–12:00', badgeLabel: 'energia cognitiva reduzida', insight: 'A dispersão predomina hoje. Tarefas curtas e pausas frequentes podem ajudar a manter o mínimo de produtividade.' },
   ];
   const focusVariant = useRotatingVariant(focusVariants);
+
+  const motivationVariants = [
+    { visualType: 'ignitionSpark' as const, status: 'high' as const, motivationLevel: 82, initiativeLevel: 71, badgeLabel: 'impulso consistente', insight: 'Você demonstra maior facilidade para iniciar tarefas e manter movimento em direção aos seus objetivos.' },
+    { visualType: 'momentumTrail' as const, status: 'moderate' as const, motivationLevel: 60, initiativeLevel: 55, badgeLabel: 'energia variável', insight: 'Sua motivação oscila ao longo do dia — começar com tarefas pequenas pode gerar o impulso que falta.' },
+    { visualType: 'risingGlow' as const, status: 'moderate' as const, motivationLevel: 68, initiativeLevel: 62, badgeLabel: 'energia variável', insight: 'A motivação cresce quando você vê progresso, mesmo que pequeno. Celebrar cada passo ajuda a manter o ritmo.' },
+    { visualType: 'actionSeeds' as const, status: 'low' as const, motivationLevel: 45, initiativeLevel: 38, badgeLabel: 'inércia percebida', insight: 'Iniciar tarefas está sendo mais difícil que executá-las. Uma ação mínima pode quebrar o ciclo de inércia.' },
+    { visualType: 'windCurrent' as const, status: 'high' as const, motivationLevel: 88, initiativeLevel: 80, badgeLabel: 'impulso consistente', insight: 'Sua vontade está fluindo bem — as tarefas parecem mais leves e você encontra energia para começar novos projetos.' },
+  ];
+  const motivationVariant = useRotatingVariant(motivationVariants);
+
+  const mentalLoadVariants = [
+    { visualType: 'attentionDistribution' as const, status: 'moderate' as const, mentalLoadScore: 72, activeTopics: 8, badgeLabel: 'ocupação equilibrada', insight: 'Existem diferentes responsabilidades ocupando sua atenção, mas ainda dentro de uma capacidade administrável.' },
+    { visualType: 'mentalStack' as const, status: 'high' as const, mentalLoadScore: 88, activeTopics: 12, badgeLabel: 'múltiplas demandas ativas', insight: 'Muitas camadas de pensamento se acumulam — tarefa a tarefa, o peso mental cresce e reduz sua clareza.' },
+    { visualType: 'openLoops' as const, status: 'high' as const, mentalLoadScore: 80, activeTopics: 10, badgeLabel: 'múltiplas demandas ativas', insight: 'Vários assuntos ficaram abertos hoje, cada um exigindo um pouco da sua atenção — fechar um deles já aliviaria.' },
+    { visualType: 'cognitiveThreads' as const, status: 'low' as const, mentalLoadScore: 35, activeTopics: 4, badgeLabel: 'espaço mental disponível', insight: 'A mente está leve hoje — poucos fios de pensamento competindo por atenção, o que favorece foco profundo.' },
+    { visualType: 'loadContainers' as const, status: 'moderate' as const, mentalLoadScore: 65, activeTopics: 7, badgeLabel: 'ocupação equilibrada', insight: 'A carga mental do dia está distribída em áreas diferentes, nenhuma delas esgotando sozinha sua capacidade de atenção.' },
+  ];
+  const mentalLoadVariant = useRotatingVariant(mentalLoadVariants);
   
   // Buscar os dados do storage para fins de contexto ou histórico
   const registros = storage.getRegistros()
@@ -364,61 +384,15 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
         />
 
         {/* CARD D: Motivação e vontade */}
-        <div 
+        <MotivationWillpowerCard
+          status={motivationVariant.status}
+          visualType={motivationVariant.visualType}
+          motivationLevel={motivationVariant.motivationLevel}
+          initiativeLevel={motivationVariant.initiativeLevel}
+          insight={motivationVariant.insight}
+          badgeLabel={motivationVariant.badgeLabel}
           onClick={() => handleSubmoduleClick('Motivação e vontade')}
-          className="rounded-[28px] border border-[#E4DCD0]/60 p-5 space-y-4 cursor-pointer hover:border-[#C9A25D]/50 transition-all bg-[#EEE8DD]"
-        >
-          <div className="flex justify-between items-start">
-            <div className="w-8 h-8 rounded-full bg-[#C9A25D]/10 text-[#C9A25D] flex items-center justify-center">
-              <Flame className="w-4 h-4 stroke-[2]" />
-            </div>
-            <ChevronRight className="w-4 h-4 text-[#A49D94]" />
-          </div>
-
-          <div className="space-y-1">
-            <h3 className="text-sm font-bold text-[#242320]">Motivação e vontade</h3>
-            <p className="text-xs text-[#746F68] leading-relaxed">
-              Disposição psicológica para agir, impulso interno e intenção de execução.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2.5 py-1">
-            <div className="bg-[#FFFDF8]/80 border border-[#E4DCD0]/40 rounded-xl p-2.5">
-              <span className="text-[10px] text-[#A49D94] uppercase tracking-wider block font-semibold">Motivação</span>
-              <span className="text-base font-bold text-[#242320]">Média</span>
-            </div>
-            <div className="bg-[#FFFDF8]/80 border border-[#E4DCD0]/40 rounded-xl p-2.5">
-              <span className="text-[10px] text-[#A49D94] uppercase tracking-wider block font-semibold">Área mais forte</span>
-              <span className="text-base font-bold text-[#242320] truncate block">Projetos</span>
-            </div>
-          </div>
-
-          {/* Mini visualização: Barras horizontais */}
-          <div className="space-y-1.5 py-1">
-            {[
-              { label: 'Projetos', value: 85 },
-              { label: 'Trabalho', value: 70 },
-              { label: 'Vida Pessoal', value: 55 },
-              { label: 'Saúde', value: 40 },
-            ].map((item, idx) => (
-              <div key={idx} className="flex items-center gap-2 text-xs">
-                <span className="w-20 text-[9px] text-[#746F68] truncate font-semibold uppercase">{item.label}</span>
-                <div className="flex-1 h-2 bg-[#FFFDF8]/55 rounded-full overflow-hidden">
-                  <div className="h-full bg-[#C9A25D] rounded-full" style={{ width: `${item.value}%` }}></div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <p className="text-xs text-[#746F68] leading-relaxed border-t border-[#E4DCD0]/30 pt-3">
-            “Sua motivação melhora quando há progresso visível, mesmo pequeno.”
-          </p>
-
-          <div className="flex justify-between items-center text-[10px] font-bold text-[#C9A25D] uppercase tracking-wider font-mono pt-1">
-            <span>IMPULSO</span>
-            <span className="px-2.5 py-0.5 rounded-md bg-[#C9A25D]/10">impulso seletivo</span>
-          </div>
-        </div>
+        />
 
         {/* Insight menor 2 (Posicionado entre D e E) */}
         <div 
@@ -437,53 +411,15 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
         </div>
 
         {/* CARD E: Carga mental e esforço percebido */}
-        <div 
+        <MentalLoadCard
+          status={mentalLoadVariant.status}
+          visualType={mentalLoadVariant.visualType}
+          mentalLoadScore={mentalLoadVariant.mentalLoadScore}
+          activeTopics={mentalLoadVariant.activeTopics}
+          insight={mentalLoadVariant.insight}
+          badgeLabel={mentalLoadVariant.badgeLabel}
           onClick={() => handleSubmoduleClick('Carga mental')}
-          className="rounded-[28px] border border-[#E4DCD0]/60 p-5 space-y-4 cursor-pointer hover:border-[#8F8798]/50 transition-all bg-gradient-to-br from-[#FFFDF8] to-[#8F8798]/5"
-        >
-          <div className="flex justify-between items-start">
-            <div className="w-8 h-8 rounded-full bg-[#8F8798]/10 text-[#8F8798] flex items-center justify-center">
-              <Layers className="w-4 h-4 stroke-[2]" />
-            </div>
-            <ChevronRight className="w-4 h-4 text-[#A49D94]" />
-          </div>
-
-          <div className="space-y-1">
-            <h3 className="text-sm font-bold text-[#242320]">Carga mental</h3>
-            <p className="text-xs text-[#746F68] leading-relaxed">
-              Sensação de peso mental, dificuldade subjetiva e custo emocional das ações.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2.5 py-1">
-            <div className="bg-[#FFFDF8]/70 border border-[#E4DCD0]/40 rounded-xl p-2.5">
-              <span className="text-[10px] text-[#A49D94] uppercase tracking-wider block font-semibold">Carga atual</span>
-              <span className="text-base font-bold text-[#242320]">74%</span>
-            </div>
-            <div className="bg-[#FFFDF8]/70 border border-[#E4DCD0]/40 rounded-xl p-2.5">
-              <span className="text-[10px] text-[#A49D94] uppercase tracking-wider block font-semibold">Maior esforço</span>
-              <span className="text-base font-bold text-[#242320] truncate block">Tarefas</span>
-            </div>
-          </div>
-
-          {/* Mini visualização: Pilha de camadas */}
-          <div className="flex flex-col items-center justify-center gap-1.5 py-2">
-            <div className="w-24 h-2 bg-[#8F8798] rounded-sm translate-x-1.5 shadow-xs opacity-90"></div>
-            <div className="w-24 h-2 bg-[#8F8798] rounded-sm opacity-80"></div>
-            <div className="w-24 h-2 bg-[#8F8798] rounded-sm opacity-60"></div>
-            <div className="w-24 h-2 bg-[#8F8798] rounded-sm opacity-40"></div>
-            <div className="w-24 h-2 bg-[#8F8798]/15 rounded-sm"></div>
-          </div>
-
-          <p className="text-xs text-[#746F68] leading-relaxed border-t border-[#E4DCD0]/30 pt-3">
-            “Algumas tarefas simples estão parecendo mais pesadas por acúmulo mental.”
-          </p>
-
-          <div className="flex justify-between items-center text-[10px] font-bold text-[#8F8798] uppercase tracking-wider font-mono pt-1">
-            <span>ESFORÇO</span>
-            <span className="px-2.5 py-0.5 rounded-md bg-[#8F8798]/10">sobrecarga leve</span>
-          </div>
-        </div>
+        />
 
         {/* CARD F: Journal */}
         <div 
