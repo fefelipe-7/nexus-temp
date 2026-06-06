@@ -43,6 +43,7 @@ import { EmotionMoodCard } from '../../shared/cards/EmotionCard';
 import { FocusCognitionCard } from '../../shared/cards/FocusCognitionCard';
 import { MotivationWillpowerCard } from '../../shared/cards/MotivationWillpowerCard';
 import { MentalLoadCard } from '../../shared/cards/MentalLoadCard';
+import { SelfAwarenessCard } from '../../shared/cards/SelfAwarenessCard';
 import { StressAnxietyCard } from '../../shared/cards/StressAnxietyCard';
 import { useRotatingVariant } from '../../hooks/useRotatingVariant';
 import { storage } from '../../lib/storage';
@@ -92,6 +93,15 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
     { visualType: 'loadContainers' as const, status: 'moderate' as const, mentalLoadScore: 65, activeTopics: 7, badgeLabel: 'ocupação equilibrada', insight: 'A carga mental do dia está distribída em áreas diferentes, nenhuma delas esgotando sozinha sua capacidade de atenção.' },
   ];
   const mentalLoadVariant = useRotatingVariant(mentalLoadVariants);
+
+  const selfAwarenessVariants = [
+    { visualType: 'patternDiscovery' as const, patternsIdentified: 12, newInsights: 3, badgeLabel: 'novos padrões percebidos', insight: 'Eventos e emoções começam a formar conexões compreensíveis — padrões que antes passavam despercebidos agora fazem sentido.' },
+    { visualType: 'innerMirror' as const, patternsIdentified: 8, newInsights: 2, badgeLabel: 'auto-observação ativa', insight: 'Seu olhar para dentro está mais aguçado — você reconhece reações automáticas e começa a entender de onde elas vêm.' },
+    { visualType: 'layersOfSelf' as const, patternsIdentified: 15, newInsights: 5, badgeLabel: 'camadas reveladas', insight: 'Novas camadas de autoconhecimento surgem quando você revisita situações passadas com o entendimento que tem hoje.' },
+    { visualType: 'insightFragments' as const, patternsIdentified: 6, newInsights: 4, badgeLabel: 'fragmentos de clareza', insight: 'Pequenos insights aparecem em momentos inesperados — anotá-los ajuda a montar o quebra-cabeça de quem você é.' },
+    { visualType: 'lighthouse' as const, patternsIdentified: 10, newInsights: 3, badgeLabel: 'direção interna', insight: 'Em meio a dúvidas, alguns valores e direções permanecem sólidos — como um farol que orienta suas escolhas.' },
+  ];
+  const selfAwarenessVariant = useRotatingVariant(selfAwarenessVariants);
   
   // Buscar os dados do storage para fins de contexto ou histórico
   const registros = storage.getRegistros()
@@ -494,59 +504,14 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
         </div>
 
         {/* CARD G: Autoconhecimento */}
-        <div 
+        <SelfAwarenessCard
+          visualType={selfAwarenessVariant.visualType}
+          patternsIdentified={selfAwarenessVariant.patternsIdentified}
+          newInsights={selfAwarenessVariant.newInsights}
+          insight={selfAwarenessVariant.insight}
+          badgeLabel={selfAwarenessVariant.badgeLabel}
           onClick={() => handleSubmoduleClick('Autoconhecimento')}
-          className="rounded-[28px] border border-[#E4DCD0]/60 p-5 space-y-4 cursor-pointer hover:border-[#9B8FB5]/50 transition-all bg-gradient-to-br from-[#FFFDF8] to-[#9B8FB5]/5"
-        >
-          <div className="flex justify-between items-start">
-            <div className="w-8 h-8 rounded-full bg-[#9B8FB5]/10 text-[#9B8FB5] flex items-center justify-center">
-              <Compass className="w-4 h-4 stroke-[2]" />
-            </div>
-            <ChevronRight className="w-4 h-4 text-[#A49D94]" />
-          </div>
-
-          <div className="space-y-1">
-            <h3 className="text-sm font-bold text-[#242320]">Autoconhecimento</h3>
-            <p className="text-xs text-[#746F68] leading-relaxed">
-              Gatilhos, padrões pessoais, crenças, ciclos internos e reflexões estruturadas.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2.5 py-1">
-            <div className="bg-[#FFFDF8]/70 border border-[#E4DCD0]/40 rounded-xl p-2.5">
-              <span className="text-[10px] text-[#A49D94] uppercase tracking-wider block font-semibold">Padrões</span>
-              <span className="text-base font-bold text-[#242320]">5</span>
-            </div>
-            <div className="bg-[#FFFDF8]/70 border border-[#E4DCD0]/40 rounded-xl p-2.5">
-              <span className="text-[10px] text-[#A49D94] uppercase tracking-wider block font-semibold">Gatilho central</span>
-              <span className="text-base font-bold text-[#242320] truncate block">Autocobrança</span>
-            </div>
-          </div>
-
-          {/* Mini visualização: Ciclo de auto-conhecimento */}
-          <div className="space-y-2 py-1">
-            <svg viewBox="0 0 200 60" className="w-full h-12">
-              <circle cx="100" cy="30" r="22" fill="none" stroke="#9B8FB5" strokeWidth="1" strokeDasharray="3 3" />
-              <circle cx="100" cy="8" r="4.5" fill="#9B8FB5" />
-              <text x="100" y="2" textAnchor="middle" className="text-[8px] font-bold fill-[#746F68]">cobrança</text>
-              <circle cx="122" cy="30" r="4.5" fill="#9B8FB5" />
-              <text x="129" y="32" textAnchor="start" className="text-[8px] font-bold fill-[#746F68]">tensão</text>
-              <circle cx="100" cy="52" r="4.5" fill="#9B8FB5" />
-              <text x="100" y="59" textAnchor="middle" className="text-[8px] font-bold fill-[#746F68]">cansaço</text>
-              <circle cx="78" cy="30" r="4.5" fill="#9B8FB5" />
-              <text x="71" y="32" textAnchor="end" className="text-[8px] font-bold fill-[#746F68]">queda</text>
-            </svg>
-          </div>
-
-          <p className="text-xs text-[#746F68] leading-relaxed border-t border-[#E4DCD0]/30 pt-3">
-            “Autocobrança aparece como ponto inicial de alguns ciclos de queda de energia.”
-          </p>
-
-          <div className="flex justify-between items-center text-[10px] font-bold text-[#9B8FB5] uppercase tracking-wider font-mono pt-1">
-            <span>ESTRUTURA</span>
-            <span className="px-2.5 py-0.5 rounded-md bg-[#9B8FB5]/10">padrão detectado</span>
-          </div>
-        </div>
+        />
 
         {/* CARD H: Práticas mentais */}
         <div 
