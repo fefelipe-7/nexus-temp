@@ -40,6 +40,7 @@ import {
   BookOpen
 } from 'lucide-react';
 import { EmotionMoodCard } from '../../shared/cards/EmotionCard';
+import { FocusCognitionCard } from '../../shared/cards/FocusCognitionCard';
 import { StressAnxietyCard } from '../../shared/cards/StressAnxietyCard';
 import { useRotatingVariant } from '../../hooks/useRotatingVariant';
 import { storage } from '../../lib/storage';
@@ -62,6 +63,15 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
     { visualType: 'breathingBalance' as const, trend: 'low' as const, status: 'positive' as const, badgeLabel: 'tensão reduzida', insight: 'O ritmo respiratório indica um estado de calma — a ansiedade do dia está sob controle.', pressureLevel: 2 },
   ];
   const stressVariant = useRotatingVariant(stressVariants);
+
+  const focusVariants = [
+    { visualType: 'cognitiveWindow' as const, status: 'good' as const, focusScore: 78, peakHour: '09:00–11:00', badgeLabel: 'bom fluxo mental', insight: 'Seu foco parece mais consistente durante o período da manhã, especialmente em atividades que exigem concentração contínua.' },
+    { visualType: 'focusHalo' as const, status: 'excellent' as const, focusScore: 92, peakHour: '08:00–10:30', badgeLabel: 'clareza elevada', insight: 'Sua capacidade de concentração está no pico — é um ótimo momento para tarefas que exigem atenção profunda.' },
+    { visualType: 'attentionBeam' as const, status: 'moderate' as const, focusScore: 55, peakHour: '10:00–12:00', badgeLabel: 'atenção estável', insight: 'O foco oscila ao longo do dia, com momentos de maior concentração intercalados por dispersão.' },
+    { visualType: 'mentalOrbit' as const, status: 'moderate' as const, focusScore: 65, peakHour: '14:00–16:00', badgeLabel: 'atenção estável', insight: 'Seu foco se distribui de forma irregular — alguns períodos do dia são mais produtivos que outros.' },
+    { visualType: 'peakClock' as const, status: 'low' as const, focusScore: 40, peakHour: '11:00–12:00', badgeLabel: 'energia cognitiva reduzida', insight: 'A dispersão predomina hoje. Tarefas curtas e pausas frequentes podem ajudar a manter o mínimo de produtividade.' },
+  ];
+  const focusVariant = useRotatingVariant(focusVariants);
   
   // Buscar os dados do storage para fins de contexto ou histórico
   const registros = storage.getRegistros()
@@ -343,77 +353,15 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
         </div>
 
         {/* CARD C: Foco e cognição */}
-        <div 
+        <FocusCognitionCard
+          status={focusVariant.status}
+          visualType={focusVariant.visualType}
+          focusScore={focusVariant.focusScore}
+          peakHour={focusVariant.peakHour}
+          insight={focusVariant.insight}
+          badgeLabel={focusVariant.badgeLabel}
           onClick={() => handleSubmoduleClick('Foco e cognição')}
-          className="rounded-[28px] border border-[#E4DCD0]/60 p-5 space-y-4 cursor-pointer hover:border-[#6F8F98]/50 transition-all bg-gradient-to-br from-[#FFFDF8] to-[#6F8F98]/5"
-        >
-          <div className="flex justify-between items-start">
-            <div className="w-8 h-8 rounded-full bg-[#6F8F98]/10 text-[#6F8F98] flex items-center justify-center">
-              <Target className="w-4 h-4 stroke-[2]" />
-            </div>
-            <ChevronRight className="w-4 h-4 text-[#A49D94]" />
-          </div>
-
-          <div className="space-y-1">
-            <h3 className="text-sm font-bold text-[#242320]">Foco e cognição</h3>
-            <p className="text-xs text-[#746F68] leading-relaxed">
-              Clareza mental, concentração, memória, dispersão e capacidade percebida.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2.5 py-1">
-            <div className="bg-[#FFFDF8]/70 border border-[#E4DCD0]/40 rounded-xl p-2.5">
-              <span className="text-[10px] text-[#A49D94] uppercase tracking-wider block font-semibold">Foco percebido</span>
-              <span className="text-base font-bold text-[#242320]">62%</span>
-            </div>
-            <div className="bg-[#FFFDF8]/70 border border-[#E4DCD0]/40 rounded-xl p-2.5">
-              <span className="text-[10px] text-[#A49D94] uppercase tracking-wider block font-semibold">Melhor horário</span>
-              <span className="text-base font-bold text-[#242320] truncate block">Manhã</span>
-            </div>
-          </div>
-
-          {/* Mini visualização: Blocos por período */}
-          <div className="space-y-2 py-1">
-            <div className="flex justify-between items-center gap-4 py-1">
-              <div className="flex-1 space-y-1">
-                <span className="text-[9px] text-[#A49D94] uppercase font-semibold">Manhã</span>
-                <div className="flex gap-0.5">
-                  <div className="h-3 flex-1 bg-[#6F8F98] rounded-[2px]"></div>
-                  <div className="h-3 flex-1 bg-[#6F8F98] rounded-[2px]"></div>
-                  <div className="h-3 flex-1 bg-[#6F8F98] rounded-[2px]"></div>
-                  <div className="h-3 flex-1 bg-[#6F8F98] rounded-[2px]"></div>
-                </div>
-              </div>
-              <div className="flex-1 space-y-1">
-                <span className="text-[9px] text-[#A49D94] uppercase font-semibold">Tarde</span>
-                <div className="flex gap-0.5">
-                  <div className="h-3 flex-1 bg-[#6F8F98]/20 border border-dashed border-[#6F8F98] rounded-[2px]"></div>
-                  <div className="h-3 flex-1 bg-[#6F8F98]/40 border border-dashed border-[#6F8F98] rounded-[2px]"></div>
-                  <div className="h-3 flex-1 bg-[#6F8F98]/20 border border-dashed border-[#6F8F98] rounded-[2px]"></div>
-                  <div className="h-3 flex-1 bg-[#6F8F98]/10 border border-dashed border-[#6F8F98] rounded-[2px]"></div>
-                </div>
-              </div>
-              <div className="flex-1 space-y-1">
-                <span className="text-[9px] text-[#A49D94] uppercase font-semibold">Noite</span>
-                <div className="flex gap-0.5">
-                  <div className="h-3 flex-1 bg-[#6F8F98]/60 rounded-[2px]"></div>
-                  <div className="h-3 flex-1 bg-[#6F8F98]/60 rounded-[2px]"></div>
-                  <div className="h-3 flex-1 bg-[#6F8F98]/30 rounded-[2px]"></div>
-                  <div className="h-3 flex-1 bg-[#6F8F98]/15 rounded-[2px]"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <p className="text-xs text-[#746F68] leading-relaxed border-t border-[#E4DCD0]/30 pt-3">
-            “Sua dispersão aparece mais forte entre 15h e 18h.”
-          </p>
-
-          <div className="flex justify-between items-center text-[10px] font-bold text-[#6F8F98] uppercase tracking-wider font-mono pt-1">
-            <span>COGNITIVO</span>
-            <span className="px-2.5 py-0.5 rounded-md bg-[#6F8F98]/10">clareza matinal</span>
-          </div>
-        </div>
+        />
 
         {/* CARD D: Motivação e vontade */}
         <div 
