@@ -10,21 +10,14 @@ import {
   Zap,
   Flag,
   Sparkles,
-  Plus,
   ArrowRight,
   SlidersHorizontal,
-  MessageCircle,
-  GraduationCap,
-  Sun,
-  Coffee,
   Lightbulb,
-  Smile,
-  Activity,
-  Flame,
-  Target,
   type LucideIcon,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { RelationshipsCard } from '../../shared/cards/RelationshipsCard';
+import { CommunityBelongingCard } from '../../shared/cards/CommunityBelongingCard';
 import { storage } from '../../lib/storage';
 import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
 
@@ -276,100 +269,23 @@ export default function LifeModulePage({ selectedDate, refreshCount }: LifeModul
         </div>
 
         {/* 5.1 Relacionamentos */}
-        <div className="bg-card border border-line rounded-sheet p-5 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-life-soft border border-life-line flex items-center justify-center">
-              <HeartHandshake className="w-4 h-4 text-life" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-ink">Relacionamentos</h3>
-              <p className="text-caption text-subtle">Pessoas importantes, vínculos, apoio emocional</p>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
-              <span className="text-micro text-faint uppercase font-mono font-bold">Vínculos</span>
-              <div className="text-base font-bold text-ink mt-0.5">4 ativos</div>
-            </div>
-            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
-              <span className="text-micro text-faint uppercase font-mono font-bold">Frequência</span>
-              <div className="text-base font-bold text-ink mt-0.5">Alta</div>
-            </div>
-            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
-              <span className="text-micro text-faint uppercase font-mono font-bold">Apoio</span>
-              <div className="text-base font-bold text-ink mt-0.5">Disponível</div>
-            </div>
-          </div>
-          {/* Mini network SVG */}
-          <div className="flex justify-center py-1">
-            <svg viewBox="0 0 160 80" className="w-40 h-20">
-              <circle cx="80" cy="40" r="12" fill="var(--color-life)" fillOpacity="0.15" stroke="var(--color-life)" strokeWidth="1.5" />
-              <text x="80" y="43" textAnchor="middle" className="text-[7px] font-bold" fill="var(--color-ink)">Eu</text>
-              <circle cx="30" cy="20" r="10" fill="#E8927A" fillOpacity="0.15" stroke="#E8927A" strokeWidth="1" />
-              <text x="30" y="23" textAnchor="middle" className="text-[6px] font-bold" fill="var(--color-ink)">Ana</text>
-              <circle cx="130" cy="20" r="10" fill="#E8927A" fillOpacity="0.15" stroke="#E8927A" strokeWidth="1" />
-              <text x="130" y="23" textAnchor="middle" className="text-[6px] font-bold" fill="var(--color-ink)">João</text>
-              <circle cx="40" cy="65" r="9" fill="#F0B8A8" fillOpacity="0.15" stroke="#F0B8A8" strokeWidth="1" />
-              <text x="40" y="68" textAnchor="middle" className="text-[6px] font-bold" fill="var(--color-ink)">Lia</text>
-              <circle cx="120" cy="65" r="9" fill="#F0B8A8" fillOpacity="0.15" stroke="#F0B8A8" strokeWidth="1" />
-              <text x="120" y="68" textAnchor="middle" className="text-[6px] font-bold" fill="var(--color-ink)">Pedro</text>
-              <line x1="80" y1="40" x2="30" y2="20" stroke="var(--color-life-line)" strokeWidth="1" />
-              <line x1="80" y1="40" x2="130" y2="20" stroke="var(--color-life-line)" strokeWidth="1" />
-              <line x1="80" y1="40" x2="40" y2="65" stroke="var(--color-life-line)" strokeWidth="1" />
-              <line x1="80" y1="40" x2="120" y2="65" stroke="var(--color-life-line)" strokeWidth="1" />
-            </svg>
-          </div>
-          <p className="text-caption text-subtle leading-relaxed italic border-t border-line/40 pt-3">
-            “As conversas com pessoas próximas continuam associadas aos seus melhores dias.”
-          </p>
-          <button onClick={() => handleSubmodule('Relacionamentos')} className="text-caption font-bold text-life hover:underline flex items-center gap-1">
-            Ver relacionamentos <ArrowRight className="w-3 h-3" />
-          </button>
-        </div>
+        <RelationshipsCard
+          relationshipCount={12}
+          activeConnections={5}
+          supportAvailable={true}
+          insight="As conversas com pessoas próximas continuam associadas aos seus melhores dias."
+          badgeLabel="vínculos fortalecidos"
+          onClick={() => handleSubmodule('Relacionamentos')}
+        />
 
         {/* 5.2 Comunidade */}
-        <div className="bg-card border border-line rounded-sheet p-5 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-life-soft border border-life-line flex items-center justify-center">
-              <Users className="w-4 h-4 text-life" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-ink">Comunidade e pertencimento</h3>
-              <p className="text-caption text-subtle">Grupos, participação social e conexão coletiva</p>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
-              <span className="text-micro text-faint uppercase font-mono font-bold">Pertencimento</span>
-              <div className="text-base font-bold text-ink mt-0.5">Alto</div>
-            </div>
-            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
-              <span className="text-micro text-faint uppercase font-mono font-bold">Participação</span>
-              <div className="text-base font-bold text-ink mt-0.5">Ativa</div>
-            </div>
-          </div>
-          {/* Overlapping groups SVG */}
-          <div className="flex justify-center py-1">
-            <svg viewBox="0 0 160 80" className="w-40 h-20">
-              {[
-                { cx: 45, cy: 40, r: 28, label: 'Família' },
-                { cx: 80, cy: 35, r: 26, label: 'Amigos' },
-                { cx: 115, cy: 40, r: 24, label: 'Trabalho' },
-              ].map((g, i) => (
-                <g key={i}>
-                  <circle cx={g.cx} cy={g.cy} r={g.r} fill="var(--color-life)" fillOpacity={0.06} stroke="var(--color-life-line)" strokeWidth="1" />
-                  <text x={g.cx} y={g.cy + 2} textAnchor="middle" className="text-[6px] font-bold" fill="var(--color-ink)">{g.label}</text>
-                </g>
-              ))}
-            </svg>
-          </div>
-          <p className="text-caption text-subtle leading-relaxed italic border-t border-line/40 pt-3">
-            “Sua sensação de pertencimento cresce quando participa ativamente de grupos.”
-          </p>
-          <button onClick={() => handleSubmodule('Comunidade')} className="text-caption font-bold text-life hover:underline flex items-center gap-1">
-            Ver comunidade <ArrowRight className="w-3 h-3" />
-          </button>
-        </div>
+        <CommunityBelongingCard
+          belongingScore={82}
+          participationScore={67}
+          insight="Sua sensação de pertencimento cresce quando participa ativamente de grupos."
+          badgeLabel="pertencimento ativo"
+          onClick={() => handleSubmodule('Comunidade')}
+        />
 
         {/* Insight break 1 */}
         <div className="rounded-2xl p-4 flex gap-3.5 items-start border border-life-line bg-life-soft/60">
