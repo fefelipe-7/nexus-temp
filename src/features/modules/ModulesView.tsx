@@ -14,7 +14,7 @@ import HealthModulePage from './HealthModulePage';
 import MindModulePage from './MindModulePage';
 import ExecutionModulePage from './ExecutionModulePage';
 import ResourcesModulePage from './ResourcesModulePage';
-import RelationsModulePage from './RelationsModulePage';
+import LifeModulePage from './LifeModulePage';
 
 interface ModulesViewProps {
   selectedDate: string;
@@ -66,7 +66,7 @@ export default function ModulesView({ selectedDate, refreshCount, triggerRefresh
               {activeModule === 'mente' && <MindModulePage selectedDate={selectedDate} refreshCount={refreshCount} />}
               {activeModule === 'acao' && <ExecutionModulePage selectedDate={selectedDate} refreshCount={refreshCount} triggerRefresh={triggerRefresh} />}
               {activeModule === 'financas' && <ResourcesModulePage selectedDate={selectedDate} refreshCount={refreshCount} triggerRefresh={triggerRefresh} />}
-              {activeModule === 'relacoes' && <RelationsModulePage selectedDate={selectedDate} refreshCount={refreshCount} triggerRefresh={triggerRefresh} />}
+              {activeModule === 'relacoes' && <LifeModulePage selectedDate={selectedDate} refreshCount={refreshCount} />}
             </ModuleDetailView>
           </motion.div>
         )}

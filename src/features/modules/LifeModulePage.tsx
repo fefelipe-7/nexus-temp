@@ -1,0 +1,728 @@
+import React, { useState } from 'react';
+import {
+  Heart,
+  HeartHandshake,
+  Users,
+  Star,
+  Music,
+  BookOpen,
+  Compass,
+  Zap,
+  Flag,
+  Sparkles,
+  Plus,
+  ArrowRight,
+  SlidersHorizontal,
+  MessageCircle,
+  GraduationCap,
+  Sun,
+  Coffee,
+  Lightbulb,
+  Smile,
+  Activity,
+  Flame,
+  Target,
+  type LucideIcon,
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { storage } from '../../lib/storage';
+import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
+
+interface LifeModulePageProps {
+  selectedDate: string;
+  refreshCount: number;
+}
+
+function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
+  const rad = ((angleDeg - 90) * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+const LIFE_NODES = [
+  { label: 'Relacionamentos', angle: 0, distance: 50, strength: 'forte', color: '#E06D53', size: 26 },
+  { label: 'Comunidade', angle: 45, distance: 68, strength: 'médio', color: '#E8927A', size: 20 },
+  { label: 'Experiências', angle: 90, distance: 52, strength: 'forte', color: '#E06D53', size: 26 },
+  { label: 'Lazer', angle: 135, distance: 64, strength: 'médio', color: '#E8927A', size: 22 },
+  { label: 'Aprendizados', angle: 180, distance: 60, strength: 'médio', color: '#E8927A', size: 22 },
+  { label: 'Propósito', angle: 225, distance: 48, strength: 'forte', color: '#E06D53', size: 28 },
+  { label: 'Decisões', angle: 270, distance: 72, strength: 'leve', color: '#F0B8A8', size: 18 },
+  { label: 'Marcos', angle: 315, distance: 58, strength: 'médio', color: '#E8927A', size: 22 },
+];
+
+interface QuickItem {
+  icon: LucideIcon;
+  title: string;
+  sub: string;
+}
+
+const QUICK_ITEMS: QuickItem[] = [
+  { icon: Heart, title: 'Relacionamentos', sub: 'Registrar interação importante' },
+  { icon: Users, title: 'Comunidade', sub: 'Registrar participação em grupo' },
+  { icon: Star, title: 'Experiência', sub: 'Registrar experiência vivida' },
+  { icon: Music, title: 'Lazer', sub: 'Registrar atividade prazerosa' },
+  { icon: BookOpen, title: 'Aprendizado', sub: 'Registrar algo aprendido' },
+  { icon: Compass, title: 'Propósito', sub: 'Registrar reflexão pessoal' },
+  { icon: Zap, title: 'Decisão', sub: 'Registrar decisão importante' },
+  { icon: Flag, title: 'Marco', sub: 'Registrar acontecimento marcante' },
+];
+
+const CONNECTIONS = [
+  { title: 'Relacionamentos ↔ Humor', insight: 'Interações positivas aparecem associadas a melhores estados emocionais.' },
+  { title: 'Experiências ↔ Energia', insight: 'Momentos fora da rotina costumam aumentar sua energia percebida.' },
+  { title: 'Lazer ↔ Estresse', insight: 'Mais lazer parece estar associado a menor estresse.' },
+  { title: 'Propósito ↔ Motivação', insight: 'Quando suas ações estão alinhadas aos seus valores, a motivação tende a crescer.' },
+  { title: 'Aprendizados ↔ Objetivos', insight: 'Períodos de aprendizado intenso aparecem associados a maior progresso pessoal.' },
+];
+
+const TIMELINE_EVENTS = [
+  { title: 'Conversa importante com amigo próximo', category: 'Relacionamentos', impact: 'positivo', color: '#E06D53' },
+  { title: 'Participação em evento social', category: 'Comunidade', impact: 'positivo', color: '#E8927A' },
+  { title: 'Nova atividade iniciada', category: 'Experiência', impact: 'crescimento', color: '#E06D53' },
+  { title: 'Reflexão sobre propósito', category: 'Propósito', impact: 'clareza', color: '#F0B8A8' },
+  { title: 'Decisão profissional importante', category: 'Decisão', impact: 'transformação', color: '#E8927A' },
+];
+
+export default function LifeModulePage({ selectedDate, refreshCount }: LifeModulePageProps) {
+  const { showAlert } = useNexusAlert();
+  const [reflexaoTexto, setReflexaoTexto] = useState('');
+
+  const registros = storage.getRegistros()
+    .sort((a, b) => b.data.localeCompare(a.data));
+
+  const handleQuickRegister = (item: string) => {
+    showAlert(`Abrindo fluxo de registro para ${item}...`, 'relacoes');
+  };
+
+  const handleSubmodule = (name: string) => {
+    showAlert(`Navegando para ${name}...`, 'relacoes');
+  };
+
+  const handleSalvarReflexao = () => {
+    if (!reflexaoTexto.trim()) {
+      showAlert('Escreva algo antes de registrar.', 'relacoes');
+      return;
+    }
+    const hoje = storage.getRegistroPorData(selectedDate) || { data: selectedDate };
+    const reg = { ...hoje };
+    reg.diario = (reg.diario ? reg.diario + '\n' : '') + `[Reflexão Vida]: ${reflexaoTexto.trim()}`;
+    storage.actualizarRegistro(reg);
+    setReflexaoTexto('');
+    showAlert('Reflexão registrada!', 'relacoes');
+  };
+
+  const cx = 100, cy = 100;
+
+  return (
+    <div className="space-y-8 -mx-5 px-5 -mt-6 pt-5 pb-32 text-ink font-sans bg-app">
+      {/* ── 1. Header editorial ── */}
+      <div className="flex justify-between items-start pt-2">
+        <div className="space-y-1 max-w-[78%]">
+          <span className="text-caption font-semibold tracking-wider text-subtle uppercase font-mono">MÓDULO</span>
+          <h1 className="text-[34px] font-bold text-ink tracking-tight leading-none">Vida</h1>
+          <p className="text-body text-subtle mt-1.5 leading-relaxed">
+            Relacionamentos, pertencimento, experiências, propósito e trajetória pessoal.
+          </p>
+        </div>
+        <button
+          onClick={() => showAlert('Opções de visualização filtradas.', 'relacoes')}
+          className="w-10 h-10 rounded-full bg-card border border-line flex items-center justify-center shadow-xs active-tap text-ink transition-colors cursor-pointer"
+        >
+          <SlidersHorizontal className="w-4 h-4 stroke-[1.5]" />
+        </button>
+      </div>
+      <div>
+        <span className="inline-flex items-center px-3.5 py-1 rounded-full text-caption font-semibold bg-muted text-subtle border border-line/50">
+          Últimos 30 dias
+        </span>
+      </div>
+
+      {/* ── 2. Life Overview Card ── */}
+      <div className="rounded-sheet border border-life-line p-5 space-y-6 relative overflow-hidden shadow-card bg-life-soft">
+        <div className="flex justify-between items-start">
+          <div className="space-y-1 max-w-[80%]">
+            <h3 className="text-sm font-bold text-ink flex items-center gap-1.5">
+              <HeartHandshake className="w-4 h-4 text-life" />
+              Panorama da sua vida
+            </h3>
+            <p className="text-caption text-subtle leading-relaxed">
+              Seu período recente mostra fortalecimento das relações importantes, mais experiências significativas e maior alinhamento com seus valores.
+            </p>
+          </div>
+          <span className="text-micro uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-life/10 text-life">
+            trajetória em evolução
+          </span>
+        </div>
+
+        {/* Métricas 2x2 */}
+        <div className="grid grid-cols-2 gap-3 border-t border-life-line/40 pt-4">
+          <div className="space-y-1">
+            <span className="text-caption text-subtle font-medium">Relacionamentos</span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-xl font-bold text-ink">8.2</span>
+              <span className="text-micro text-faint">/10</span>
+            </div>
+            <span className="text-micro text-faint block">qualidade percebida</span>
+          </div>
+          <div className="space-y-1">
+            <span className="text-caption text-subtle font-medium">Comunidade</span>
+            <div className="text-xl font-bold text-ink">Alta</div>
+            <span className="text-micro text-faint block">pertencimento</span>
+          </div>
+          <div className="space-y-1 border-t border-life-line/20 pt-3">
+            <span className="text-caption text-subtle font-medium">Experiências</span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-xl font-bold text-ink">+12</span>
+            </div>
+            <span className="text-micro text-faint block">momentos relevantes</span>
+          </div>
+          <div className="space-y-1 border-t border-life-line/20 pt-3">
+            <span className="text-caption text-subtle font-medium">Propósito</span>
+            <div className="text-xl font-bold text-ink">Alto</div>
+            <span className="text-micro text-faint block">alinhamento atual</span>
+          </div>
+        </div>
+
+        {/* SVG: Mapa da Vida radial */}
+        <div className="border-t border-life-line/40 pt-4 flex flex-col items-center">
+          <span className="text-caption text-faint uppercase tracking-wider font-semibold mb-3">Mapa da Vida</span>
+          <svg viewBox="0 0 200 200" className="w-48 h-48 mx-auto">
+            {/* Grid rings */}
+            {[0.35, 0.55, 0.75].map((scale, i) => (
+              <circle key={i} cx={cx} cy={cy} r={84 * scale} fill="none" stroke="var(--color-life-line)" strokeWidth="0.8" strokeDasharray="3 4" opacity={0.6} />
+            ))}
+            {/* Connection lines from center */}
+            {LIFE_NODES.map((node, i) => {
+              const p = polarToCartesian(cx, cy, node.distance, node.angle);
+              return <line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke={node.color} strokeWidth="0.8" opacity={0.25} />;
+            })}
+            {/* Nodes */}
+            {LIFE_NODES.map((node, i) => {
+              const p = polarToCartesian(cx, cy, node.distance, node.angle);
+              return (
+                <g key={i}>
+                  <circle cx={p.x} cy={p.y} r={node.size / 2} fill={node.color} fillOpacity={0.12} stroke={node.color} strokeWidth="1.5" />
+                  <text x={p.x} y={p.y + 3} textAnchor="middle" className="text-[6px] font-bold fill-current text-ink" fill="var(--color-ink)">
+                    {node.label.length > 8 ? node.label.slice(0, 8) + '…' : node.label}
+                  </text>
+                </g>
+              );
+            })}
+            {/* Center node */}
+            <circle cx={cx} cy={cy} r={18} fill="var(--color-life)" fillOpacity={0.15} stroke="var(--color-life)" strokeWidth="2" />
+            <text x={cx} y={cy + 3} textAnchor="middle" className="text-[9px] font-bold fill-ink" fill="var(--color-ink)">Vida</text>
+          </svg>
+        </div>
+
+        {/* Insight */}
+        <div className="border-t border-life-line/40 pt-3 text-caption text-subtle leading-relaxed italic text-center">
+          “Os relacionamentos continuam sendo o principal fator associado ao seu bem-estar.”
+        </div>
+      </div>
+
+      {/* ── 3. Quick Capture ── */}
+      <div className="space-y-3">
+        <div>
+          <h2 className="text-lg font-bold text-ink">Registrar algo da sua vida</h2>
+          <p className="text-caption text-subtle">Capture momentos, relações, experiências e reflexões importantes.</p>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {QUICK_ITEMS.map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={idx}
+                onClick={() => handleQuickRegister(item.title)}
+                className="bg-card border border-line rounded-xl p-3 text-left relative h-24 flex flex-col justify-between hover:border-life/50 active-tap transition-all cursor-pointer"
+              >
+                <span className="absolute top-3 right-3 text-xs font-bold text-faint">+</span>
+                <div className="w-7 h-7 rounded-full bg-life-soft text-life flex items-center justify-center">
+                  <Icon className="w-4 h-4 stroke-[2]" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-caption font-bold text-ink leading-tight">{item.title}</h4>
+                  <p className="text-micro text-faint truncate">{item.sub}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── 4. Featured Insight ── */}
+      <div className="rounded-sheet border border-life-line bg-life-soft p-5 space-y-3.5">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-life" />
+          <span className="text-micro uppercase font-bold tracking-wider text-life font-mono">INSIGHT</span>
+        </div>
+        <div className="space-y-1">
+          <h4 className="text-sm font-bold text-ink">Relações significativas continuam moldando seu bem-estar</h4>
+          <p className="text-caption text-subtle leading-relaxed">
+            Os dias com mais interações positivas apresentaram melhor humor, maior motivação e maior sensação de propósito.
+          </p>
+        </div>
+        <button
+          onClick={() => showAlert('Explorando conexões...', 'relacoes')}
+          className="inline-flex items-center px-4 py-1.5 bg-card hover:bg-life/5 text-life hover:text-life text-caption font-bold rounded-full border border-line active-tap transition-colors cursor-pointer"
+        >
+          Explorar conexões
+        </button>
+      </div>
+
+      {/* ── 5. Life Map Section ── */}
+      <div className="space-y-5">
+        <div>
+          <h2 className="text-lg font-bold text-ink">Mapa da Vida</h2>
+          <p className="text-caption text-subtle">Cada área abaixo representa um aspecto importante da sua trajetória.</p>
+        </div>
+
+        {/* 5.1 Relacionamentos */}
+        <div className="bg-card border border-line rounded-sheet p-5 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-life-soft border border-life-line flex items-center justify-center">
+              <HeartHandshake className="w-4 h-4 text-life" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-ink">Relacionamentos</h3>
+              <p className="text-caption text-subtle">Pessoas importantes, vínculos, apoio emocional</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Vínculos</span>
+              <div className="text-base font-bold text-ink mt-0.5">4 ativos</div>
+            </div>
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Frequência</span>
+              <div className="text-base font-bold text-ink mt-0.5">Alta</div>
+            </div>
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Apoio</span>
+              <div className="text-base font-bold text-ink mt-0.5">Disponível</div>
+            </div>
+          </div>
+          {/* Mini network SVG */}
+          <div className="flex justify-center py-1">
+            <svg viewBox="0 0 160 80" className="w-40 h-20">
+              <circle cx="80" cy="40" r="12" fill="var(--color-life)" fillOpacity="0.15" stroke="var(--color-life)" strokeWidth="1.5" />
+              <text x="80" y="43" textAnchor="middle" className="text-[7px] font-bold" fill="var(--color-ink)">Eu</text>
+              <circle cx="30" cy="20" r="10" fill="#E8927A" fillOpacity="0.15" stroke="#E8927A" strokeWidth="1" />
+              <text x="30" y="23" textAnchor="middle" className="text-[6px] font-bold" fill="var(--color-ink)">Ana</text>
+              <circle cx="130" cy="20" r="10" fill="#E8927A" fillOpacity="0.15" stroke="#E8927A" strokeWidth="1" />
+              <text x="130" y="23" textAnchor="middle" className="text-[6px] font-bold" fill="var(--color-ink)">João</text>
+              <circle cx="40" cy="65" r="9" fill="#F0B8A8" fillOpacity="0.15" stroke="#F0B8A8" strokeWidth="1" />
+              <text x="40" y="68" textAnchor="middle" className="text-[6px] font-bold" fill="var(--color-ink)">Lia</text>
+              <circle cx="120" cy="65" r="9" fill="#F0B8A8" fillOpacity="0.15" stroke="#F0B8A8" strokeWidth="1" />
+              <text x="120" y="68" textAnchor="middle" className="text-[6px] font-bold" fill="var(--color-ink)">Pedro</text>
+              <line x1="80" y1="40" x2="30" y2="20" stroke="var(--color-life-line)" strokeWidth="1" />
+              <line x1="80" y1="40" x2="130" y2="20" stroke="var(--color-life-line)" strokeWidth="1" />
+              <line x1="80" y1="40" x2="40" y2="65" stroke="var(--color-life-line)" strokeWidth="1" />
+              <line x1="80" y1="40" x2="120" y2="65" stroke="var(--color-life-line)" strokeWidth="1" />
+            </svg>
+          </div>
+          <p className="text-caption text-subtle leading-relaxed italic border-t border-line/40 pt-3">
+            “As conversas com pessoas próximas continuam associadas aos seus melhores dias.”
+          </p>
+          <button onClick={() => handleSubmodule('Relacionamentos')} className="text-caption font-bold text-life hover:underline flex items-center gap-1">
+            Ver relacionamentos <ArrowRight className="w-3 h-3" />
+          </button>
+        </div>
+
+        {/* 5.2 Comunidade */}
+        <div className="bg-card border border-line rounded-sheet p-5 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-life-soft border border-life-line flex items-center justify-center">
+              <Users className="w-4 h-4 text-life" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-ink">Comunidade e pertencimento</h3>
+              <p className="text-caption text-subtle">Grupos, participação social e conexão coletiva</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Pertencimento</span>
+              <div className="text-base font-bold text-ink mt-0.5">Alto</div>
+            </div>
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Participação</span>
+              <div className="text-base font-bold text-ink mt-0.5">Ativa</div>
+            </div>
+          </div>
+          {/* Overlapping groups SVG */}
+          <div className="flex justify-center py-1">
+            <svg viewBox="0 0 160 80" className="w-40 h-20">
+              {[
+                { cx: 45, cy: 40, r: 28, label: 'Família' },
+                { cx: 80, cy: 35, r: 26, label: 'Amigos' },
+                { cx: 115, cy: 40, r: 24, label: 'Trabalho' },
+              ].map((g, i) => (
+                <g key={i}>
+                  <circle cx={g.cx} cy={g.cy} r={g.r} fill="var(--color-life)" fillOpacity={0.06} stroke="var(--color-life-line)" strokeWidth="1" />
+                  <text x={g.cx} y={g.cy + 2} textAnchor="middle" className="text-[6px] font-bold" fill="var(--color-ink)">{g.label}</text>
+                </g>
+              ))}
+            </svg>
+          </div>
+          <p className="text-caption text-subtle leading-relaxed italic border-t border-line/40 pt-3">
+            “Sua sensação de pertencimento cresce quando participa ativamente de grupos.”
+          </p>
+          <button onClick={() => handleSubmodule('Comunidade')} className="text-caption font-bold text-life hover:underline flex items-center gap-1">
+            Ver comunidade <ArrowRight className="w-3 h-3" />
+          </button>
+        </div>
+
+        {/* Insight break 1 */}
+        <div className="rounded-2xl p-4 flex gap-3.5 items-start border border-life-line bg-life-soft/60">
+          <div className="w-7 h-7 rounded-full bg-life-soft flex items-center justify-center shrink-0">
+            <Sparkles className="w-4 h-4 text-life" />
+          </div>
+          <p className="text-caption text-subtle leading-relaxed font-medium italic">
+            “Apoio social e motivação continuam aparecendo fortemente conectados.”
+          </p>
+        </div>
+
+        {/* 5.3 Experiências */}
+        <div className="bg-card border border-line rounded-sheet p-5 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-life-soft border border-life-line flex items-center justify-center">
+              <Star className="w-4 h-4 text-life" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-ink">Experiências</h3>
+              <p className="text-caption text-subtle">Momentos marcantes, novidades e acontecimentos fora da rotina</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Memoráveis</span>
+              <div className="text-base font-bold text-ink mt-0.5">8 eventos</div>
+            </div>
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Novidades</span>
+              <div className="text-base font-bold text-ink mt-0.5">3 recentes</div>
+            </div>
+          </div>
+          {/* Experience dots along timeline */}
+          <div className="flex justify-center py-1">
+            <svg viewBox="0 0 160 40" className="w-full h-10">
+              <line x1="10" y1="20" x2="150" y2="20" stroke="var(--color-life-line)" strokeWidth="1.5" strokeDasharray="4 4" />
+              {[20, 45, 70, 95, 120, 140].map((x, i) => (
+                <g key={i}>
+                  <circle cx={x} cy={20} r={i === 3 ? 7 : 5} fill={i === 3 ? 'var(--color-life)' : 'var(--color-life-line)'} fillOpacity={i === 3 ? 0.3 : 0.5} stroke="var(--color-life)" strokeWidth="1" />
+                  <circle cx={x} cy={20} r={2} fill="var(--color-life)" />
+                </g>
+              ))}
+              <text x="80" y="36" textAnchor="middle" className="text-[6px] text-subtle" fill="var(--color-subtle)">eventos ao longo do período</text>
+            </svg>
+          </div>
+          <p className="text-caption text-subtle leading-relaxed italic border-t border-line/40 pt-3">
+            “Experiências fora da rotina tiveram forte impacto positivo na energia mental.”
+          </p>
+          <button onClick={() => handleSubmodule('Experiências')} className="text-caption font-bold text-life hover:underline flex items-center gap-1">
+            Ver experiências <ArrowRight className="w-3 h-3" />
+          </button>
+        </div>
+
+        {/* 5.4 Lazer */}
+        <div className="bg-card border border-line rounded-sheet p-5 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-life-soft border border-life-line flex items-center justify-center">
+              <Music className="w-4 h-4 text-life" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-ink">Lazer e hobbies</h3>
+              <p className="text-caption text-subtle">Atividades prazerosas, diversão, descanso ativo e interesses pessoais</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Tempo</span>
+              <div className="text-base font-bold text-ink mt-0.5">4h/sem</div>
+            </div>
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Hobbies</span>
+              <div className="text-base font-bold text-ink mt-0.5">3 ativos</div>
+            </div>
+          </div>
+          {/* Activity distribution */}
+          <div className="flex justify-center gap-4 py-2">
+            {[
+              { label: 'Leitura', pct: 35, color: '#E06D53' },
+              { label: 'Música', pct: 28, color: '#E8927A' },
+              { label: 'Jogos', pct: 22, color: '#F0B8A8' },
+              { label: 'Outros', pct: 15, color: '#F9D4CF' },
+            ].map((a, i) => (
+              <div key={i} className="flex flex-col items-center gap-1">
+                <div className="w-8 h-8 rounded-full" style={{ backgroundColor: a.color, opacity: 0.2, border: `2px solid ${a.color}` }}>
+                  <div className="w-full h-full rounded-full flex items-center justify-center text-[8px] font-bold" style={{ color: a.color }}>{a.pct}%</div>
+                </div>
+                <span className="text-micro text-faint">{a.label}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-caption text-subtle leading-relaxed italic border-t border-line/40 pt-3">
+            “Seu lazer está mais consistente do que nos períodos anteriores.”
+          </p>
+          <button onClick={() => handleSubmodule('Lazer')} className="text-caption font-bold text-life hover:underline flex items-center gap-1">
+            Ver lazer <ArrowRight className="w-3 h-3" />
+          </button>
+        </div>
+
+        {/* 5.5 Aprendizados */}
+        <div className="bg-card border border-line rounded-sheet p-5 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-life-soft border border-life-line flex items-center justify-center">
+              <BookOpen className="w-4 h-4 text-life" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-ink">Aprendizados</h3>
+              <p className="text-caption text-subtle">Conhecimento adquirido, habilidades desenvolvidas e evolução intelectual</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Temas</span>
+              <div className="text-base font-bold text-ink mt-0.5">5 em foco</div>
+            </div>
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Aplicação</span>
+              <div className="text-base font-bold text-ink mt-0.5">Prática</div>
+            </div>
+          </div>
+          {/* Knowledge clusters */}
+          <div className="flex flex-wrap justify-center gap-2 py-1">
+            {['Livros', 'Cursos', 'Projetos', 'Reflexões'].map((c, i) => (
+              <span key={i} className="text-micro font-bold px-3 py-1 rounded-full bg-life-soft border border-life-line text-life">
+                {c}
+              </span>
+            ))}
+          </div>
+          <p className="text-caption text-subtle leading-relaxed italic border-t border-line/40 pt-3">
+            “Você aprende melhor quando conecta teoria com aplicação prática.”
+          </p>
+          <button onClick={() => handleSubmodule('Aprendizados')} className="text-caption font-bold text-life hover:underline flex items-center gap-1">
+            Ver aprendizados <ArrowRight className="w-3 h-3" />
+          </button>
+        </div>
+
+        {/* Insight break 2 */}
+        <div className="rounded-2xl p-4 flex gap-3.5 items-start border border-life-line bg-life-soft/60">
+          <div className="w-7 h-7 rounded-full bg-life-soft flex items-center justify-center shrink-0">
+            <Lightbulb className="w-4 h-4 text-life" />
+          </div>
+          <p className="text-caption text-subtle leading-relaxed font-medium italic">
+            “Os períodos com mais aprendizado também coincidiram com maior motivação.”
+          </p>
+        </div>
+
+        {/* 5.6 Propósito */}
+        <div className="bg-card border border-line rounded-sheet p-5 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-life-soft border border-life-line flex items-center justify-center">
+              <Compass className="w-4 h-4 text-life" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-ink">Propósito e valores</h3>
+              <p className="text-caption text-subtle">Direção pessoal, significado e alinhamento com o que importa</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Propósito</span>
+              <div className="text-base font-bold text-ink mt-0.5">Claro</div>
+            </div>
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Alinhamento</span>
+              <div className="text-base font-bold text-ink mt-0.5">Crescente</div>
+            </div>
+          </div>
+          {/* Values map */}
+          <div className="flex justify-center py-2">
+            <svg viewBox="0 0 160 80" className="w-40 h-20">
+              <circle cx="80" cy="40" r="14" fill="var(--color-life)" fillOpacity={0.12} stroke="var(--color-life)" strokeWidth="1.5" />
+              <text x="80" y="43" textAnchor="middle" className="text-[7px] font-bold" fill="var(--color-ink)">Valores</text>
+              {[
+                { angle: 0, label: 'Família' },
+                { angle: 72, label: 'Saúde' },
+                { angle: 144, label: 'Cresc.' },
+                { angle: 216, label: 'Liberd.' },
+                { angle: 288, label: 'Contrib.' },
+              ].map((v, i) => {
+                const p = polarToCartesian(80, 40, 32, v.angle);
+                return (
+                  <text key={i} x={p.x} y={p.y} textAnchor="middle" dominantBaseline="central" className="text-[6px] font-semibold" fill="var(--color-subtle)">
+                    {v.label}
+                  </text>
+                );
+              })}
+            </svg>
+          </div>
+          <p className="text-caption text-subtle leading-relaxed italic border-t border-line/40 pt-3">
+            “Suas decisões recentes mostram maior alinhamento com seus valores centrais.”
+          </p>
+          <button onClick={() => handleSubmodule('Propósito')} className="text-caption font-bold text-life hover:underline flex items-center gap-1">
+            Ver propósito <ArrowRight className="w-3 h-3" />
+          </button>
+        </div>
+
+        {/* 5.7 Decisões */}
+        <div className="bg-card border border-line rounded-sheet p-5 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-life-soft border border-life-line flex items-center justify-center">
+              <Zap className="w-4 h-4 text-life" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-ink">Decisões</h3>
+              <p className="text-caption text-subtle">Escolhas importantes e impactos gerados ao longo do tempo</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Decisões</span>
+              <div className="text-base font-bold text-ink mt-0.5">3 recentes</div>
+            </div>
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Satisfação</span>
+              <div className="text-base font-bold text-ink mt-0.5">Alta</div>
+            </div>
+          </div>
+          {/* Simple decision tree */}
+          <div className="flex justify-center py-1">
+            <svg viewBox="0 0 160 60" className="w-full h-14">
+              <line x1="80" y1="10" x2="40" y2="35" stroke="var(--color-life-line)" strokeWidth="1" />
+              <line x1="80" y1="10" x2="120" y2="35" stroke="var(--color-life-line)" strokeWidth="1" />
+              <line x1="40" y1="35" x2="25" y2="50" stroke="var(--color-life-line)" strokeWidth="0.8" />
+              <line x1="40" y1="35" x2="55" y2="50" stroke="var(--color-life-line)" strokeWidth="0.8" />
+              <line x1="120" y1="35" x2="105" y2="50" stroke="var(--color-life-line)" strokeWidth="0.8" />
+              <line x1="120" y1="35" x2="135" y2="50" stroke="var(--color-life-line)" strokeWidth="0.8" />
+              <circle cx="80" cy="10" r="6" fill="var(--color-life)" fillOpacity={0.2} stroke="var(--color-life)" strokeWidth="1.5" />
+              <circle cx="40" cy="35" r="5" fill="var(--color-life)" fillOpacity={0.12} stroke="var(--color-life)" strokeWidth="1" />
+              <circle cx="120" cy="35" r="5" fill="var(--color-life)" fillOpacity={0.12} stroke="var(--color-life)" strokeWidth="1" />
+              <circle cx="25" cy="50" r="3" fill="var(--color-life-line)" />
+              <circle cx="55" cy="50" r="3" fill="var(--color-life-line)" />
+              <circle cx="105" cy="50" r="3" fill="var(--color-life-line)" />
+              <circle cx="135" cy="50" r="3" fill="var(--color-life-line)" />
+            </svg>
+          </div>
+          <p className="text-caption text-subtle leading-relaxed italic border-t border-line/40 pt-3">
+            “As decisões tomadas com mais reflexão geraram maior satisfação posterior.”
+          </p>
+          <button onClick={() => handleSubmodule('Decisões')} className="text-caption font-bold text-life hover:underline flex items-center gap-1">
+            Ver decisões <ArrowRight className="w-3 h-3" />
+          </button>
+        </div>
+
+        {/* 5.8 Marcos */}
+        <div className="bg-card border border-line rounded-sheet p-5 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-life-soft border border-life-line flex items-center justify-center">
+              <Flag className="w-4 h-4 text-life" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-ink">Marcos</h3>
+              <p className="text-caption text-subtle">Eventos importantes da linha do tempo pessoal, fases e transições</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Marcos</span>
+              <div className="text-base font-bold text-ink mt-0.5">2 recentes</div>
+            </div>
+            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
+              <span className="text-micro text-faint uppercase font-mono font-bold">Fase</span>
+              <div className="text-base font-bold text-ink mt-0.5">Crescimento</div>
+            </div>
+          </div>
+          {/* Simple flag/timeline */}
+          <div className="flex justify-center py-1">
+            <svg viewBox="0 0 160 40" className="w-full h-10">
+              <line x1="20" y1="30" x2="140" y2="30" stroke="var(--color-life-line)" strokeWidth="1.5" />
+              {[40, 80, 120].map((x, i) => (
+                <g key={i}>
+                  <line x1={x} y1="12" x2={x} y2="30" stroke="var(--color-life)" strokeWidth="1.5" opacity={0.4} />
+                  <polygon points={`${x},12 ${x + 14},18 ${x},24`} fill="var(--color-life)" fillOpacity={0.3} stroke="var(--color-life)" strokeWidth="1" />
+                </g>
+              ))}
+              <text x="80" y="12" textAnchor="middle" className="text-[6px] font-bold text-subtle" fill="var(--color-subtle)">linha do tempo pessoal</text>
+            </svg>
+          </div>
+          <p className="text-caption text-subtle leading-relaxed italic border-t border-line/40 pt-3">
+            “O último período marcou uma nova fase de crescimento pessoal.”
+          </p>
+          <button onClick={() => handleSubmodule('Marcos')} className="text-caption font-bold text-life hover:underline flex items-center gap-1">
+            Ver marcos <ArrowRight className="w-3 h-3" />
+          </button>
+        </div>
+      </div>
+
+      {/* ── 6. Connections Section ── */}
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-lg font-bold text-ink">Conexões da sua vida</h2>
+          <p className="text-caption text-subtle">Algumas áreas parecem evoluir juntas.</p>
+        </div>
+        <div className="space-y-3">
+          {CONNECTIONS.map((conn, i) => (
+            <div key={i} className="bg-card border border-line rounded-2xl p-4 flex items-center gap-3.5">
+              <div className="w-8 h-8 rounded-full bg-life-soft flex items-center justify-center shrink-0">
+                <Sparkles className="w-4 h-4 text-life" />
+              </div>
+              <div className="space-y-0.5 min-w-0">
+                <h4 className="text-caption font-bold text-ink">{conn.title}</h4>
+                <p className="text-micro text-subtle leading-relaxed">{conn.insight}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── 7. Recent Timeline ── */}
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-lg font-bold text-ink">Linha do tempo recente</h2>
+          <p className="text-caption text-subtle">Momentos que contribuíram para sua trajetória recente.</p>
+        </div>
+        <div className="relative pl-6 space-y-4 border-l border-line">
+          {TIMELINE_EVENTS.map((event, i) => (
+            <div key={i} className="relative">
+              <div className="absolute -left-[30px] top-1.5 w-4 h-4 rounded-full border-4 border-app" style={{ backgroundColor: event.color }} />
+              <div className="bg-card border border-line rounded-2xl p-3.5 space-y-1">
+                <div className="flex justify-between items-start">
+                  <span className="text-micro text-faint uppercase tracking-wider font-semibold">{event.category}</span>
+                  <span className="text-micro text-subtle font-medium font-mono capitalize">{event.impact}</span>
+                </div>
+                <h4 className="text-caption font-bold text-ink">{event.title}</h4>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── 8. Reflection Card ── */}
+      <div className="rounded-[28px] p-6 space-y-5 shadow-md relative overflow-hidden bg-ink-deep">
+        <div className="space-y-1 relative z-10">
+          <span className="text-micro uppercase font-bold tracking-wider text-faint font-mono">REFLEXÃO</span>
+          <h3 className="text-base font-bold text-white leading-snug">Pergunta para refletir</h3>
+          <p className="text-body text-white/80 leading-relaxed font-serif italic pt-1">
+            “O que mais influenciou positivamente sua vida nas últimas semanas?”
+          </p>
+        </div>
+        <div className="space-y-3 relative z-10">
+          <textarea
+            value={reflexaoTexto}
+            onChange={(e) => setReflexaoTexto(e.target.value)}
+            placeholder="Escreva uma percepção rápida..."
+            rows={3}
+            className="w-full text-caption bg-white/10 text-white border border-white/20 rounded-xl p-3 placeholder-white/50 focus:outline-hidden focus:border-white/50 focus:ring-1 focus:ring-white/25 resize-none leading-relaxed"
+          />
+          <button
+            onClick={handleSalvarReflexao}
+            className="w-full bg-white/10 hover:bg-white/20 text-white text-caption font-bold py-3 px-4 rounded-xl border border-white/20 transition-colors active-tap cursor-pointer"
+          >
+            Registrar reflexão
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
