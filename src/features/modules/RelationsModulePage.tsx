@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { HeartHandshake, Users, Star, Target, BookOpen, Heart, Sparkles, Plus, ArrowRight, MessageCircle, GraduationCap, ChevronRight, Moon, Dumbbell, Droplets, Brain, Zap, Wallet, TrendingUp } from 'lucide-react';
-import { ExperiencesCard } from '../../shared/cards/ExperiencesCard';
 import { useRotatingVariant } from '../../hooks/useRotatingVariant';
 import { storage } from '../../lib/storage';
 import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
@@ -252,16 +251,18 @@ export default function RelationsModulePage({ selectedDate, refreshCount, trigge
       </div>
 
       {/* ── Experiências ──────────────────────── */}
-      <ExperiencesCard
-        title="Experiências"
-        subtitle="Momentos vividos, memórias e acontecimentos fora da rotina."
-        insight={expVariant.insight}
-        badgeLabel={expVariant.badgeLabel}
-        visualType={expVariant.visualType}
-        trend={expVariant.trend}
-        status="positive"
-        onClick={() => showAlert('Abrindo painel de experiências...', 'relacoes')}
-      />
+      {/* ── Experiências ──────────────────────── */}
+      <div className="bg-card border border-line rounded-2xl p-4 space-y-3">
+        <h3 className="text-sm font-bold text-ink">Experiências</h3>
+        <p className="text-[11px] text-subtle leading-relaxed">Momentos vividos, memórias e acontecimentos fora da rotina.</p>
+        <p className="text-[11px] text-subtle italic">{expVariant.insight}</p>
+        <button
+          onClick={() => showAlert('Abrindo painel de experiências...', 'relacoes')}
+          className="text-[11px] font-semibold text-ink border border-line rounded-lg px-3 py-1.5 hover:border-subtle transition-colors"
+        >
+          Ver experiências
+        </button>
+      </div>
 
       {/* ── Lazer e hábitos ───────────────────── */}
       <div className="bg-card border border-line rounded-2xl p-4 space-y-3">
