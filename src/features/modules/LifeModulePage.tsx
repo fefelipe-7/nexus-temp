@@ -10,7 +10,6 @@ import {
   Zap,
   Flag,
   Sparkles,
-  ArrowRight,
   SlidersHorizontal,
   Lightbulb,
   type LucideIcon,
@@ -22,6 +21,8 @@ import { ExperiencesCard } from '../../shared/cards/ExperiencesCard';
 import { LeisureHobbiesCard } from '../../shared/cards/LeisureHobbiesCard';
 import { LearningsCard } from '../../shared/cards/LearningsCard';
 import { PurposeValuesCard } from '../../shared/cards/PurposeValuesCard';
+import { DecisionsCard } from '../../shared/cards/DecisionsCard';
+import { MilestonesCard } from '../../shared/cards/MilestonesCard';
 import { storage } from '../../lib/storage';
 import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
 
@@ -352,93 +353,22 @@ export default function LifeModulePage({ selectedDate, refreshCount }: LifeModul
         />
 
         {/* 5.7 Decisões */}
-        <div className="bg-card border border-line rounded-sheet p-5 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-life-soft border border-life-line flex items-center justify-center">
-              <Zap className="w-4 h-4 text-life" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-ink">Decisões</h3>
-              <p className="text-caption text-subtle">Escolhas importantes e impactos gerados ao longo do tempo</p>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
-              <span className="text-micro text-faint uppercase font-mono font-bold">Decisões</span>
-              <div className="text-base font-bold text-ink mt-0.5">3 recentes</div>
-            </div>
-            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
-              <span className="text-micro text-faint uppercase font-mono font-bold">Satisfação</span>
-              <div className="text-base font-bold text-ink mt-0.5">Alta</div>
-            </div>
-          </div>
-          {/* Simple decision tree */}
-          <div className="flex justify-center py-1">
-            <svg viewBox="0 0 160 60" className="w-full h-14">
-              <line x1="80" y1="10" x2="40" y2="35" stroke="var(--color-life-line)" strokeWidth="1" />
-              <line x1="80" y1="10" x2="120" y2="35" stroke="var(--color-life-line)" strokeWidth="1" />
-              <line x1="40" y1="35" x2="25" y2="50" stroke="var(--color-life-line)" strokeWidth="0.8" />
-              <line x1="40" y1="35" x2="55" y2="50" stroke="var(--color-life-line)" strokeWidth="0.8" />
-              <line x1="120" y1="35" x2="105" y2="50" stroke="var(--color-life-line)" strokeWidth="0.8" />
-              <line x1="120" y1="35" x2="135" y2="50" stroke="var(--color-life-line)" strokeWidth="0.8" />
-              <circle cx="80" cy="10" r="6" fill="var(--color-life)" fillOpacity={0.2} stroke="var(--color-life)" strokeWidth="1.5" />
-              <circle cx="40" cy="35" r="5" fill="var(--color-life)" fillOpacity={0.12} stroke="var(--color-life)" strokeWidth="1" />
-              <circle cx="120" cy="35" r="5" fill="var(--color-life)" fillOpacity={0.12} stroke="var(--color-life)" strokeWidth="1" />
-              <circle cx="25" cy="50" r="3" fill="var(--color-life-line)" />
-              <circle cx="55" cy="50" r="3" fill="var(--color-life-line)" />
-              <circle cx="105" cy="50" r="3" fill="var(--color-life-line)" />
-              <circle cx="135" cy="50" r="3" fill="var(--color-life-line)" />
-            </svg>
-          </div>
-          <p className="text-caption text-subtle leading-relaxed italic border-t border-line/40 pt-3">
-            “As decisões tomadas com mais reflexão geraram maior satisfação posterior.”
-          </p>
-          <button onClick={() => handleSubmodule('Decisões')} className="text-caption font-bold text-life hover:underline flex items-center gap-1">
-            Ver decisões <ArrowRight className="w-3 h-3" />
-          </button>
-        </div>
+        <DecisionsCard
+          decisionCount={18}
+          satisfactionScore={78}
+          insight="As decisões tomadas com mais reflexão geraram maior satisfação posterior."
+          badgeLabel="escolhas refletidas"
+          onClick={() => handleSubmodule('Decisões')}
+        />
 
         {/* 5.8 Marcos */}
-        <div className="bg-card border border-line rounded-sheet p-5 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-life-soft border border-life-line flex items-center justify-center">
-              <Flag className="w-4 h-4 text-life" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-ink">Marcos</h3>
-              <p className="text-caption text-subtle">Eventos importantes da linha do tempo pessoal, fases e transições</p>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
-              <span className="text-micro text-faint uppercase font-mono font-bold">Marcos</span>
-              <div className="text-base font-bold text-ink mt-0.5">2 recentes</div>
-            </div>
-            <div className="flex-1 bg-muted/60 border border-line/60 rounded-xl p-3">
-              <span className="text-micro text-faint uppercase font-mono font-bold">Fase</span>
-              <div className="text-base font-bold text-ink mt-0.5">Crescimento</div>
-            </div>
-          </div>
-          {/* Simple flag/timeline */}
-          <div className="flex justify-center py-1">
-            <svg viewBox="0 0 160 40" className="w-full h-10">
-              <line x1="20" y1="30" x2="140" y2="30" stroke="var(--color-life-line)" strokeWidth="1.5" />
-              {[40, 80, 120].map((x, i) => (
-                <g key={i}>
-                  <line x1={x} y1="12" x2={x} y2="30" stroke="var(--color-life)" strokeWidth="1.5" opacity={0.4} />
-                  <polygon points={`${x},12 ${x + 14},18 ${x},24`} fill="var(--color-life)" fillOpacity={0.3} stroke="var(--color-life)" strokeWidth="1" />
-                </g>
-              ))}
-              <text x="80" y="12" textAnchor="middle" className="text-[6px] font-bold text-subtle" fill="var(--color-subtle)">linha do tempo pessoal</text>
-            </svg>
-          </div>
-          <p className="text-caption text-subtle leading-relaxed italic border-t border-line/40 pt-3">
-            “O último período marcou uma nova fase de crescimento pessoal.”
-          </p>
-          <button onClick={() => handleSubmodule('Marcos')} className="text-caption font-bold text-life hover:underline flex items-center gap-1">
-            Ver marcos <ArrowRight className="w-3 h-3" />
-          </button>
-        </div>
+        <MilestonesCard
+          milestoneCount={8}
+          transitionCount={3}
+          insight="O último período marcou uma nova fase de crescimento pessoal."
+          badgeLabel="fase de crescimento"
+          onClick={() => handleSubmodule('Marcos')}
+        />
       </div>
 
       {/* ── 6. Connections Section ── */}
