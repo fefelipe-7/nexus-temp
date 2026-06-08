@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { parseCurrentRoute, tabToPath, type TabId, type WizardType } from './routes';
+import { parseCurrentRoute, tabToPath, type TabId, type WizardType, type ModuleSlug, type SubmoduleType } from './routes';
 
 interface RouterContextType {
   path: string;
   baseTab: TabId;
   isRegisterModal: boolean;
   wizardType: WizardType;
+  moduleSlug: ModuleSlug | null;
+  submoduleType: SubmoduleType;
   navigate: (toPath: string) => void;
   openRegisterModal: () => void;
   closeRegisterModal: () => void;
@@ -63,6 +65,8 @@ export function RouterProvider({ children }: RouterProviderProps) {
         baseTab: parsed.baseTab,
         isRegisterModal: parsed.isRegisterModal,
         wizardType: parsed.wizardType,
+        moduleSlug: parsed.moduleSlug,
+        submoduleType: parsed.submoduleType,
         navigate,
         openRegisterModal,
         closeRegisterModal,

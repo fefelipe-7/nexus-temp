@@ -6,6 +6,7 @@ import HojeView from './features/today/HojeView';
 import RegistrarSheet from './features/register/RegistrarSheet';
 import InsightsView from './features/insights/InsightsView';
 import ModulesView from './features/modules/ModulesView';
+import SubmodulePage from './features/modules/SubmodulePage';
 import { SleepWizard, MealWizard, WorkoutWizard, ExpenseWizard, MoodWizard, JournalWizard, TaskWizard, HabitWizard } from './features/register';
 import { useRouter } from './app/router/RouterProvider';
 import { AppHeader } from './app/shell/AppHeader';
@@ -21,7 +22,7 @@ export default function App() {
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [refreshCount, setRefreshCount] = useState<number>(0);
 
-  const { path, baseTab, isRegisterModal, wizardType, navigate, openRegisterModal, closeRegisterModal } = useRouter();
+  const { path, baseTab, isRegisterModal, wizardType, moduleSlug, submoduleType, navigate, openRegisterModal, closeRegisterModal } = useRouter();
   const mainRef = useRef<HTMLElement>(null);
 
   useEffect(() => { inicializarStorage(); }, []);
@@ -67,6 +68,9 @@ export default function App() {
   };
 
   const renderActiveTabContent = () => {
+    if (moduleSlug && submoduleType) {
+      return <SubmodulePage selectedDate={selectedDate} />;
+    }
     switch (baseTab) {
       case 'home':
         return (
@@ -127,7 +131,7 @@ export default function App() {
             <main ref={mainRef} className="mobile-screen">
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={baseTab}
+                  key={submoduleType ? `sub-${submoduleType}` : baseTab}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}

@@ -16,6 +16,8 @@ import {
 import { motion } from 'framer-motion';
 import { storage } from '../../lib/storage';
 import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
+import { useRouter } from '../../app/router/RouterProvider';
+import { submodulePath } from '../../app/router/routes';
 
 interface ResourcesModulePageProps {
   selectedDate: string;
@@ -67,8 +69,14 @@ const TIMELINE_EVENTS = [
   { title: 'Meta financeira de curto prazo alcançada', category: 'Objetivos', impact: 'realização', color: '#9A7D0A' },
 ];
 
+const RESOURCES_SUB_MAP: Record<string, 'renda' | 'despesas-fixas' | 'despesas-variaveis' | 'investimentos' | 'dividas' | 'objetivos' | 'seguranca' | 'abundancia'> = {
+  Renda: 'renda', 'Despesas Fixas': 'despesas-fixas', 'Despesas Variáveis': 'despesas-variaveis',
+  Investimentos: 'investimentos', Dívidas: 'dividas', Objetivos: 'objetivos', Segurança: 'seguranca', Abundância: 'abundancia',
+};
+
 export default function ResourcesModulePage({ selectedDate, refreshCount }: ResourcesModulePageProps) {
   const { showAlert } = useNexusAlert();
+  const { navigate } = useRouter();
   const [reflexaoTexto, setReflexaoTexto] = useState('');
 
   const handleQuickRegister = (item: string) => {
@@ -76,7 +84,8 @@ export default function ResourcesModulePage({ selectedDate, refreshCount }: Reso
   };
 
   const handleSubmodule = (name: string) => {
-    showAlert(`Navegando para ${name}...`, 'recursos');
+    const slug = RESOURCES_SUB_MAP[name];
+    if (slug) navigate(submodulePath('financas', slug));
   };
 
   const handleSalvarReflexao = () => {

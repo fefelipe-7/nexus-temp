@@ -25,6 +25,8 @@ import { DecisionsCard } from '../../shared/cards/DecisionsCard';
 import { MilestonesCard } from '../../shared/cards/MilestonesCard';
 import { storage } from '../../lib/storage';
 import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
+import { useRouter } from '../../app/router/RouterProvider';
+import { submodulePath } from '../../app/router/routes';
 
 interface LifeModulePageProps {
   selectedDate: string;
@@ -80,8 +82,14 @@ const TIMELINE_EVENTS = [
   { title: 'Decisão profissional importante', category: 'Decisão', impact: 'transformação', color: '#E8927A' },
 ];
 
+const LIFE_SUB_MAP: Record<string, 'relacionamentos' | 'comunidade' | 'experiencias' | 'lazer' | 'aprendizados' | 'proposito' | 'decisoes' | 'marcos'> = {
+  Relacionamentos: 'relacionamentos', Comunidade: 'comunidade', Experiências: 'experiencias',
+  Lazer: 'lazer', Aprendizados: 'aprendizados', Propósito: 'proposito', Decisões: 'decisoes', Marcos: 'marcos',
+};
+
 export default function LifeModulePage({ selectedDate, refreshCount }: LifeModulePageProps) {
   const { showAlert } = useNexusAlert();
+  const { navigate } = useRouter();
   const [reflexaoTexto, setReflexaoTexto] = useState('');
 
   const registros = storage.getRegistros()
@@ -92,7 +100,8 @@ export default function LifeModulePage({ selectedDate, refreshCount }: LifeModul
   };
 
   const handleSubmodule = (name: string) => {
-    showAlert(`Navegando para ${name}...`, 'relacoes');
+    const slug = LIFE_SUB_MAP[name];
+    if (slug) navigate(submodulePath('relacoes', slug));
   };
 
   const handleSalvarReflexao = () => {

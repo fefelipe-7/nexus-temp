@@ -16,6 +16,8 @@ import {
 import { motion } from 'framer-motion';
 import { storage } from '../../lib/storage';
 import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
+import { useRouter } from '../../app/router/RouterProvider';
+import { submodulePath } from '../../app/router/routes';
 
 interface HealthModulePageProps {
   selectedDate: string;
@@ -67,8 +69,14 @@ const TIMELINE_EVENTS = [
   { title: 'Novo exame realizado', category: 'Saúde Clínica', impact: 'acompanhamento', color: '#2396F3' },
 ];
 
+const HEALTH_SUB_MAP: Record<string, 'sono' | 'nutricao' | 'hidratacao' | 'movimento' | 'recuperacao' | 'biometria' | 'saude-clinica' | 'substancias'> = {
+  Sono: 'sono', Nutrição: 'nutricao', Hidratação: 'hidratacao', Movimento: 'movimento',
+  Recuperação: 'recuperacao', Biometria: 'biometria', 'Saúde Clínica': 'saude-clinica', Substâncias: 'substancias',
+};
+
 export default function HealthModulePage({ selectedDate, refreshCount }: HealthModulePageProps) {
   const { showAlert } = useNexusAlert();
+  const { navigate } = useRouter();
   const [reflexaoTexto, setReflexaoTexto] = useState('');
 
   const handleQuickRegister = (item: string) => {
@@ -76,7 +84,8 @@ export default function HealthModulePage({ selectedDate, refreshCount }: HealthM
   };
 
   const handleSubmodule = (name: string) => {
-    showAlert(`Navegando para ${name}...`, 'saude');
+    const slug = HEALTH_SUB_MAP[name];
+    if (slug) navigate(submodulePath('saude', slug));
   };
 
   const handleSalvarReflexao = () => {

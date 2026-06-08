@@ -17,6 +17,8 @@ import {
 import { motion } from 'framer-motion';
 import { storage } from '../../lib/storage';
 import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
+import { useRouter } from '../../app/router/RouterProvider';
+import { submodulePath } from '../../app/router/routes';
 
 interface ExecutionModulePageProps {
   selectedDate: string;
@@ -68,8 +70,14 @@ const TIMELINE_EVENTS = [
   { title: 'Conquista de meta importante de carreira', category: 'Conquistas', impact: 'realização', color: '#0969DA' },
 ];
 
+const EXECUTION_SUB_MAP: Record<string, 'foco' | 'disciplina' | 'fluxo' | 'energia' | 'prioridades' | 'consistencia' | 'adaptabilidade' | 'conquistas'> = {
+  Foco: 'foco', Disciplina: 'disciplina', Fluxo: 'fluxo', Energia: 'energia',
+  Prioridades: 'prioridades', Consistência: 'consistencia', Adaptabilidade: 'adaptabilidade', Conquistas: 'conquistas',
+};
+
 export default function ExecutionModulePage({ selectedDate, refreshCount }: ExecutionModulePageProps) {
   const { showAlert } = useNexusAlert();
+  const { navigate } = useRouter();
   const [reflexaoTexto, setReflexaoTexto] = useState('');
 
   const handleQuickRegister = (item: string) => {
@@ -77,7 +85,8 @@ export default function ExecutionModulePage({ selectedDate, refreshCount }: Exec
   };
 
   const handleSubmodule = (name: string) => {
-    showAlert(`Navegando para ${name}...`, 'acao');
+    const slug = EXECUTION_SUB_MAP[name];
+    if (slug) navigate(submodulePath('acao', slug));
   };
 
   const handleSalvarReflexao = () => {

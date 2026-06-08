@@ -49,14 +49,23 @@ import { StressAnxietyCard } from '../../shared/cards/StressAnxietyCard';
 import { useRotatingVariant } from '../../hooks/useRotatingVariant';
 import { storage } from '../../lib/storage';
 import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
+import { useRouter } from '../../app/router/RouterProvider';
+import { submodulePath } from '../../app/router/routes';
 
 interface MindModulePageProps {
   selectedDate: string;
   refreshCount: number;
 }
 
+const MIND_SUB_MAP: Record<string, 'humor' | 'estresse-ansiedade' | 'foco-cognicao' | 'motivacao-vontade' | 'carga-mental' | 'journal-diario' | 'autoconhecimento' | 'praticas-mentais'> = {
+  'Humor e emoções': 'humor', 'Estresse e ansiedade': 'estresse-ansiedade', 'Foco e cognição': 'foco-cognicao',
+  'Motivação e vontade': 'motivacao-vontade', 'Carga mental': 'carga-mental', Journal: 'journal-diario',
+  Autoconhecimento: 'autoconhecimento', 'Práticas mentais': 'praticas-mentais',
+};
+
 export default function MindModulePage({ selectedDate, refreshCount }: MindModulePageProps) {
   const { showAlert } = useNexusAlert();
+  const { navigate } = useRouter();
   const [percepcaoTexto, setPercepcaoTexto] = useState('');
 
   const stressVariants = [
@@ -137,7 +146,8 @@ export default function MindModulePage({ selectedDate, refreshCount }: MindModul
   };
 
   const handleSubmoduleClick = (submodule: string) => {
-    showAlert(`Navegando para o submódulo de ${submodule}...`, 'mente');
+    const slug = MIND_SUB_MAP[submodule];
+    if (slug) navigate(submodulePath('mente', slug));
   };
 
   return (
