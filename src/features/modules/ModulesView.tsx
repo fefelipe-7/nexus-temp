@@ -64,8 +64,8 @@ export default function ModulesView({ selectedDate, refreshCount, triggerRefresh
             <ModuleDetailView activeModule={activeModule} onBack={() => setActiveModule('menu')}>
               {activeModule === 'saude' && <HealthModulePage selectedDate={selectedDate} refreshCount={refreshCount} />}
               {activeModule === 'mente' && <MindModulePage selectedDate={selectedDate} refreshCount={refreshCount} />}
-              {activeModule === 'acao' && <ExecutionModulePage selectedDate={selectedDate} refreshCount={refreshCount} triggerRefresh={triggerRefresh} />}
-              {activeModule === 'financas' && <ResourcesModulePage selectedDate={selectedDate} refreshCount={refreshCount} triggerRefresh={triggerRefresh} />}
+              {activeModule === 'acao' && <ExecutionModulePage selectedDate={selectedDate} refreshCount={refreshCount} />}
+              {activeModule === 'financas' && <ResourcesModulePage selectedDate={selectedDate} refreshCount={refreshCount} />}
               {activeModule === 'relacoes' && <LifeModulePage selectedDate={selectedDate} refreshCount={refreshCount} />}
             </ModuleDetailView>
           </motion.div>
