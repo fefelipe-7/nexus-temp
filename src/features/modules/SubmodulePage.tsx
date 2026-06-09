@@ -404,8 +404,7 @@ const MENTE_SHARED_CARD_MAP: Record<string, { card: React.ComponentType<any>; pr
   'estresse-ansiedade': { card: StressAnxietyCard, props: { stressLevel: 58, anxietyLevel: 42, badgeLabel: 'tensão controlada' } },
   'foco-cognicao': { card: FocusCognitionCard, props: { focusScore: 78, mentalClarity: 72, badgeLabel: 'cognição ativa' } },
   'motivacao-vontade': { card: MotivationWillpowerCard, props: { motivationLevel: 82, willpowerScore: 68, badgeLabel: 'disposição alta' } },
-  'carga-mental': { card: MentalLoadCard, props: { mentalLoad: 74, overwhelmLevel: 'moderada', badgeLabel: 'carga elevada' } },
-  'journal-diario': { card: MentalLoadCard, props: { journalFrequency: '3-4x/sem', depthLevel: 'reflexivo', badgeLabel: 'registro ativo' } },
+  'carga-mental': { card: MentalLoadCard, props: { mentalLoadScore: 74, activeTopics: 8, badgeLabel: 'carga elevada' } },
   autoconhecimento: { card: SelfAwarenessCard, props: { awarenessScore: 76, clarityLevel: 72, badgeLabel: 'consciência ativa' } },
   'praticas-mentais': { card: MentalPracticesCard, props: { practiceFrequency: '2x/sem', consistencyLevel: 'moderada', badgeLabel: 'prática consistente' } },
 };

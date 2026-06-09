@@ -6,6 +6,11 @@ import HojeView from './features/today/HojeView';
 import RegistrarSheet from './features/register/RegistrarSheet';
 import InsightsView from './features/insights/InsightsView';
 import ModulesView from './features/modules/ModulesView';
+import HealthModulePage from './features/modules/HealthModulePage';
+import MindModulePage from './features/modules/MindModulePage';
+import ExecutionModulePage from './features/modules/ExecutionModulePage';
+import ResourcesModulePage from './features/modules/ResourcesModulePage';
+import LifeModulePage from './features/modules/LifeModulePage';
 import SubmodulePage from './features/modules/SubmodulePage';
 import { SleepWizard, MealWizard, WorkoutWizard, ExpenseWizard, MoodWizard, JournalWizard, TaskWizard, HabitWizard } from './features/register';
 import { useRouter } from './app/router/RouterProvider';
@@ -67,6 +72,17 @@ export default function App() {
     else if (tab === 'perfil') navigate('/profile');
   };
 
+  const renderModulePage = () => {
+    switch (moduleSlug) {
+      case 'saude': return <HealthModulePage selectedDate={selectedDate} refreshCount={refreshCount} />;
+      case 'mente': return <MindModulePage selectedDate={selectedDate} refreshCount={refreshCount} />;
+      case 'acao': return <ExecutionModulePage selectedDate={selectedDate} refreshCount={refreshCount} />;
+      case 'financas': return <ResourcesModulePage selectedDate={selectedDate} refreshCount={refreshCount} />;
+      case 'relacoes': return <LifeModulePage selectedDate={selectedDate} refreshCount={refreshCount} />;
+      default: return null;
+    }
+  };
+
   const renderActiveTabContent = () => {
     if (moduleSlug && submoduleType) {
       return <SubmodulePage selectedDate={selectedDate} />;
@@ -100,6 +116,7 @@ export default function App() {
           />
         );
       case 'modulos':
+        if (moduleSlug) return renderModulePage();
         return (
           <ModulesView
             selectedDate={selectedDate}

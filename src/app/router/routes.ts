@@ -125,12 +125,17 @@ export function parseCurrentRoute(path: string): ParsedRoute {
   let moduleSlug: ModuleSlug | null = null;
   let submoduleType: SubmoduleType = null;
 
-  if (baseTab === 'modulos' && segments.length >= 4 && !isRegisterModal) {
-    const slug = MODULE_MAP[segments[2]];
-    const sub = SUBMODULE_MAP[segments[3]];
-    if (slug && sub) {
-      moduleSlug = slug;
-      submoduleType = sub;
+  if (baseTab === 'modulos' && !isRegisterModal && segments.length >= 3) {
+    if (segments.length >= 4) {
+      const slug = MODULE_MAP[segments[2]];
+      const sub = SUBMODULE_MAP[segments[3]];
+      if (slug && sub) {
+        moduleSlug = slug;
+        submoduleType = sub;
+      }
+    } else {
+      const slug = MODULE_MAP[segments[2]];
+      if (slug) moduleSlug = slug;
     }
   }
 
