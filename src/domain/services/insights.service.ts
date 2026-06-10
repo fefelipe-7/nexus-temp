@@ -9,9 +9,15 @@ import {
   calculateSocialConnection,
   generateDiagnostics,
 } from '../analytics';
+import { generateInsights } from '../insights';
+import { generateRecommendations } from '../recommendations';
+import type { RecommendationContext } from '../recommendations';
 
 export const insightsService = {
-  calculate(targetDate: string): Insight {
+  calculate(targetDate: string): Insight & {
+    recommendations: ReturnType<typeof generateRecommendations>;
+    domainInsights: ReturnType<typeof generateInsights>;
+  } {
     const records = dailyRecordRepo.getAll();
     const habits = habitRepo.getAll();
     const tasks = taskRepo.getAll();
@@ -28,6 +34,43 @@ export const insightsService = {
     const conexaoSocialScore = calculateSocialConnection(people, targetDate);
     const diagnosticos = generateDiagnostics(records, recordHoje, people, finances, fadigaScore, targetDate);
 
+    const domainInsights = generateInsights({
+      scores: {
+        fatigue: fadigaScore,
+        energy: energiaScore,
+        consistency: consistenciaScore,
+        mentalClarity: clarezaMentalScore,
+        financeHealth: saudeFinanceiraScore,
+        socialConnection: conexaoSocialScore,
+      },
+      diagnostics: diagnosticos,
+      correlations: [],
+    });
+
+    const recommendationContext: RecommendationContext = {
+      fatigueScore: fadigaScore,
+      energyScore: energiaScore,
+      consistencyScore: consistenciaScore,
+      mentalClarityScore: clarezaMentalScore,
+      financeHealthScore: saudeFinanceiraScore,
+      socialConnectionScore: conexaoSocialScore,
+      diagnostics: diagnosticos,
+      hasTodayRecord: !!recordHoje,
+      pendingTasksCount: tasks.filter(t => !t.concluida).length,
+      uncheckedHabitsCount: habits.filter(h =>
+        !h.historicoCheckins.includes(targetDate)
+      ).length,
+      socialPendenciesCount: people.filter(p => {
+        if (p.historicoInteracoes.length === 0) return true;
+        const ultima = new Date(p.historicoInteracoes[p.historicoInteracoes.length - 1]);
+        const hoje = new Date(targetDate);
+        const difDays = Math.ceil(Math.abs(hoje.getTime() - ultima.getTime()) / (1000 * 60 * 60 * 24));
+        return difDays > p.frequenciaDiasAlvo;
+      }).length,
+    };
+
+    const recommendations = generateRecommendations(recommendationContext);
+
     return {
       fadigaScore,
       energiaScore,
@@ -36,6 +79,8 @@ export const insightsService = {
       saudeFinanceiraScore,
       conexaoSocialScore,
       diagnosticos,
+      recommendations,
+      domainInsights,
     };
   },
 };

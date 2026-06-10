@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { storage } from '../../lib/storage';
 import { DailyRecord } from '../../domain/entities';
+import { computeCorrelation } from '../../domain/correlations';
 import { useNexusAlert, NexusModule } from '../../app/providers/NexusAlertProvider';
 import { CompareMetrics, FilterCategory, ALL_INSIGHTS } from './constants';
 import { InsightsHeader } from './InsightsHeader';
@@ -17,32 +18,6 @@ import { CorrelationBottomSheet } from './CorrelationBottomSheet';
 interface InsightsViewProps {
   selectedDate: string;
   refreshCount: number;
-}
-
-function getCorrelationDescriptor(registros: DailyRecord[], metricA: CompareMetrics, metricB: CompareMetrics): string {
-  if (registros.length < 3) return 'Aguardando mais registros de dados para correlação.';
-  let concordances = 0;
-  let validDays = 0;
-  for (let i = 1; i < registros.length; i++) {
-    const prev = registros[i - 1];
-    const curr = registros[i];
-    const valAPrev = prev[metricA] || 0;
-    const valACurr = curr[metricA] || 0;
-    const valBPrev = prev[metricB] || 0;
-    const valBCurr = curr[metricB] || 0;
-    const diffA = valACurr - valAPrev;
-    const diffB = valBCurr - valBPrev;
-    if (Math.abs(diffA) > 0.1 && Math.abs(diffB) > 0.1) {
-      validDays++;
-      if ((diffA > 0 && diffB > 0) || (diffA < 0 && diffB < 0)) concordances++;
-    }
-  }
-  if (validDays === 0) return 'Tendência de estabilização entre variáveis.';
-  const ratio = concordances / validDays;
-  if (ratio > 0.7) return `Forte correlação direta (${Math.round(ratio * 100)}% de correspondência)`;
-  if (ratio > 0.5) return `Correlação sutil favorável (${Math.round(ratio * 100)}% de sintonia)`;
-  if (ratio < 0.3) return `Correlação inversa perceptível (andamento oposto na maioria das vezes)`;
-  return 'Relação independente ou andamento oscilante.';
 }
 
 export default function InsightsView({ selectedDate, refreshCount }: InsightsViewProps) {
@@ -91,7 +66,8 @@ export default function InsightsView({ selectedDate, refreshCount }: InsightsVie
     showAlert(`Iniciação analítica: ${ins.titulo}`, mod);
   };
 
-  const descriptor = getCorrelationDescriptor(registros, metricA, metricB);
+  const correlation = computeCorrelation(registros, metricA, metricB);
+  const descriptor = correlation.descriptor;
 
   return (
     <div className="space-y-6 text-[#20201D] font-sans bg-[#F7F6F1] animate-fade-in">

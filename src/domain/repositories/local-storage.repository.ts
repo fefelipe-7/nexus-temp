@@ -1,28 +1,20 @@
-const STORAGE_KEYS = {
-  REGISTROS: 'nexus_registros',
-  HABITOS: 'nexus_habitos',
-  METAS: 'nexus_metas',
-  PROJETOS: 'nexus_projetos',
-  TAREFAS: 'nexus_tarefas',
-  FINANCAS: 'nexus_financas',
-  PESSOAS: 'nexus_pessoas',
-} as const;
+import { storageProvider } from './local-storage-provider';
+import { STORAGE_KEYS } from './storage-provider.types';
 
 export function getStorageKey(name: keyof typeof STORAGE_KEYS): string {
   return STORAGE_KEYS[name];
 }
 
 export function loadData<T>(key: string): T[] {
-  const value = localStorage.getItem(key);
-  return value ? JSON.parse(value) : [];
+  return storageProvider.getItem<T>(key);
 }
 
 export function saveData<T>(key: string, data: T[]): void {
-  localStorage.setItem(key, JSON.stringify(data));
+  storageProvider.setItem(key, data);
 }
 
 export function isStorageEmpty(): boolean {
-  return !localStorage.getItem(STORAGE_KEYS.REGISTROS);
+  return storageProvider.isStorageEmpty();
 }
 
 export function seedAll(data: {
@@ -34,11 +26,11 @@ export function seedAll(data: {
   financas: unknown[];
   pessoas: unknown[];
 }): void {
-  localStorage.setItem(STORAGE_KEYS.REGISTROS, JSON.stringify(data.registros));
-  localStorage.setItem(STORAGE_KEYS.HABITOS, JSON.stringify(data.habitos));
-  localStorage.setItem(STORAGE_KEYS.METAS, JSON.stringify(data.metas));
-  localStorage.setItem(STORAGE_KEYS.PROJETOS, JSON.stringify(data.projetos));
-  localStorage.setItem(STORAGE_KEYS.TAREFAS, JSON.stringify(data.tarefas));
-  localStorage.setItem(STORAGE_KEYS.FINANCAS, JSON.stringify(data.financas));
-  localStorage.setItem(STORAGE_KEYS.PESSOAS, JSON.stringify(data.pessoas));
+  storageProvider.setItem(STORAGE_KEYS.REGISTROS, data.registros);
+  storageProvider.setItem(STORAGE_KEYS.HABITOS, data.habitos);
+  storageProvider.setItem(STORAGE_KEYS.METAS, data.metas);
+  storageProvider.setItem(STORAGE_KEYS.PROJETOS, data.projetos);
+  storageProvider.setItem(STORAGE_KEYS.TAREFAS, data.tarefas);
+  storageProvider.setItem(STORAGE_KEYS.FINANCAS, data.financas);
+  storageProvider.setItem(STORAGE_KEYS.PESSOAS, data.pessoas);
 }

@@ -1,6 +1,14 @@
 import { gerarDadosIniciais } from '../data/seed/demo-data';
 import { isStorageEmpty, seedAll } from '../domain/repositories/local-storage.repository';
-import { dailyRecordRepo, habitRepo, taskRepo, financeRepo, personRepo } from '../domain/repositories';
+import {
+  dailyRecordRepo,
+  habitRepo,
+  taskRepo,
+  financeRepo,
+  personRepo,
+  goalRepo,
+  projectRepo,
+} from '../domain/repositories';
 import { insightsService } from '../domain/services';
 import type { DailyRecord, Habit, Goal, Project, Task, FinanceTransaction, Person, Insight } from '../domain/entities';
 
@@ -8,16 +16,6 @@ export function inicializarStorage(): void {
   if (isStorageEmpty()) {
     seedAll(gerarDadosIniciais());
   }
-}
-
-export function loadData<T>(key: string): T[] {
-  inicializarStorage();
-  const value = localStorage.getItem(key);
-  return value ? JSON.parse(value) : [];
-}
-
-export function saveData<T>(key: string, data: T[]): void {
-  localStorage.setItem(key, JSON.stringify(data));
 }
 
 export const storage = {
@@ -31,11 +29,11 @@ export const storage = {
   toggleHabit: (id: string, data: string): boolean => habitRepo.toggle(id, data),
   completarHabit: (id: string, data: string): void => habitRepo.complete(id, data),
 
-  getGoals: (): Goal[] => loadData<Goal>('nexus_metas'),
-  saveGoals: (data: Goal[]) => saveData<Goal>('nexus_metas', data),
+  getGoals: (): Goal[] => goalRepo.getAll(),
+  saveGoals: (data: Goal[]) => goalRepo.saveAll(data),
 
-  getProjects: (): Project[] => loadData<Project>('nexus_projetos'),
-  saveProjects: (data: Project[]) => saveData<Project>('nexus_projetos', data),
+  getProjects: (): Project[] => projectRepo.getAll(),
+  saveProjects: (data: Project[]) => projectRepo.saveAll(data),
 
   getTasks: (): Task[] => taskRepo.getAll(),
   saveTasks: (data: Task[]) => taskRepo.saveAll(data),
