@@ -1,9 +1,9 @@
-export { SleepWizard } from './wizards/sleep';
-export { MealWizard } from './wizards/meal';
-export { WorkoutWizard } from './wizards/workout';
-export { ExpenseWizard } from './wizards/expense';
-export { MoodWizard } from './wizards/mood';
-export { JournalWizard } from './wizards/journal';
-export { TaskWizard } from './wizards/task';
-export { HabitWizard } from './wizards/habit';
+export { SleepWizard } from '../health/wizards/SleepWizard';
+export { MealWizard } from '../health/wizards/MealWizard';
+export { WorkoutWizard } from '../health/wizards/WorkoutWizard';
+export { ExpenseWizard } from '../finance/wizards/ExpenseWizard';
+export { MoodWizard } from '../mind/wizards/MoodWizard';
+export { JournalWizard } from '../mind/wizards/JournalWizard';
+export { TaskWizard } from '../work/wizards/TaskWizard';
+export { HabitWizard } from '../life/wizards/HabitWizard';
 export { WizardShell } from './WizardShell';

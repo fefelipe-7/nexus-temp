@@ -15,18 +15,18 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { RelationshipsCard } from '../../shared/cards/RelationshipsCard';
-import { CommunityBelongingCard } from '../../shared/cards/CommunityBelongingCard';
-import { ExperiencesCard } from '../../shared/cards/ExperiencesCard';
-import { LeisureHobbiesCard } from '../../shared/cards/LeisureHobbiesCard';
-import { LearningsCard } from '../../shared/cards/LearningsCard';
-import { PurposeValuesCard } from '../../shared/cards/PurposeValuesCard';
-import { DecisionsCard } from '../../shared/cards/DecisionsCard';
-import { MilestonesCard } from '../../shared/cards/MilestonesCard';
-import { storage } from '../../lib/storage';
-import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
-import { useRouter } from '../../app/router/RouterProvider';
-import { submodulePath } from '../../app/router/routes';
+import { RelationshipsCard } from '../../../shared/cards/RelationshipsCard';
+import { CommunityBelongingCard } from '../../../shared/cards/CommunityBelongingCard';
+import { ExperiencesCard } from '../../../shared/cards/ExperiencesCard';
+import { LeisureHobbiesCard } from '../../../shared/cards/LeisureHobbiesCard';
+import { LearningsCard } from '../../../shared/cards/LearningsCard';
+import { PurposeValuesCard } from '../../../shared/cards/PurposeValuesCard';
+import { DecisionsCard } from '../../../shared/cards/DecisionsCard';
+import { MilestonesCard } from '../../../shared/cards/MilestonesCard';
+import { storage } from '../../../lib/storage';
+import { useNexusAlert } from '../../../app/providers/NexusAlertProvider';
+import { useRouter } from '../../../app/router/RouterProvider';
+import { submodulePath } from '../../../app/router/routes';
 
 interface LifeModulePageProps {
   selectedDate: string;

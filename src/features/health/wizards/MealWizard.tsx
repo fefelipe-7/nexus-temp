@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Utensils } from 'lucide-react';
 import { storage } from '../../../lib/storage';
 import { useNexusAlert } from '../../../app/providers/NexusAlertProvider';
-import { WizardShell } from '../WizardShell';
+import { WizardShell } from '../../register/WizardShell';
 
 interface MealWizardProps {
   selectedDate: string;

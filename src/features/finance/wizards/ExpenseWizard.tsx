@@ -3,7 +3,7 @@ import { DollarSign } from 'lucide-react';
 import { storage } from '../../../lib/storage';
 import { FinanceTransaction } from '../../../domain/entities';
 import { useNexusAlert } from '../../../app/providers/NexusAlertProvider';
-import { WizardShell } from '../WizardShell';
+import { WizardShell } from '../../register/WizardShell';
 
 interface ExpenseWizardProps {
   selectedDate: string;

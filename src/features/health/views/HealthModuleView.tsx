@@ -14,10 +14,10 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { storage } from '../../lib/storage';
-import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
-import { useRouter } from '../../app/router/RouterProvider';
-import { submodulePath } from '../../app/router/routes';
+import { storage } from '../../../lib/storage';
+import { useNexusAlert } from '../../../app/providers/NexusAlertProvider';
+import { useRouter } from '../../../app/router/RouterProvider';
+import { submodulePath } from '../../../app/router/routes';
 
 interface HealthModulePageProps {
   selectedDate: string;

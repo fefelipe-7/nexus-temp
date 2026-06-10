@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { HeartHandshake, Users, Star, Target, BookOpen, Heart, Sparkles, Plus, ArrowRight, MessageCircle, GraduationCap, ChevronRight, Moon, Dumbbell, Droplets, Brain, Zap, Wallet, TrendingUp } from 'lucide-react';
-import { useRotatingVariant } from '../../hooks/useRotatingVariant';
-import { storage } from '../../lib/storage';
-import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
+import { useRotatingVariant } from '../../../hooks/useRotatingVariant';
+import { storage } from '../../../lib/storage';
+import { useNexusAlert } from '../../../app/providers/NexusAlertProvider';
 import ComunidadePage from './ComunidadePage';
 import RelacionamentosPage from './RelacionamentosPage';
 

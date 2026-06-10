@@ -26,8 +26,8 @@ import { SelfAwarenessCard } from '../../shared/cards/SelfAwarenessCard';
 import { MentalPracticesCard } from '../../shared/cards/MentalPracticesCard';
 import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
 import { storage } from '../../lib/storage';
-import RelacionamentosPage from './RelacionamentosPage';
-import ComunidadePage from './ComunidadePage';
+import RelacionamentosPage from '../life/views/RelacionamentosPage';
+import ComunidadePage from '../life/views/ComunidadePage';
 
 interface SubmoduleMeta {
   title: string;

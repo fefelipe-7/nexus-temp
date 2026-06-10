@@ -3,7 +3,7 @@ import { CheckSquare } from 'lucide-react';
 import { storage } from '../../../lib/storage';
 import { Task } from '../../../domain/entities';
 import { useNexusAlert } from '../../../app/providers/NexusAlertProvider';
-import { WizardShell } from '../WizardShell';
+import { WizardShell } from '../../register/WizardShell';
 
 interface TaskWizardProps {
   selectedDate: string;

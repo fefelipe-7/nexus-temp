@@ -39,18 +39,18 @@ import {
   Eye,
   BookOpen
 } from 'lucide-react';
-import { EmotionMoodCard } from '../../shared/cards/EmotionCard';
-import { FocusCognitionCard } from '../../shared/cards/FocusCognitionCard';
-import { MotivationWillpowerCard } from '../../shared/cards/MotivationWillpowerCard';
-import { MentalLoadCard } from '../../shared/cards/MentalLoadCard';
-import { SelfAwarenessCard } from '../../shared/cards/SelfAwarenessCard';
-import { MentalPracticesCard } from '../../shared/cards/MentalPracticesCard';
-import { StressAnxietyCard } from '../../shared/cards/StressAnxietyCard';
-import { useRotatingVariant } from '../../hooks/useRotatingVariant';
-import { storage } from '../../lib/storage';
-import { useNexusAlert } from '../../app/providers/NexusAlertProvider';
-import { useRouter } from '../../app/router/RouterProvider';
-import { submodulePath } from '../../app/router/routes';
+import { EmotionMoodCard } from '../../../shared/cards/EmotionCard';
+import { FocusCognitionCard } from '../../../shared/cards/FocusCognitionCard';
+import { MotivationWillpowerCard } from '../../../shared/cards/MotivationWillpowerCard';
+import { MentalLoadCard } from '../../../shared/cards/MentalLoadCard';
+import { SelfAwarenessCard } from '../../../shared/cards/SelfAwarenessCard';
+import { MentalPracticesCard } from '../../../shared/cards/MentalPracticesCard';
+import { StressAnxietyCard } from '../../../shared/cards/StressAnxietyCard';
+import { useRotatingVariant } from '../../../hooks/useRotatingVariant';
+import { storage } from '../../../lib/storage';
+import { useNexusAlert } from '../../../app/providers/NexusAlertProvider';
+import { useRouter } from '../../../app/router/RouterProvider';
+import { submodulePath } from '../../../app/router/routes';
 
 interface MindModulePageProps {
   selectedDate: string;

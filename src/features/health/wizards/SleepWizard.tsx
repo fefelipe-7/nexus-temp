@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Moon } from 'lucide-react';
 import { dailyRecordRepo } from '../../../domain/repositories/daily-record.repository';
 import { useNexusAlert } from '../../../app/providers/NexusAlertProvider';
-import { WizardShell } from '../WizardShell';
+import { WizardShell } from '../../register/WizardShell';
 
 interface SleepWizardProps {
   selectedDate: string;

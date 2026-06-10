@@ -6,12 +6,12 @@ import HojeView from './features/today/HojeView';
 import RegistrarSheet from './features/register/RegistrarSheet';
 import InsightsView from './features/insights/InsightsView';
 import ModulesView from './features/modules/ModulesView';
-import HealthModulePage from './features/modules/HealthModulePage';
-import MindModulePage from './features/modules/MindModulePage';
-import ExecutionModulePage from './features/modules/ExecutionModulePage';
-import ResourcesModulePage from './features/modules/ResourcesModulePage';
-import LifeModulePage from './features/modules/LifeModulePage';
 import SubmodulePage from './features/modules/SubmodulePage';
+import HealthModuleView from './features/health/views/HealthModuleView';
+import MindModuleView from './features/mind/views/MindModuleView';
+import WorkModuleView from './features/work/views/WorkModuleView';
+import FinanceModuleView from './features/finance/views/FinanceModuleView';
+import LifeModuleView from './features/life/views/LifeModuleView';
 import { SleepWizard, MealWizard, WorkoutWizard, ExpenseWizard, MoodWizard, JournalWizard, TaskWizard, HabitWizard } from './features/register';
 import { useRouter } from './app/router/RouterProvider';
 import { AppHeader } from './app/shell/AppHeader';
@@ -74,11 +74,11 @@ export default function App() {
 
   const renderModulePage = () => {
     switch (moduleSlug) {
-      case 'saude': return <HealthModulePage selectedDate={selectedDate} refreshCount={refreshCount} />;
-      case 'mente': return <MindModulePage selectedDate={selectedDate} refreshCount={refreshCount} />;
-      case 'acao': return <ExecutionModulePage selectedDate={selectedDate} refreshCount={refreshCount} />;
-      case 'financas': return <ResourcesModulePage selectedDate={selectedDate} refreshCount={refreshCount} />;
-      case 'relacoes': return <LifeModulePage selectedDate={selectedDate} refreshCount={refreshCount} />;
+      case 'saude': return <HealthModuleView selectedDate={selectedDate} refreshCount={refreshCount} />;
+      case 'mente': return <MindModuleView selectedDate={selectedDate} refreshCount={refreshCount} />;
+      case 'acao': return <WorkModuleView selectedDate={selectedDate} refreshCount={refreshCount} />;
+      case 'financas': return <FinanceModuleView selectedDate={selectedDate} refreshCount={refreshCount} />;
+      case 'relacoes': return <LifeModuleView selectedDate={selectedDate} refreshCount={refreshCount} />;
       default: return null;
     }
   };

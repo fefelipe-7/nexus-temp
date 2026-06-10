@@ -3,7 +3,7 @@ import { Lightbulb, Info } from 'lucide-react';
 import { storage } from '../../../lib/storage';
 import { Habit } from '../../../domain/entities';
 import { useNexusAlert } from '../../../app/providers/NexusAlertProvider';
-import { WizardShell } from '../WizardShell';
+import { WizardShell } from '../../register/WizardShell';
 
 interface HabitWizardProps {
   selectedDate: string;
