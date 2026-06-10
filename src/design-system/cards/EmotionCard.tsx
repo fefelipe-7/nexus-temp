@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { motion } from 'framer-motion';
 import { Heart, ChevronRight } from 'lucide-react';
-import { cn } from '../lib/cn';
+import { cn } from '../utils/cn';
 
 type EmotionMoodCardProps = {
   title?: string;

@@ -5,7 +5,7 @@ import {
   Zap, CheckSquare, Target, Wallet, TrendingDown, TrendingUp, Coins, 
   MessageSquare, HeartHandshake, Sparkles, LucideIcon 
 } from 'lucide-react';
-import { Alert, AlertIcon, AlertTitle } from '../../shared/ui/Alert';
+import { Alert, AlertIcon, AlertTitle } from '../../design-system/components/Alert';
 
 // Módulo e submódulo suportados para customização de cores/ícones
 export type NexusModule = 'saude' | 'mente' | 'acao' | 'recursos' | 'relacoes' | 'sistema';

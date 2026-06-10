@@ -1,7 +1,7 @@
 import React from 'react';
 import { Home as HomeIcon, ClipboardList, Plus, Lightbulb, LayoutGrid } from 'lucide-react';
 import { useRouter } from '../router/RouterProvider';
-import { cn } from '../../shared/lib/cn';
+import { cn } from '../../design-system/utils/cn';
 import type { TabId } from '../router/routes';
 
 const navItems: { id: TabId | 'registrar'; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
