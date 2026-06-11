@@ -34,8 +34,8 @@ export default function RegistrarSheet({ isOpen, onClose, selectedDate, onSaveSu
         gasto: '/register/expense', humor: '/register/mood', journal: '/register/journal',
         tarefa: '/register/task', habito: '/register/habit',
       };
-      onClose();
       navigate(routeMap[selectedType]);
+      onClose();
     } else {
       setCurrentStep('quick_capture');
     }

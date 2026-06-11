@@ -53,7 +53,7 @@ export default function App() {
       <Routes>
         <Route element={<ShellLayout onOpenSearch={() => setIsSearchOpen(true)} />}>
           <Route path="/" element={<Navigate to="/home" />} />
-          <Route path="/home" element={
+          <Route path="/home/*" element={
             <HomeView
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
@@ -63,7 +63,7 @@ export default function App() {
               onOpenSearch={() => setIsSearchOpen(true)}
             />
           } />
-          <Route path="/today" element={
+          <Route path="/today/*" element={
             <HojeView
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
@@ -71,23 +71,23 @@ export default function App() {
               triggerRefresh={triggerRefresh}
             />
           } />
-          <Route path="/insights" element={
+          <Route path="/insights/*" element={
             <InsightsView selectedDate={selectedDate} refreshCount={refreshCount} />
           } />
-          <Route path="/modules" element={
+          <Route path="/modules/*" element={
             <ModulesView
               selectedDate={selectedDate}
               refreshCount={refreshCount}
               triggerRefresh={triggerRefresh}
             />
           } />
-          <Route path="/modules/:module" element={
+          <Route path="/modules/:module/*" element={
             <ModuleViewSwitch selectedDate={selectedDate} refreshCount={refreshCount} />
           } />
-          <Route path="/modules/:module/:submodule" element={
+          <Route path="/modules/:module/:submodule/*" element={
             <SubmodulePage selectedDate={selectedDate} />
           } />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile/*" element={<ProfilePage />} />
           <Route path="*" element={<Navigate to="/home" />} />
         </Route>
 
