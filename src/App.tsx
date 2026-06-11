@@ -88,12 +88,12 @@ export default function App() {
             <SubmodulePage selectedDate={selectedDate} />
           } />
           <Route path="/profile/*" element={<ProfilePage />} />
-          <Route path="*" element={<Navigate to="/home" />} />
         </Route>
 
         <Route path="/register/:wizard" element={
           <WizardPage selectedDate={selectedDate} refreshCount={refreshCount} onSaveSuccess={triggerRefresh} />
         } />
+        <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
 
       <AnimatePresence>
