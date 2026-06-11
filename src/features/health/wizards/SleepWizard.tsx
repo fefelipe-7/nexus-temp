@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Moon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Moon, X } from 'lucide-react';
 import { dailyRecordRepo } from '../../../domain/repositories/daily-record.repository';
 import { useNexusAlert } from '../../../app/providers/NexusAlertProvider';
-import { WizardShell } from '../../register/WizardShell';
 
 interface SleepWizardProps {
   selectedDate: string;
@@ -10,64 +10,75 @@ interface SleepWizardProps {
   onSaveSuccess: () => void;
 }
 
-const CONFIG = {
-  title: 'Dormir & Ciclo Circadiano',
-  icon: Moon,
-  colorBg: 'bg-indigo-50/70',
-  colorText: 'text-indigo-600',
-  colorAccent: '#6366f1',
-  steps: 8,
-};
+const STEPS = 8;
 
-const QUALITY_LEVELS = [
-  { value: 2, label: 'Péssima', emoji: '😫' },
-  { value: 4, label: 'Ruim', emoji: '😩' },
-  { value: 6, label: 'Regular', emoji: '😐' },
-  { value: 8, label: 'Boa', emoji: '😌' },
-  { value: 10, label: 'Incrível', emoji: '🌟' },
+const QUALITY_OPTS = [
+  { value: 2, label: 'Péssima', emoji: '😖', desc: 'Acordei várias vezes e não me sinto descansado.', bg: 'bg-[#2d0f0f]', accent: 'text-[#f87171]' },
+  { value: 4, label: 'Ruim', emoji: '😔', desc: 'Tive dificuldades para dormir ou acordei cansado.', bg: 'bg-[#2d1a00]', accent: 'text-[#fb923c]' },
+  { value: 6, label: 'Regular', emoji: '😐', desc: 'Dormi, mas não foi o suficiente.', bg: 'bg-[#1a1f00]', accent: 'text-[#d4d400]' },
+  { value: 8, label: 'Boa', emoji: '🙂', desc: 'Acordei bem e me sinto razoavelmente descansado.', bg: 'bg-[#001a1a]', accent: 'text-[#34d399]' },
+  { value: 9, label: 'Ótima', emoji: '😄', desc: 'Dormi bem e estou com energia.', bg: 'bg-[#1a1200]', accent: 'text-[#fbbf24]' },
+  { value: 10, label: 'Incrível', emoji: '🤩', desc: 'Dormi profundamente e acordei renovado.', bg: 'bg-[#1a0f00]', accent: 'text-[#f59e0b]' },
 ];
 
-const CONTINUITY_LEVELS = [
-  { value: 2, label: 'Péssima' },
-  { value: 4, label: 'Ruim' },
-  { value: 6, label: 'Regular' },
-  { value: 8, label: 'Boa' },
-  { value: 10, label: 'Excelente' },
+const CONTINUITY_OPTS = [
+  { id: 'direto', emoji: '🌙', label: 'Dormi direto', desc: 'Sem interrupções durante a noite.' },
+  { id: 'despertares', emoji: '🌗', label: 'Houve despertares', desc: 'Acordei uma ou mais vezes.' },
+  { id: 'nao_lembro', emoji: '✨', label: 'Não lembro', desc: 'Não tenho clareza do que aconteceu.' },
 ];
 
-const WAKE_CAUSES = [
-  'Banheiro', 'Barulho', 'Calor', 'Frio', 'Ansiedade',
-  'Dor', 'Pesadelo', 'Criança/Pet', 'Não sei',
+const CAUSAS = [
+  { emoji: '🚽', label: 'Banheiro' }, { emoji: '😟', label: 'Ansiedade' },
+  { emoji: '🔊', label: 'Barulho' }, { emoji: '🥵', label: 'Calor' },
+  { emoji: '🤕', label: 'Dor' }, { emoji: '🐶', label: 'Animal' },
+  { emoji: '👶', label: 'Criança' }, { emoji: '❓', label: 'Não sei' },
 ];
 
-const PRE_BED_ACTIVITIES = [
-  'Leitura', 'Série/Filme', 'Redes sociais', 'Meditação',
-  'Música', 'Trabalho', 'Comer', 'Nada especial',
+const CAUSA_AREAS = [
+  { emoji: '💼', label: 'Trabalho' }, { emoji: '❤️', label: 'Relacionamentos' },
+  { emoji: '💰', label: 'Dinheiro' }, { emoji: '🏥', label: 'Saúde' },
+  { emoji: '📚', label: 'Estudos' }, { emoji: '💬', label: 'Outro' },
 ];
 
-const INFLUENCES = [
-  'Cafeína', 'Álcool', 'Tela antes de dormir', 'Treino intenso',
-  'Jantar pesado', 'Estresse', 'Ansiedade', 'Calor', 'Barulho',
-  'Cochilo durante o dia', 'Horário irregular',
+const SENTIMENTOS = [
+  { emoji: '⚡', label: 'Energizado' }, { emoji: '😴', label: 'Sonolento' },
+  { emoji: '😫', label: 'Exausto' }, { emoji: '😊', label: 'Bem' },
+  { emoji: '😖', label: 'Tenso' }, { emoji: '😟', label: 'Ansioso' },
 ];
 
-const SCALE = Array.from({ length: 10 }, (_, i) => i + 1);
+const ATIVIDADES = [
+  { emoji: '📱', label: 'Celular' }, { emoji: '📖', label: 'Livro' },
+  { emoji: '☕', label: 'Cafeína' }, { emoji: '🧘', label: 'Meditação' },
+  { emoji: '💻', label: 'Trabalho' }, { emoji: '🍽️', label: 'Refeição' },
+  { emoji: '🎮', label: 'Jogos' }, { emoji: '📺', label: 'TV' },
+];
 
-function StepDots({ step, total, colorAccent }: { step: number; total: number; colorAccent: string }) {
+const INFLUENCIAS = [
+  { emoji: '💼', label: 'Trabalho' }, { emoji: '❤️', label: 'Relacionamentos' },
+  { emoji: '💰', label: 'Finanças' }, { emoji: '🏥', label: 'Saúde' },
+  { emoji: '🎉', label: 'Evento especial' }, { emoji: '✈️', label: 'Viagem' },
+  { emoji: '😌', label: 'Nada em especial' },
+];
+
+const IMPACTOS = [
+  { id: 'negativo', emoji: '😟', label: 'Negativo', activeText: 'text-[#f87171]' },
+  { id: 'neutro', emoji: '😐', label: 'Neutro', activeText: 'text-muted-foreground' },
+  { id: 'positivo', emoji: '😊', label: 'Positivo', activeText: 'text-[#34d399]' },
+];
+
+function StepBars({ step }: { step: number }) {
   return (
-    <div className="flex justify-center gap-2 py-3 bg-white border-b border-hairline">
-      {Array.from({ length: total }, (_, i) => {
+    <div className="flex items-center gap-1.5">
+      {Array.from({ length: STEPS }, (_, i) => {
         const idx = i + 1;
-        const isActive = idx <= step;
+        const isPast = idx < step;
         const isCurrent = idx === step;
         return (
           <div
             key={i}
-            className={`rounded-full transition-all duration-300 ${isCurrent ? 'w-3 h-3' : 'w-2 h-2'}`}
-            style={{
-              backgroundColor: isActive ? colorAccent : '#d1d5db',
-              opacity: isActive ? 1 : 0.3,
-            }}
+            className={`h-1 rounded-xl transition-all duration-300 ${
+              isCurrent ? 'w-6 bg-[#f59e0b]' : isPast ? 'w-3 bg-[#f59e0b] opacity-40' : 'w-3 bg-[#ffffff18]'
+            }`}
           />
         );
       })}
@@ -75,135 +86,94 @@ function StepDots({ step, total, colorAccent }: { step: number; total: number; c
   );
 }
 
-function ScaleGrid({
-  value,
-  onChange,
-  labels,
-}: {
-  value: number | null;
-  onChange: (v: number) => void;
-  labels?: [string, string];
-}) {
+function StepHeader({ num, label, title, desc }: { num: number; label: string; title: string; desc: string }) {
   return (
-    <div>
-      <div className="grid grid-cols-10 gap-1.5">
-        {SCALE.map((v) => (
-          <button
-            key={v}
-            type="button"
-            onClick={() => onChange(v)}
-            className={`rounded-xl border text-sm font-semibold py-2 transition-all cursor-pointer ${
-              value === v
-                ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm scale-105'
-                : 'bg-surface border-hairline text-slate hover:border-indigo-300'
-            }`}
-          >
-            {v}
-          </button>
-        ))}
-      </div>
-      {labels && (
-        <div className="mt-2 flex justify-between text-[10px] font-bold uppercase text-slate/70 px-0.5">
-          <span>{labels[0]}</span>
-          <span>{labels[1]}</span>
+    <>
+      <div className="flex items-center gap-3 px-4 mt-6 mb-1">
+        <div className="w-6 h-6 rounded-full bg-[#f59e0b] flex items-center justify-center">
+          <span className="text-xs font-bold text-[#0f0a00]">{num}</span>
         </div>
-      )}
-    </div>
+        <span className="text-xs font-semibold text-[#8a7a55] uppercase tracking-[0.14em]">{label}</span>
+        <div className="flex-1 h-px bg-[#ffffff18]" />
+      </div>
+      <div className="flex flex-col gap-3 px-6 pt-6 pb-2">
+        <StepBars step={num} />
+        <div className="flex flex-col gap-1 mt-1">
+          <h2 className="font-semibold text-xl leading-snug text-[#fdf6e3]" style={{ fontFamily: 'DM Sans' }}>{title}</h2>
+          <p className="text-sm text-[#8a7a55]">{desc}</p>
+        </div>
+      </div>
+    </>
   );
 }
 
+const containerClass = 'bg-[#0f0a00] min-h-dvh text-[#fdf6e3] flex flex-col';
+const cardClass = 'rounded-xl border border-[#ffffff18] bg-[#140f00]';
+const btnClass = 'w-full bg-[#f59e0b] text-[#0f0a00] font-semibold text-base rounded-xl py-4 cursor-pointer';
+
 export function SleepWizard({ selectedDate, onClose, onSaveSuccess }: SleepWizardProps) {
   const [step, setStep] = useState(1);
-  const [sonoInicio, setSonoInicio] = useState('23:00');
-  const [sonoFim, setSonoFim] = useState('07:00');
-  const [sonoQualidade, setSonoQualidade] = useState(6);
-  const [sonoContinuidade, setSonoContinuidade] = useState<number | null>(null);
-  const [sonoInterrupcoes, setSonoInterrupcoes] = useState(0);
-  const [sonoCausas, setSonoCausas] = useState<string[]>([]);
-  const [sonoPreBed, setSonoPreBed] = useState<string | null>(null);
-  const [sonoInfluencias, setSonoInfluencias] = useState<string[]>([]);
-  const [energia, setEnergia] = useState<number | null>(null);
-  const [disposicao, setDisposicao] = useState<number | null>(null);
-  const [sonolencia, setSonolencia] = useState<number | null>(null);
   const [salvando, setSalvando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
   const { showAlert } = useNexusAlert();
 
-  const formatDateLabel = (date: Date) =>
-    new Intl.DateTimeFormat('pt-BR', {
-      weekday: 'long', day: 'numeric', month: 'long',
-    }).format(date);
-
-  const totalSonoMinutos = (() => {
-    const [startH, startM] = sonoInicio.split(':').map(Number);
-    const [endH, endM] = sonoFim.split(':').map(Number);
-    let diffMins = endH * 60 + endM - (startH * 60 + startM);
-    if (diffMins < 0) diffMins += 24 * 60;
-    return diffMins;
-  })();
-
-  const sonoHoras = Math.floor(totalSonoMinutos / 60);
-  const sonoMinutos = totalSonoMinutos % 60;
-
-  const eficiencyPercent = Math.max(60, 100 - sonoInterrupcoes * 10);
-  const sonoRealMinutos = Math.round((totalSonoMinutos * eficiencyPercent) / 100);
-  const sonoRealHoras = Math.floor(sonoRealMinutos / 60);
-  const sonoRealResto = sonoRealMinutos % 60;
-
-  const startDate = new Date(selectedDate);
-  const startDateLabel = formatDateLabel(startDate);
-  const crossedMidnight = (() => {
-    const [startH, startM] = sonoInicio.split(':').map(Number);
-    const [endH, endM] = sonoFim.split(':').map(Number);
-    return endH * 60 + endM <= startH * 60 + startM;
-  })();
-  const endDate = new Date(selectedDate);
-  if (crossedMidnight) endDate.setDate(endDate.getDate() + 1);
-  const endDateLabel = formatDateLabel(endDate);
+  const [qualidade, setQualidade] = useState<number | null>(null);
+  const [deitou, setDeitou] = useState('22:00');
+  const [dormiu, setDormiu] = useState('23:00');
+  const [acordouTempo, setAcordouTempo] = useState('07:00');
+  const [continuidade, setContinuidade] = useState<string | null>(null);
+  const [causas, setCausas] = useState<string[]>([]);
+  const [causaArea, setCausaArea] = useState<string | null>(null);
+  const [sentimentos, setSentimentos] = useState<string[]>([]);
+  const [atividades, setAtividades] = useState<string[]>([]);
+  const [influencias, setInfluencias] = useState<string[]>([]);
+  const [impacto, setImpacto] = useState<string | null>(null);
 
   useEffect(() => {
     const reg = dailyRecordRepo.getByDate(selectedDate);
-    if (reg) {
-      setSonoQualidade(reg.sonoQualidade ?? 6);
-      setSonoContinuidade(reg.sonoContinuidade ?? null);
-      if (reg.sono) {
-        const hours = reg.sono;
-        setSonoFim('07:00');
-        const hr = Math.round(23 - (hours - 8));
-        setSonoInicio(`${hr < 10 ? '0' + hr : hr}:00`);
-      }
-      setSonoInterrupcoes(reg.sonoInterrupcoes ?? 0);
-      setSonoCausas(reg.sonoCausas ?? []);
-      setSonoPreBed(reg.sonoPreBed ?? null);
-      setSonoInfluencias(reg.sonoInfluencias ?? []);
-      setEnergia(reg.acordou ?? null);
-      setDisposicao(reg.humorAoAcordar ?? null);
-      setSonolencia(reg.sonolenciaAoAcordar ?? null);
+    if (!reg) return;
+    setQualidade(reg.sonoQualidade ?? null);
+    setContinuidade(reg.sonoContinuidade != null ? (reg.sonoContinuidade >= 8 ? 'direto' : reg.sonoContinuidade >= 4 ? 'despertares' : 'nao_lembro') : null);
+    setCausas(reg.sonoCausas ?? []);
+    setCausaArea(reg.sonoCausaArea ?? null);
+    setSentimentos(reg.sonoSentimentos ?? []);
+    setAtividades(reg.sonoAtividades ?? []);
+    setInfluencias(reg.sonoInfluencias ?? []);
+    setImpacto(reg.sonoImpacto ?? null);
+    if (reg.sono) {
+      const hrs = Math.round(reg.sono);
+      const endH = 7;
+      const startH = 23 - (hrs - 8);
+      setDeitou(`${startH < 10 ? '0' + startH : startH > 23 ? startH - 24 : startH}:00`);
+      setDormiu(`${startH < 10 ? '0' + startH : startH > 23 ? startH - 24 : startH}:30`);
+      setAcordouTempo(`${endH < 10 ? '0' + endH : endH}:00`);
     }
   }, [selectedDate]);
 
-  const handleCommit = () => {
+  const toggleMulti = (arr: string[], val: string) =>
+    arr.includes(val) ? arr.filter(x => x !== val) : [...arr, val];
+
+  const handleSave = () => {
     setSalvando(true);
     const existing = dailyRecordRepo.getByDate(selectedDate) || ({ data: selectedDate } as any);
-    const [startH, startM] = sonoInicio.split(':').map(Number);
-    const [endH, endM] = sonoFim.split(':').map(Number);
-    let diffMins = endH * 60 + endM - (startH * 60 + startM);
-    if (diffMins < 0) diffMins += 24 * 60;
-    const eficiencia = Math.max(60, 100 - sonoInterrupcoes * 10);
-    const sonoRealMinutos = Math.round((diffMins * eficiencia) / 100);
+    const [dH, dM] = dormiu.split(':').map(Number);
+    const [aH, aM] = acordouTempo.split(':').map(Number);
+    let diffMin = (aH * 60 + aM) - (dH * 60 + dM);
+    if (diffMin < 0) diffMin += 24 * 60;
+    const contValue = continuidade === 'direto' ? 10 : continuidade === 'despertares' ? 5 : 2;
     const novo: any = {
       ...existing,
       data: selectedDate,
-      sono: parseFloat((sonoRealMinutos / 60).toFixed(1)),
-      sonoQualidade,
-      sonoContinuidade: sonoContinuidade ?? undefined,
-      sonoInterrupcoes,
-      sonoCausas: sonoCausas.length > 0 ? sonoCausas : undefined,
-      sonoPreBed: sonoPreBed ?? undefined,
-      sonoInfluencias,
-      acordou: energia ?? undefined,
-      humorAoAcordar: disposicao ?? undefined,
-      sonolenciaAoAcordar: sonolencia ?? undefined,
+      sono: parseFloat((diffMin / 60).toFixed(1)),
+      sonoQualidade: qualidade ?? undefined,
+      sonoContinuidade: contValue,
+      sonoInterrupcoes: continuidade === 'despertares' ? causas.length : 0,
+      sonoCausas: causas.length > 0 ? causas : undefined,
+      sonoCausaArea: causaArea ?? undefined,
+      sonoSentimentos: sentimentos.length > 0 ? sentimentos : undefined,
+      sonoAtividades: atividades.length > 0 ? atividades : undefined,
+      sonoInfluencias: influencias.length > 0 ? influencias : undefined,
+      sonoImpacto: impacto ?? undefined,
     };
     dailyRecordRepo.upsert(novo);
     setTimeout(() => {
@@ -211,368 +181,358 @@ export function SleepWizard({ selectedDate, onClose, onSaveSuccess }: SleepWizar
       setSucesso(true);
       setTimeout(() => {
         onSaveSuccess();
-        showAlert('Registro de sono gravado no Nexus!', 'sucesso', 'registro');
+        showAlert('Registro de sono gravado!', 'sucesso', 'registro');
         onClose();
       }, 700);
     }, 450);
   };
 
-  const indicator = <StepDots step={step} total={CONFIG.steps} colorAccent={CONFIG.colorAccent} />;
+  const selectedColor = 'border-[#f59e0b] bg-[#1e1800]';
 
   return (
-    <WizardShell
-      {...CONFIG}
-      step={step}
-      totalSteps={CONFIG.steps}
-      onBack={() => (step > 1 ? setStep((s) => s - 1) : onClose())}
-      onNext={() => setStep((s) => s + 1)}
-      onCommit={handleCommit}
-      saving={salvando}
-      sucesso={sucesso}
-      commitLabel="Salvar Registro"
-      indicator={indicator}
-    >
-      {step === 1 && (
-        <div className="space-y-5">
-          <div className="space-y-1">
-            <h3 className="text-base font-black text-ink">Como foi a qualidade do seu sono?</h3>
-            <p className="text-[12px] text-slate font-medium">
-              Selecione o nível que melhor representa sua noite.
-            </p>
+    <div className={`${containerClass} absolute inset-0 z-50 overflow-y-auto`}>
+      <div className="sticky top-0 z-10 bg-[#0f0a00]/80 backdrop-blur-md px-4 pt-4 pb-2 flex items-center justify-between border-b border-[#ffffff18]">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-full bg-[#f59e0b]/15 flex items-center justify-center">
+            <Moon className="w-3.5 h-3.5 text-[#f59e0b]" />
           </div>
-          <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm">
-            <div className="grid grid-cols-5 gap-3">
-              {QUALITY_LEVELS.map(({ value, label, emoji }) => {
-                const min = value - 1;
-                const isActive = sonoQualidade >= min && sonoQualidade <= value;
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setSonoQualidade(value)}
-                    className={`rounded-3xl border-2 p-4 flex flex-col items-center gap-2 transition-all cursor-pointer ${
-                      isActive
-                        ? 'border-indigo-500 bg-indigo-50 shadow-sm'
-                        : 'border-hairline bg-surface hover:border-indigo-300'
-                    }`}
-                  >
-                    <span className="text-2xl">{emoji}</span>
-                    <span className={`text-[11px] font-bold text-center leading-tight ${isActive ? 'text-indigo-700' : 'text-slate'}`}>
-                      {label}
+          <span className="text-sm font-semibold text-[#fdf6e3]">Dormir & Ciclo Circadiano</span>
+        </div>
+        <button onClick={onClose} className="w-7 h-7 rounded-full bg-[#ffffff18] flex items-center justify-center cursor-pointer">
+          <X className="w-3.5 h-3.5 text-[#8a7a55]" />
+        </button>
+      </div>
+
+      <div className="flex-1">
+        <AnimatePresence mode="wait">
+          {step === 1 && (
+            <motion.div key="s1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <StepHeader num={1} label="Como foi sua noite?" title="Como foi sua noite?" desc="Escolha a sensação que mais representa seu sono." />
+              <div className="grid grid-cols-2 gap-3 px-4 py-2">
+                {QUALITY_OPTS.map(q => {
+                  const sel = qualidade === q.value;
+                  return (
+                    <button key={q.value} onClick={() => setQualidade(q.value)}
+                      className={`flex flex-col gap-2 rounded-xl p-4 border text-left cursor-pointer transition-all ${sel ? `${q.bg} border-[#f59e0b]` : `${q.bg} border-[#ffffff18]`}`}>
+                      <span className="text-2xl">{q.emoji}</span>
+                      <span className={`font-semibold text-base ${sel ? q.accent : 'text-[#fdf6e3]'}`}>{q.label}</span>
+                      <span className="text-xs text-[#8a7a55] leading-relaxed">{q.desc}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="px-4 pb-4 pt-3">
+                <button disabled={!qualidade} onClick={() => setStep(2)} className={`${btnClass} disabled:opacity-30`}>Continuar</button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 2 && (
+            <motion.div key="s2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <StepHeader num={2} label="Reconstrua sua noite" title="Quando sua noite começou e terminou?" desc="Arraste os marcadores para ajustar os horários." />
+              <div className="px-6 py-4 flex flex-col gap-5">
+                <div className="flex justify-between text-xs text-[#8a7a55]">
+                  <span>22h</span><span>23h</span><span>00h</span><span>2h</span><span>4h</span><span>6h</span><span>8h</span>
+                </div>
+                <div className="relative h-10 flex items-center">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full h-2 bg-[#1e1800] rounded-xl" />
+                  </div>
+                  <div className="absolute h-2 bg-[#f59e0b] rounded-xl" style={{ left: '10%', right: '10%' }} />
+                  <div className="absolute flex flex-col items-center" style={{ left: '0%', transform: 'translateX(-50%)' }}>
+                    <div className="w-3 h-3 rounded-full bg-[#8a7a55] border-2 border-[#0f0a00]" />
+                    <span className="text-xs text-[#8a7a55] mt-1">🛌</span>
+                  </div>
+                  <div className="absolute flex flex-col items-center" style={{ left: '10%', transform: 'translateX(-50%)' }}>
+                    <div className="w-4 h-4 rounded-full bg-[#f59e0b] border-2 border-[#0f0a00]" />
+                    <span className="text-xs text-[#f59e0b] mt-1">🌙</span>
+                  </div>
+                  <div className="absolute flex flex-col items-center" style={{ left: '90%', transform: 'translateX(-50%)' }}>
+                    <div className="w-4 h-4 rounded-full bg-[#34d399] border-2 border-[#0f0a00]" />
+                    <span className="text-xs text-[#34d399] mt-1">☀️</span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <div className={`${cardClass} px-4 py-3`}>
+                    <label className="text-xs text-[#8a7a55]">Na cama</label>
+                    <input type="time" value={deitou} onChange={e => setDeitou(e.target.value)}
+                      className="mt-1 w-full bg-transparent text-base font-semibold text-[#fdf6e3] outline-none cursor-pointer" />
+                  </div>
+                  <div className={`${cardClass} px-4 py-3`}>
+                    <label className="text-xs text-[#8a7a55]">Dormiu</label>
+                    <input type="time" value={dormiu} onChange={e => setDormiu(e.target.value)}
+                      className="mt-1 w-full bg-transparent text-base font-semibold text-[#f59e0b] outline-none cursor-pointer" />
+                  </div>
+                  <div className={`${cardClass} px-4 py-3`}>
+                    <label className="text-xs text-[#8a7a55]">Acordou</label>
+                    <input type="time" value={acordouTempo} onChange={e => setAcordouTempo(e.target.value)}
+                      className="mt-1 w-full bg-transparent text-base font-semibold text-[#34d399] outline-none cursor-pointer" />
+                  </div>
+                </div>
+              </div>
+              <div className="px-4 pb-4 pt-3">
+                <button onClick={() => setStep(3)} className={btnClass}>Continuar</button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 3 && (
+            <motion.div key="s3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <StepHeader num={3} label="Continuidade do sono" title="Seu sono foi tranquilo ou teve interrupções?" desc="Selecione o que melhor descreve sua noite." />
+              <div className="px-6 py-2">
+                <div className="flex gap-0.5 rounded-xl overflow-hidden h-3 mx-2">
+                  <div className="flex-1 bg-[#f59e0b] opacity-90" />
+                  <div className="w-4 bg-[#fb923c] opacity-70" />
+                  <div className="flex" style={{ flex: 3 }}>
+                    <div className="flex-1 bg-[#f59e0b] opacity-90" />
+                  </div>
+                  <div className="w-3 bg-[#fb923c] opacity-70" />
+                  <div className="flex-1 bg-[#f59e0b] opacity-90" />
+                </div>
+              </div>
+              <div className="px-4 py-2 flex flex-col gap-3">
+                {CONTINUITY_OPTS.map(c => {
+                  const sel = continuidade === c.id;
+                  return (
+                    <button key={c.id} onClick={() => setContinuidade(c.id)}
+                      className={`flex items-center gap-4 px-4 py-4 rounded-xl border text-left cursor-pointer transition-all ${sel ? 'bg-[#1e1800] border-[#f59e0b]' : 'bg-[#140f00] border-[#ffffff18]'}`}>
+                      <span className="text-2xl">{c.emoji}</span>
+                      <div className="flex flex-col gap-0.5 flex-1">
+                        <span className={`font-semibold text-base ${sel ? 'text-[#f59e0b]' : 'text-[#fdf6e3]'}`}>{c.label}</span>
+                        <span className="text-xs text-[#8a7a55]">{c.desc}</span>
+                      </div>
+                      {sel && <div className="w-5 h-5 rounded-full bg-[#f59e0b] flex items-center justify-center"><span className="text-xs text-[#0f0a00] font-bold">✓</span></div>}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="px-4 pb-4 pt-3">
+                <button disabled={!continuidade} onClick={() => setStep(4)} className={`${btnClass} disabled:opacity-30`}>Continuar</button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 4 && (
+            <motion.div key="s4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <StepHeader num={4} label="Explorando os despertares" title="O que causou o despertar?" desc="Toque no que melhor descreve o que aconteceu." />
+              <div className="px-4 py-2 flex flex-col gap-4">
+                <div className={`${cardClass} px-4 py-3 flex items-center gap-3`}>
+                  <span className="text-lg">🌙</span>
+                  <span className="text-sm font-semibold text-[#fdf6e3]">Despertar #1</span>
+                  <span className="ml-auto text-xs text-[#8a7a55]">O que aconteceu?</span>
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {CAUSAS.map(c => {
+                    const sel = causas.includes(c.label);
+                    return (
+                      <button key={c.label} onClick={() => setCausas(toggleMulti(causas, c.label))}
+                        className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border text-center cursor-pointer transition-all ${sel ? 'bg-[#1e1800] border-[#f59e0b]' : 'bg-[#140f00] border-[#ffffff18]'}`}>
+                        <span className="text-xl">{c.emoji}</span>
+                        <span className={`text-xs font-medium ${sel ? 'text-[#f59e0b]' : 'text-[#8a7a55]'}`}>{c.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {causas.includes('Ansiedade') && (
+                  <div className={`${cardClass} px-4 py-4 flex flex-col gap-3`}>
+                    <p className="text-sm text-[#8a7a55]">Essa preocupação estava relacionada a:</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {CAUSA_AREAS.map(a => {
+                        const sel2 = causaArea === a.label;
+                        return (
+                          <button key={a.label} onClick={() => setCausaArea(sel2 ? null : a.label)}
+                            className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-left cursor-pointer transition-all ${sel2 ? 'bg-[#1e1800] border-[#f59e0b]' : 'bg-[#0f0a00] border-[#ffffff18]'}`}>
+                            <span className="text-base">{a.emoji}</span>
+                            <span className={`text-sm font-medium ${sel2 ? 'text-[#f59e0b]' : 'text-[#fdf6e3]'}`}>{a.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="px-4 pb-4 pt-3">
+                <button onClick={() => setStep(5)} className={btnClass}>Continuar</button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 5 && (
+            <motion.div key="s5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <StepHeader num={5} label="Como você acordou?" title="Como você se sentiu ao acordar?" desc="Pode selecionar mais de uma sensação." />
+              <div className="px-4 py-2">
+                <div className="relative w-full flex items-center justify-center" style={{ height: 220 }}>
+                  <svg width="80" height="180" viewBox="0 0 80 180" fill="none" className="opacity-30">
+                    <ellipse cx="40" cy="22" rx="17" ry="19" fill="#a78bfa" />
+                    <rect x="22" y="42" width="36" height="60" rx="14" fill="#a78bfa" />
+                    <rect x="10" y="44" width="14" height="44" rx="7" fill="#a78bfa" />
+                    <rect x="56" y="44" width="14" height="44" rx="7" fill="#a78bfa" />
+                    <rect x="22" y="100" width="15" height="60" rx="7" fill="#a78bfa" />
+                    <rect x="43" y="100" width="15" height="60" rx="7" fill="#a78bfa" />
+                  </svg>
+                  {SENTIMENTOS.map((s, i) => {
+                    const sel = sentimentos.includes(s.label);
+                    const isLeft = i < 3;
+                    const topPos = [16, 80, 144][i % 3];
+                    return (
+                      <button key={s.label} onClick={() => setSentimentos(toggleMulti(sentimentos, s.label))}
+                        className={`absolute flex items-center gap-1.5 px-3 py-2 rounded-xl border text-sm font-medium cursor-pointer transition-all ${isLeft ? '-left-2' : '-right-2'}`}
+                        style={{ top: topPos }}
+                        data-selected={sel}>
+                        <span>{s.emoji}</span>
+                        <span className={sel ? 'text-[#f59e0b]' : 'text-[#8a7a55]'}>{s.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-xs text-[#8a7a55] text-center mt-2">Pode selecionar mais de um.</p>
+              </div>
+              <div className="px-4 pb-4 pt-3">
+                <button onClick={() => setStep(6)} className={btnClass}>Continuar</button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 6 && (
+            <motion.div key="s6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <StepHeader num={6} label="O que fez antes de dormir?" title="O que fez parte da sua noite?" desc="Toque nos objetos que fizeram parte da sua rotina." />
+              <div className="px-4 py-2">
+                <div className={`relative ${cardClass} px-4 py-5 flex flex-col items-center gap-1`}>
+                  <div className="absolute top-3 right-4 text-xs text-[#8a7a55]">toque para selecionar</div>
+                  <div className="grid grid-cols-4 gap-3 w-full mt-3">
+                    {ATIVIDADES.map(a => {
+                      const sel = atividades.includes(a.label);
+                      return (
+                        <button key={a.label} onClick={() => setAtividades(toggleMulti(atividades, a.label))}
+                          className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border cursor-pointer transition-all ${sel ? 'bg-[#1e1800] border-[#f59e0b]' : 'bg-[#0f0a00] border-[#ffffff18] opacity-50'}`}>
+                          <span className="text-2xl">{a.emoji}</span>
+                          <span className={`text-xs font-medium ${sel ? 'text-[#f59e0b]' : 'text-[#8a7a55]'}`}>{a.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="w-full h-px bg-[#ffffff18] mt-4 rounded-full" />
+                  <p className="text-xs text-[#8a7a55] mt-1">Mesa de cabeceira</p>
+                </div>
+              </div>
+              <div className="px-4 pb-4 pt-3">
+                <button onClick={() => setStep(7)} className={btnClass}>Continuar</button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 7 && (
+            <motion.div key="s7" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <StepHeader num={7} label="Influências da noite" title="Houve algo importante acontecendo?" desc="Selecione o que influenciou seu sono." />
+              <div className="px-4 py-2 flex flex-col gap-4">
+                <div className="grid grid-cols-2 gap-2">
+                  {INFLUENCIAS.map(i => {
+                    const sel = influencias.includes(i.label);
+                    const isFull = i.label === 'Nada em especial';
+                    return (
+                      <button key={i.label} onClick={() => setInfluencias(isFull ? [i.label] : toggleMulti(influencias, i.label))}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-left cursor-pointer transition-all ${isFull ? 'col-span-2' : ''} ${sel ? 'bg-[#1e1800] border-[#f59e0b]' : 'bg-[#140f00] border-[#ffffff18]'}`}>
+                        <span className="text-xl">{i.emoji}</span>
+                        <span className={`text-sm font-medium ${sel ? 'text-[#f59e0b]' : 'text-[#fdf6e3]'}`}>{i.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className={`${cardClass} px-4 py-4 flex flex-col gap-3`}>
+                  <p className="text-sm text-[#8a7a55]">Isso impactou seu sono de forma:</p>
+                  <div className="flex gap-2">
+                    {IMPACTOS.map(imp => {
+                      const sel = impacto === imp.id;
+                      return (
+                        <button key={imp.id} onClick={() => setImpacto(imp.id)}
+                          className={`flex-1 flex flex-col items-center gap-1 py-3 rounded-xl border cursor-pointer transition-all ${sel ? 'bg-[#1e1800] border-[#f59e0b]' : 'bg-[#0f0a00] border-[#ffffff18]'}`}>
+                          <span className="text-xl">{imp.emoji}</span>
+                          <span className={`text-xs font-medium ${sel ? imp.activeText : 'text-[#8a7a55]'}`}>{imp.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+              <div className="px-4 pb-4 pt-3">
+                <button onClick={() => setStep(8)} className={btnClass}>Continuar</button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 8 && (
+            <motion.div key="s8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <StepHeader num={8} label="Memória da noite" title="Sua noite em memória" desc="Um registro do que aconteceu." />
+              <div className="mx-4 my-2 rounded-xl overflow-hidden border border-[#e8d9b0] bg-[#fffbf0]">
+                <div className="px-5 pt-5 pb-4 border-b border-[#e8d9b0] flex items-start justify-between">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-xs text-[#8a7a55] tracking-widest uppercase">Memória da noite</span>
+                    <span className="text-lg font-semibold text-[#1a1300]">
+                      {new Date(selectedDate + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long' })}
                     </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {step === 2 && (
-        <div className="space-y-5">
-          <div className="space-y-1">
-            <h3 className="text-base font-black text-ink">Defina o período principal da sua noite de sono.</h3>
-            <p className="text-[12px] text-slate font-medium">
-              Registre quando dormiu e quando acordou.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 gap-3">
-            <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm">
-              <label className="text-[11px] uppercase tracking-[0.2em] font-mono text-slate">Dormiu às</label>
-              <div className="mt-3 flex items-center justify-between gap-3">
-                <input
-                  type="time"
-                  value={sonoInicio}
-                  onChange={(e) => setSonoInicio(e.target.value)}
-                  className="w-full rounded-2xl border border-hairline bg-slate-50 px-4 py-3 text-base font-semibold text-ink outline-none focus:border-indigo-400 cursor-pointer"
-                />
+                  </div>
+                  <div className="flex flex-col items-end gap-0.5">
+                    <span className="text-2xl">{qualidade != null ? ['😖', '😖', '😔', '😔', '😐', '😐', '🙂', '🙂', '😄', '🤩'][qualidade - 1] || '🌙' : '🌙'}</span>
+                    <span className="text-xs text-[#8a7a55]">{qualidade != null ? (qualidade >= 8 ? 'Boa noite de sono' : qualidade >= 5 ? 'Sono regular' : 'Sono difícil') : ''}</span>
+                  </div>
+                </div>
+                <div className="px-5 py-4 flex flex-col gap-2 border-b border-[#e8d9b0]">
+                  <div className="flex items-center gap-3">
+                    <span className="text-base">😴</span>
+                    <span className="text-sm text-[#1a1300]">{(() => { const [dh, dm] = dormiu.split(':').map(Number); const [ah, am] = acordouTempo.split(':').map(Number); let diff = (ah * 60 + am) - (dh * 60 + dm); if (diff < 0) diff += 1440; return `${Math.floor(diff / 60)}h${diff % 60}m dormidas`; })()}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-base">⚡</span>
+                    <span className="text-sm text-[#1a1300]">{sentimentos.length > 0 ? sentimentos.join(', ') : 'Energia moderada'}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-base">🌙</span>
+                    <span className="text-sm text-[#1a1300]">{continuidade === 'direto' ? 'Sono contínuo' : continuidade === 'despertares' ? `${causas.length} despertar(es)` : 'Não lembro'}</span>
+                  </div>
+                  {atividades.length > 0 && (
+                    <div className="flex items-center gap-3">
+                      <span className="text-base">📱</span>
+                      <span className="text-sm text-[#1a1300]">{atividades.join(', ')}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="px-5 py-4">
+                  <p className="text-xs text-[#8a7a55] uppercase tracking-widest mb-2">Observação</p>
+                  <p className="text-sm text-[#1a1300] leading-relaxed italic">
+                    {qualidade != null && qualidade <= 4
+                      ? 'Parece que você teve uma noite desafiadora. Pequenos ajustes na rotina podem fazer diferença.'
+                      : qualidade != null && qualidade >= 8
+                        ? 'Boa recuperação! Seu corpo agradece noites como essa.'
+                        : 'Uma noite dentro do esperado. Observe os padrões que mais se repetem.'}
+                  </p>
+                  <div className="mt-4 flex gap-1">
+                    <div className="h-0.5 w-8 bg-[#b45309] rounded-full opacity-60" />
+                    <div className="h-0.5 w-4 bg-[#b45309] rounded-full opacity-30" />
+                    <div className="h-0.5 w-2 bg-[#b45309] rounded-full opacity-15" />
+                  </div>
+                </div>
               </div>
-              <div className="mt-3 text-[11px] text-slate/80">{startDateLabel}</div>
-            </div>
-            <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm">
-              <label className="text-[11px] uppercase tracking-[0.2em] font-mono text-slate">Acordou às</label>
-              <div className="mt-3 flex items-center justify-between gap-3">
-                <input
-                  type="time"
-                  value={sonoFim}
-                  onChange={(e) => setSonoFim(e.target.value)}
-                  className="w-full rounded-2xl border border-hairline bg-slate-50 px-4 py-3 text-base font-semibold text-ink outline-none focus:border-indigo-400 cursor-pointer"
-                />
+              <div className="px-4 pt-3 pb-10">
+                <button disabled={salvando} onClick={handleSave} className={`${btnClass} disabled:opacity-30`}>
+                  {salvando ? 'Salvando...' : 'Finalizar registro'}
+                </button>
               </div>
-              <div className="mt-3 text-[11px] text-slate/80">{endDateLabel}</div>
-            </div>
-          </div>
-          <div className="rounded-3xl bg-surface p-4 border border-hairline shadow-sm">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] font-mono text-slate">Tempo total na cama</p>
-                <p className="mt-2 text-2xl font-black text-ink">{sonoHoras}h {sonoMinutos}min</p>
-              </div>
-              {crossedMidnight && (
-                <div className="rounded-2xl bg-indigo-50 px-3 py-2 text-[11px] font-semibold text-indigo-700 whitespace-nowrap">+1 dia</div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {step === 3 && (
-        <div className="space-y-5">
-          <div className="space-y-1">
-            <h3 className="text-base font-black text-ink">Como foi a continuidade do seu sono?</h3>
-            <p className="text-[12px] text-slate font-medium">
-              Avalie o quanto seu sono foi ininterrupto.
-            </p>
-          </div>
-          <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm">
-            <p className="text-[11px] uppercase tracking-[0.2em] font-mono text-slate mb-4">Continuidade</p>
-            <div className="grid grid-cols-5 gap-3">
-              {CONTINUITY_LEVELS.map(({ value, label }) => {
-                const isActive = sonoContinuidade === value;
-                return (
-                  <button
-                    key={value}
-                    type="button"
-                    onClick={() => setSonoContinuidade(value)}
-                    className={`rounded-2xl border-2 py-3 text-xs font-bold text-center transition-all cursor-pointer ${
-                      isActive
-                        ? 'border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm'
-                        : 'border-hairline bg-surface text-slate hover:border-indigo-300'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-          <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm">
-            <p className="text-[11px] uppercase tracking-[0.2em] font-mono text-slate">Quantas vezes você acordou?</p>
-            <div className="mt-4 flex items-center justify-center gap-3 rounded-3xl border border-hairline bg-surface p-3">
-              <button
-                type="button"
-                onClick={() => setSonoInterrupcoes((prev) => Math.max(0, prev - 1))}
-                className="w-10 h-10 rounded-2xl border border-hairline bg-white text-lg font-bold text-slate hover:bg-indigo-50 hover:border-indigo-300 transition-colors cursor-pointer"
-              >
-                −
-              </button>
-              <div className="min-w-[4rem] text-center text-2xl font-black text-ink">{sonoInterrupcoes}</div>
-              <button
-                type="button"
-                onClick={() => setSonoInterrupcoes((prev) => prev + 1)}
-                className="w-10 h-10 rounded-2xl border border-hairline bg-white text-lg font-bold text-slate hover:bg-indigo-50 hover:border-indigo-300 transition-colors cursor-pointer"
-              >
-                +
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {step === 4 && (
-        <div className="space-y-5">
-          <div className="space-y-1">
-            <h3 className="text-base font-black text-ink">O que te fez acordar durante a noite?</h3>
-            <p className="text-[12px] text-slate font-medium">
-              Selecione os motivos que te despertaram.
-            </p>
-          </div>
-          <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm">
-            <div className="grid grid-cols-3 gap-3">
-              {WAKE_CAUSES.map((causa) => {
-                const isActive = sonoCausas.includes(causa);
-                return (
-                  <button
-                    key={causa}
-                    type="button"
-                    onClick={() =>
-                      setSonoCausas((prev) =>
-                        prev.includes(causa) ? prev.filter((x) => x !== causa) : [...prev, causa],
-                      )
-                    }
-                    className={`rounded-3xl border px-3 py-2.5 text-xs font-semibold text-left transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm'
-                        : 'bg-surface border-hairline text-slate hover:border-indigo-300'
-                    }`}
-                  >
-                    {causa}
-                  </button>
-                );
-              })}
-            </div>
-            {sonoCausas.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {sonoCausas.map((c) => (
-                  <span key={c} className="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-semibold">{c}</span>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {step === 5 && (
-        <div className="space-y-5">
-          <div className="space-y-1">
-            <h3 className="text-base font-black text-ink">Ao acordar, como você se sentiu?</h3>
-            <p className="text-[12px] text-slate font-medium">
-              Avalie sua energia, disposição e sonolência ao despertar.
-            </p>
-          </div>
-          <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm">
-            <p className="text-[11px] uppercase tracking-[0.2em] font-mono text-slate mb-3">Energia</p>
-            <ScaleGrid value={energia} onChange={setEnergia} labels={['Sem energia', 'Total energia']} />
-          </div>
-          <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm">
-            <p className="text-[11px] uppercase tracking-[0.2em] font-mono text-slate mb-3">Disposição</p>
-            <ScaleGrid value={disposicao} onChange={setDisposicao} labels={['Pouca', 'Muita']} />
-          </div>
-          <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm">
-            <p className="text-[11px] uppercase tracking-[0.2em] font-mono text-slate mb-3">Sonolência</p>
-            <ScaleGrid value={sonolencia} onChange={setSonolencia} labels={['Acordado(a)', 'Muito sono']} />
-          </div>
-        </div>
-      )}
-
-      {step === 6 && (
-        <div className="space-y-5">
-          <div className="space-y-1">
-            <h3 className="text-base font-black text-ink">O que você fez antes de dormir?</h3>
-            <p className="text-[12px] text-slate font-medium">
-              Selecione a atividade principal antes de deitar.
-            </p>
-          </div>
-          <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm">
-            <div className="grid grid-cols-2 gap-3">
-              {PRE_BED_ACTIVITIES.map((act) => {
-                const isActive = sonoPreBed === act;
-                return (
-                  <button
-                    key={act}
-                    type="button"
-                    onClick={() => setSonoPreBed(isActive ? null : act)}
-                    className={`rounded-3xl border-2 py-3 px-4 text-sm font-semibold text-left transition-all cursor-pointer ${
-                      isActive
-                        ? 'border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm'
-                        : 'border-hairline bg-surface text-slate hover:border-indigo-300'
-                    }`}
-                  >
-                    {act}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {step === 7 && (
-        <div className="space-y-5">
-          <div className="space-y-1">
-            <h3 className="text-base font-black text-ink">O que mais influenciou sua noite?</h3>
-            <p className="text-[12px] text-slate font-medium">
-              Escolha os fatores que fizeram diferença.
-            </p>
-          </div>
-          <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm">
-            <div className="grid grid-cols-2 gap-3">
-              {INFLUENCES.map((tag) => {
-                const isActive = sonoInfluencias.includes(tag);
-                return (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() =>
-                      setSonoInfluencias((prev) =>
-                        prev.includes(tag) ? prev.filter((x) => x !== tag) : [...prev, tag],
-                      )
-                    }
-                    className={`rounded-3xl border px-3 py-2.5 text-xs font-semibold text-left transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm'
-                        : 'bg-surface border-hairline text-slate hover:border-indigo-300'
-                    }`}
-                  >
-                    {tag}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-          <div className="rounded-3xl bg-surface p-4 border border-hairline text-xs font-medium text-slate">
-            <p className="font-semibold text-ink">{sonoInfluencias.length} fator(es) selecionado(s)</p>
-            <p className="mt-2">O Nexus vai cruzar esses dados com seus registros de treino e humor.</p>
-          </div>
-        </div>
-      )}
-
-      {step === 8 && (
-        <div className="space-y-5 py-2">
-          <div className="space-y-1 text-center">
-            <h3 className="text-base font-black text-ink">Revisar Registro de Sono</h3>
-            <p className="text-[12px] text-slate font-medium">Confira os detalhes antes de salvar.</p>
-          </div>
-
-          <div className="rounded-3xl bg-indigo-50/90 border border-indigo-100 p-5 shadow-sm text-left max-w-sm mx-auto">
-            <div className="flex items-start gap-4">
-              <div className="rounded-3xl bg-white p-4 text-center text-3xl font-black text-ink w-24 h-24 flex items-center justify-center shadow-sm">
-                {sonoRealHoras}h {sonoRealResto}m
-              </div>
-              <div className="pt-2">
-                <div className="text-[11px] uppercase font-semibold tracking-[0.2em] text-slate">de sono real</div>
-                <div className="mt-2 text-sm text-slate">{eficiencyPercent}% eficiência</div>
-                <div className="mt-1 text-xs text-slate/70">{sonoHoras}h{sonoMinutos} na cama</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm max-w-sm mx-auto space-y-3 text-xs text-slate">
-            <div className="font-semibold text-indigo-700 uppercase tracking-[0.2em] text-[11px]">Qualidade & Continuidade</div>
-            <div className="flex justify-between"><span>Qualidade</span><span className="font-mono text-sm font-semibold text-ink">{sonoQualidade}/10</span></div>
-            {sonoContinuidade && <div className="flex justify-between"><span>Continuidade</span><span className="font-mono text-sm font-semibold text-ink">{sonoContinuidade}/10</span></div>}
-            <div className="flex justify-between"><span>Interrupções</span><span className="font-mono text-sm font-semibold text-ink">{sonoInterrupcoes}x</span></div>
-          </div>
-
-          {sonoCausas.length > 0 && (
-            <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm max-w-sm mx-auto text-xs text-slate">
-              <div className="font-semibold text-indigo-700 uppercase tracking-[0.2em] text-[11px] mb-3">Causas dos despertares</div>
-              <div className="flex flex-wrap gap-2">
-                {sonoCausas.map((c) => (
-                  <span key={c} className="rounded-full bg-surface px-3 py-1 text-[11px] font-semibold text-slate border border-hairline">{c}</span>
-                ))}
-              </div>
-            </div>
+            </motion.div>
           )}
+        </AnimatePresence>
+      </div>
 
-          {sonoPreBed && (
-            <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm max-w-sm mx-auto text-xs text-slate flex justify-between items-center">
-              <span className="font-semibold text-indigo-700 uppercase tracking-[0.2em] text-[11px]">Antes de dormir</span>
-              <span className="font-mono text-sm font-semibold text-ink">{sonoPreBed}</span>
-            </div>
-          )}
-
-          <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm max-w-sm mx-auto text-xs text-slate">
-            <div className="font-semibold text-indigo-700 uppercase tracking-[0.2em] text-[11px] mb-3">Ao acordar</div>
-            <div className="grid gap-2">
-              <div className="flex justify-between"><span>Energia</span><span className="font-mono text-sm font-semibold text-ink">{energia ?? '—'}/10</span></div>
-              <div className="flex justify-between"><span>Disposição</span><span className="font-mono text-sm font-semibold text-ink">{disposicao ?? '—'}/10</span></div>
-              <div className="flex justify-between"><span>Sonolência</span><span className="font-mono text-sm font-semibold text-ink">{sonolencia ?? '—'}/10</span></div>
-            </div>
-          </div>
-
-          {sonoInfluencias.length > 0 && (
-            <div className="rounded-3xl bg-white border border-hairline p-4 shadow-sm max-w-sm mx-auto text-xs text-slate">
-              <div className="font-semibold text-indigo-700 uppercase tracking-[0.2em] text-[11px] mb-3">Influências</div>
-              <div className="flex flex-wrap gap-2">
-                {sonoInfluencias.map((tag) => (
-                  <span key={tag} className="rounded-full bg-surface px-3 py-1 text-[11px] font-semibold text-slate border border-hairline">{tag}</span>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+      {sucesso && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-[#0f0a00] flex flex-col items-center justify-center p-6 text-center z-50">
+          <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 10 }}
+            className="w-16 h-16 bg-[#f59e0b]/20 rounded-full flex items-center justify-center mb-4">
+            <Moon className="w-8 h-8 text-[#f59e0b]" />
+          </motion.div>
+          <h3 className="text-base font-bold tracking-wide uppercase text-[#fdf6e3]">Registro concluído</h3>
+          <p className="text-xs text-[#8a7a55] max-w-xs mt-2">Sua noite foi registrada com sucesso.</p>
+        </motion.div>
       )}
-    </WizardShell>
+    </div>
   );
 }

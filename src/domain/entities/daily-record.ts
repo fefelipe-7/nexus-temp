@@ -14,7 +14,11 @@ export interface DailyRecord {
   sonoInfluencias?: string[];
   sonoContinuidade?: number;
   sonoCausas?: string[];
-  sonoPreBed?: string;
+  sonoCausaArea?: string;
+  sonoSentimentos?: string[];
+  sonoAtividades?: string[];
+  sonoImpacto?: 'negativo' | 'neutro' | 'positivo';
+  sonoTempoPraDormir?: number;
   acordou?: number;
   humorAoAcordar?: number;
   sonolenciaAoAcordar?: number;
