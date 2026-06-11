@@ -12,6 +12,9 @@ export interface DailyRecord {
   sonoMotivo?: string;
   sonoAgitado?: boolean;
   sonoInfluencias?: string[];
+  sonoContinuidade?: number;
+  sonoCausas?: string[];
+  sonoPreBed?: string;
   acordou?: number;
   humorAoAcordar?: number;
   sonolenciaAoAcordar?: number;

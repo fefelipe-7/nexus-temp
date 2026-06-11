@@ -17,11 +17,12 @@ interface WizardShellProps {
   sucesso?: boolean;
   commitLabel?: string;
   children: ReactNode;
+  indicator?: ReactNode;
 }
 
 export function WizardShell({
   title, icon: Icon, colorBg, colorText, colorAccent,
-  step, totalSteps, onBack, onNext, onCommit, saving, sucesso, commitLabel, children,
+  step, totalSteps, onBack, onNext, onCommit, saving, sucesso, commitLabel, children, indicator,
 }: WizardShellProps) {
   const progress = (step / totalSteps) * 100;
   const isLastStep = step === totalSteps;
@@ -43,10 +44,12 @@ export function WizardShell({
         </button>
       </div>
 
-      <div className="w-full bg-surface-soft h-1 shrink-0 relative">
-        <motion.div className="absolute top-0 bottom-0 left-0 h-full transition-all duration-300"
-          style={{ width: `${progress}%`, backgroundColor: colorAccent }} />
-      </div>
+      {indicator ?? (
+        <div className="w-full bg-surface-soft h-1 shrink-0 relative">
+          <motion.div className="absolute top-0 bottom-0 left-0 h-full transition-all duration-300"
+            style={{ width: `${progress}%`, backgroundColor: colorAccent }} />
+        </div>
+      )}
 
       <div className="flex-1 overflow-y-auto px-5 py-6">
         <AnimatePresence mode="wait">
