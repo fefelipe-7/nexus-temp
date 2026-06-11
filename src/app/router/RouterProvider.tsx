@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useMemo, useCallback, type ReactNode } from 'react';
+import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
 import { parseCurrentRoute, tabToPath, type TabId, type WizardType, type ModuleSlug, type SubmoduleType } from './routes';
 
 interface RouterContextType {
@@ -28,50 +29,50 @@ interface RouterProviderProps {
 }
 
 export function RouterProvider({ children }: RouterProviderProps) {
-  const [currentPath, setCurrentPath] = useState<string>(() => window.location.pathname);
+  return (
+    <BrowserRouter>
+      <RouterStateProvider>
+        {children}
+      </RouterStateProvider>
+    </BrowserRouter>
+  );
+}
 
-  useEffect(() => {
-    if (window.location.pathname === '/' || window.location.pathname === '') {
-      window.history.replaceState(null, '', '/home');
-      setCurrentPath('/home');
+function RouterStateProvider({ children }: RouterProviderProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const parsed = useMemo(() => parseCurrentRoute(location.pathname), [location.pathname]);
+
+  const navigateFn = useCallback((toPath: string) => {
+    if (location.pathname !== toPath) {
+      navigate(toPath);
     }
-    const handlePopState = () => setCurrentPath(window.location.pathname);
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
+  }, [navigate, location.pathname]);
 
-  const navigate = (toPath: string) => {
-    if (window.location.pathname !== toPath) {
-      window.history.pushState(null, '', toPath);
-      setCurrentPath(toPath);
-    }
-  };
-
-  const parsed = parseCurrentRoute(currentPath);
-
-  const openRegisterModal = () => {
+  const openRegisterModal = useCallback(() => {
     const base = tabToPath(parsed.baseTab);
     navigate(`${base}/register`);
-  };
+  }, [navigate, parsed.baseTab]);
 
-  const closeRegisterModal = () => {
+  const closeRegisterModal = useCallback(() => {
     navigate(tabToPath(parsed.baseTab));
-  };
+  }, [navigate, parsed.baseTab]);
+
+  const value = useMemo<RouterContextType>(() => ({
+    path: location.pathname,
+    baseTab: parsed.baseTab,
+    isRegisterModal: parsed.isRegisterModal,
+    wizardType: parsed.wizardType,
+    moduleSlug: parsed.moduleSlug,
+    submoduleType: parsed.submoduleType,
+    navigate: navigateFn,
+    openRegisterModal,
+    closeRegisterModal,
+  }), [location.pathname, parsed, navigateFn, openRegisterModal, closeRegisterModal]);
 
   return (
-    <RouterContext.Provider
-      value={{
-        path: currentPath,
-        baseTab: parsed.baseTab,
-        isRegisterModal: parsed.isRegisterModal,
-        wizardType: parsed.wizardType,
-        moduleSlug: parsed.moduleSlug,
-        submoduleType: parsed.submoduleType,
-        navigate,
-        openRegisterModal,
-        closeRegisterModal,
-      }}
-    >
+    <RouterContext.Provider value={value}>
       {children}
     </RouterContext.Provider>
   );

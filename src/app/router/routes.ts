@@ -26,7 +26,7 @@ export interface ParsedRoute {
   submoduleType: SubmoduleType;
 }
 
-const MODULE_MAP: Record<string, ModuleSlug> = {
+export const MODULE_MAP: Record<string, ModuleSlug> = {
   relacoes: 'relacoes', relationships: 'relacoes', vida: 'relacoes', life: 'relacoes',
   mente: 'mente', mind: 'mente',
   saude: 'saude', health: 'saude',
@@ -77,7 +77,7 @@ const SUBMODULE_MAP: Record<string, SubmoduleType> = {
   abundancia: 'abundancia', abundance: 'abundancia',
 };
 
-const WIZARD_MAP: Record<string, WizardType> = {
+export const WIZARD_MAP: Record<string, WizardType> = {
   sleep: 'sono', sono: 'sono',
   meal: 'refeicao', refeicao: 'refeicao',
   workout: 'treino', treino: 'treino',
