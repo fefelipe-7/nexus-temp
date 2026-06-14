@@ -13,7 +13,6 @@ import { ShellLayout } from './app/router/ShellLayout';
 import { ModuleViewSwitch } from './app/router/ModuleViewSwitch';
 import { WizardPage } from './app/router/WizardPage';
 import { GlobalSearch } from './app/shell/GlobalSearch';
-import { useRouter } from './app/router/RouterProvider';
 import { useViewportHeight } from './hooks/useViewportHeight';
 
 export default function App() {
@@ -21,8 +20,8 @@ export default function App() {
 
   const [selectedDate, setSelectedDate] = useState<string>('2026-05-29');
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState<boolean>(false);
   const [refreshCount, setRefreshCount] = useState<number>(0);
-  const { isRegisterModal, closeRegisterModal, openRegisterModal } = useRouter();
   const navigate = useNavigate();
 
   useEffect(() => { inicializarStorage(); }, []);
@@ -51,13 +50,13 @@ export default function App() {
   return (
     <>
       <Routes>
-        <Route element={<ShellLayout onOpenSearch={() => setIsSearchOpen(true)} />}>
+        <Route element={<ShellLayout onOpenSearch={() => setIsSearchOpen(true)} onOpenRegister={() => setIsRegisterOpen(true)} isRegisterOpen={isRegisterOpen} />}>
           <Route path="/" element={<Navigate to="/home" />} />
           <Route path="/home/*" element={
             <HomeView
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
-              onOpenRecord={openRegisterModal}
+              onOpenRecord={() => setIsRegisterOpen(true)}
               setActiveTab={handleSetActiveTab}
               refreshCount={refreshCount}
               onOpenSearch={() => setIsSearchOpen(true)}
@@ -97,10 +96,10 @@ export default function App() {
       </Routes>
 
       <AnimatePresence>
-        {isRegisterModal && (
+        {isRegisterOpen && (
           <RegistrarSheet
-            isOpen={isRegisterModal}
-            onClose={closeRegisterModal}
+            isOpen={isRegisterOpen}
+            onClose={() => setIsRegisterOpen(false)}
             selectedDate={selectedDate}
             onSaveSuccess={triggerRefresh}
           />

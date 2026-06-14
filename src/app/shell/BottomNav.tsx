@@ -4,6 +4,11 @@ import { Home, ClipboardList, Plus, Lightbulb, LayoutGrid } from 'lucide-react';
 import { useRouter } from '../router/RouterProvider';
 import { cn } from '../../design-system/utils/cn';
 
+interface BottomNavProps {
+  onOpenRegister?: () => void;
+  isHidden?: boolean;
+}
+
 const navItems: { id: string; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'home', label: 'Início', icon: Home },
   { id: 'hoje', label: 'Hoje', icon: ClipboardList },
@@ -12,12 +17,12 @@ const navItems: { id: string; label: string; icon: React.ComponentType<{ classNa
   { id: 'modulos', label: 'Módulos', icon: LayoutGrid },
 ];
 
-export function BottomNav() {
-  const { baseTab, navigate, openRegisterModal } = useRouter();
+export function BottomNav({ onOpenRegister, isHidden }: BottomNavProps) {
+  const { baseTab, navigate } = useRouter();
 
   const handleClick = (id: string) => {
     if (id === 'registrar') {
-      openRegisterModal();
+      onOpenRegister?.();
     } else {
       const pathMap: Record<string, string> = {
         home: '/home',
@@ -30,7 +35,7 @@ export function BottomNav() {
   };
 
   return (
-    <nav className="bottom-nav">
+    <nav className={cn('bottom-nav transition-all duration-300', isHidden && 'translate-y-[calc(100%+16px)] opacity-0 pointer-events-none')}>
       {navItems.map((item) => {
         const Icon = item.icon;
         const isRegistrar = item.id === 'registrar';

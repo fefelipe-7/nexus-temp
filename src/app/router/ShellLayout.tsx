@@ -6,9 +6,11 @@ import { BottomNav } from '../shell/BottomNav';
 
 interface ShellLayoutProps {
   onOpenSearch: () => void;
+  onOpenRegister: () => void;
+  isRegisterOpen: boolean;
 }
 
-export function ShellLayout({ onOpenSearch }: ShellLayoutProps) {
+export function ShellLayout({ onOpenSearch, onOpenRegister, isRegisterOpen }: ShellLayoutProps) {
   const mainRef = useRef<HTMLElement>(null);
   const location = useLocation();
 
@@ -33,7 +35,7 @@ export function ShellLayout({ onOpenSearch }: ShellLayoutProps) {
           </motion.div>
         </AnimatePresence>
       </main>
-      <BottomNav />
+      <BottomNav onOpenRegister={onOpenRegister} isHidden={isRegisterOpen} />
     </>
   );
 }
