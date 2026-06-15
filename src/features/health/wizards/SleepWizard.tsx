@@ -72,12 +72,6 @@ const QUALITY_EMOJI_MAP: Record<number, string> = {
   9: '😄', 10: '🤩',
 };
 
-const QUALITY_LABEL_MAP: Record<number, string> = {
-  1: 'Péssima', 2: 'Péssima', 3: 'Ruim', 4: 'Ruim',
-  5: 'Regular', 6: 'Regular', 7: 'Boa', 8: 'Boa',
-  9: 'Ótima', 10: 'Incrível',
-};
-
 function toMin(t: string) {
   const [h, m] = t.split(':').map(Number);
   return h * 60 + m;
@@ -162,10 +156,13 @@ interface TimeSliderProps {
 
 function TimeSlider({ label, emoji, value, onChange, min, max, color = 'accent' }: TimeSliderProps) {
   const minM = toMin(min);
-  const maxM = toMin(max);
-  const valM = toMin(value);
+  let maxM = toMin(max);
+  let valM = toMin(value);
+  if (maxM <= minM) maxM += 1440;
+  if (valM < minM) valM += 1440;
   const clamped = Math.max(minM, Math.min(maxM, valM));
-  const pct = maxM !== minM ? ((clamped - minM) / (maxM - minM)) * 100 : 0;
+  const range = maxM - minM;
+  const pct = range > 0 ? ((clamped - minM) / range) * 100 : 0;
   const colorClass = color === 'accent' ? 'bg-accent' : `bg-${color}`;
   const textColorClass = color === 'accent' ? 'text-accent' : `text-${color}`;
 
@@ -196,6 +193,26 @@ function TimeSlider({ label, emoji, value, onChange, min, max, color = 'accent' 
           style={{ left: `${pct}%`, transform: 'translate(-50%, 0)' }}
         />
       </div>
+    </div>
+  );
+}
+
+function StepFooter({ step, onNext, onBack, nextLabel, disabled }: {
+  step: number; onNext: () => void; onBack?: () => void;
+  nextLabel?: string; disabled?: boolean;
+}) {
+  return (
+    <div className="px-4 pb-4 pt-3 flex gap-3">
+      {onBack && (
+        <button onClick={onBack}
+          className="flex-1 border border-line text-ink font-semibold text-base rounded-xl py-4 cursor-pointer hover:bg-muted transition-colors">
+          Voltar
+        </button>
+      )}
+      <button onClick={onNext} disabled={disabled}
+        className={`${onBack ? 'flex-1' : 'w-full'} bg-accent text-white font-semibold text-base rounded-xl py-4 cursor-pointer disabled:opacity-30 hover:bg-accent-pressed transition-colors shadow-xs`}>
+        {nextLabel ?? 'Continuar'}
+      </button>
     </div>
   );
 }
@@ -364,12 +381,7 @@ export function SleepWizard({ selectedDate, onClose, onSaveSuccess }: SleepWizar
                   );
                 })}
               </div>
-              <div className="px-4 pb-4 pt-3">
-                <button disabled={!qualidade} onClick={() => setStep(2)}
-                  className="w-full bg-accent text-white font-semibold text-base rounded-xl py-4 cursor-pointer disabled:opacity-30 hover:bg-accent-pressed transition-colors shadow-xs">
-                  Continuar
-                </button>
-              </div>
+              <StepFooter step={1} onNext={() => setStep(2)} disabled={!qualidade} />
             </motion.div>
           )}
 
@@ -390,12 +402,7 @@ export function SleepWizard({ selectedDate, onClose, onSaveSuccess }: SleepWizar
                   </div>
                 </div>
               </div>
-              <div className="px-4 pb-4 pt-3">
-                <button onClick={() => setStep(3)}
-                  className="w-full bg-accent text-white font-semibold text-base rounded-xl py-4 cursor-pointer hover:bg-accent-pressed transition-colors shadow-xs">
-                  Continuar
-                </button>
-              </div>
+              <StepFooter step={2} onNext={() => setStep(3)} onBack={() => setStep(1)} />
             </motion.div>
           )}
 
@@ -435,12 +442,7 @@ export function SleepWizard({ selectedDate, onClose, onSaveSuccess }: SleepWizar
                   );
                 })}
               </div>
-              <div className="px-4 pb-4 pt-3">
-                <button disabled={!continuidade} onClick={() => setStep(4)}
-                  className="w-full bg-accent text-white font-semibold text-base rounded-xl py-4 cursor-pointer disabled:opacity-30 hover:bg-accent-pressed transition-colors shadow-xs">
-                  Continuar
-                </button>
-              </div>
+              <StepFooter step={3} onNext={() => setStep(4)} onBack={() => setStep(2)} disabled={!continuidade} />
             </motion.div>
           )}
 
@@ -487,12 +489,7 @@ export function SleepWizard({ selectedDate, onClose, onSaveSuccess }: SleepWizar
                   </div>
                 )}
               </div>
-              <div className="px-4 pb-4 pt-3">
-                <button onClick={() => setStep(5)}
-                  className="w-full bg-accent text-white font-semibold text-base rounded-xl py-4 cursor-pointer hover:bg-accent-pressed transition-colors shadow-xs">
-                  Continuar
-                </button>
-              </div>
+              <StepFooter step={4} onNext={() => setStep(5)} onBack={() => setStep(3)} />
             </motion.div>
           )}
 
@@ -500,8 +497,8 @@ export function SleepWizard({ selectedDate, onClose, onSaveSuccess }: SleepWizar
             <motion.div key="s5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <StepHeader num={5} label="Como você acordou?" title="Como você se sentiu ao acordar?" desc="Pode selecionar mais de uma sensação." />
               <div className="px-4 py-2">
-                <div className="relative w-full flex items-center justify-center" style={{ height: 220 }}>
-                  <svg width="80" height="180" viewBox="0 0 80 180" fill="none" className="opacity-20">
+                <div className="flex flex-col items-center gap-2">
+                  <svg width="60" height="120" viewBox="0 0 80 180" fill="none" className="opacity-15 shrink-0">
                     <ellipse cx="40" cy="22" rx="17" ry="19" fill="#6D5DD3" />
                     <rect x="22" y="42" width="36" height="60" rx="14" fill="#6D5DD3" />
                     <rect x="10" y="44" width="14" height="44" rx="7" fill="#6D5DD3" />
@@ -509,32 +506,24 @@ export function SleepWizard({ selectedDate, onClose, onSaveSuccess }: SleepWizar
                     <rect x="22" y="100" width="15" height="60" rx="7" fill="#6D5DD3" />
                     <rect x="43" y="100" width="15" height="60" rx="7" fill="#6D5DD3" />
                   </svg>
-                  {SENTIMENTOS.map((s, i) => {
-                    const sel = sentimentos.includes(s.label);
-                    const isLeft = i < 3;
-                    const topPos = [16, 80, 144][i % 3];
-                    return (
-                      <button key={s.label} onClick={() => setSentimentos(toggleMulti(sentimentos, s.label))}
-                        className={`absolute flex items-center gap-1.5 px-3 py-2 rounded-xl border text-sm font-medium cursor-pointer transition-all ${
-                          isLeft ? '-left-2' : '-right-2'
-                        } ${
-                          sel ? 'bg-accent-soft border-accent' : 'bg-card border-line hover:border-accent/40'
-                        }`}
-                        style={{ top: topPos }}>
-                        <span>{s.emoji}</span>
-                        <span className={sel ? 'text-accent' : 'text-subtle'}>{s.label}</span>
-                      </button>
-                    );
-                  })}
+                  <div className="grid grid-cols-2 gap-2 w-full">
+                    {SENTIMENTOS.map(s => {
+                      const sel = sentimentos.includes(s.label);
+                      return (
+                        <button key={s.label} onClick={() => setSentimentos(toggleMulti(sentimentos, s.label))}
+                          className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium cursor-pointer transition-all ${
+                            sel ? 'bg-accent-soft border-accent' : 'bg-card border-line hover:border-accent/40'
+                          }`}>
+                          <span className="text-lg">{s.emoji}</span>
+                          <span className={sel ? 'text-accent' : 'text-subtle'}>{s.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <p className="text-xs text-subtle text-center mt-2">Pode selecionar mais de um.</p>
+                <p className="text-xs text-subtle text-center mt-3">Pode selecionar mais de um.</p>
               </div>
-              <div className="px-4 pb-4 pt-3">
-                <button onClick={() => setStep(6)}
-                  className="w-full bg-accent text-white font-semibold text-base rounded-xl py-4 cursor-pointer hover:bg-accent-pressed transition-colors shadow-xs">
-                  Continuar
-                </button>
-              </div>
+              <StepFooter step={5} onNext={() => setStep(6)} onBack={() => setStep(4)} />
             </motion.div>
           )}
 
@@ -550,7 +539,7 @@ export function SleepWizard({ selectedDate, onClose, onSaveSuccess }: SleepWizar
                       return (
                         <button key={a.label} onClick={() => setAtividades(toggleMulti(atividades, a.label))}
                           className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border cursor-pointer transition-all ${
-                            sel ? 'bg-accent-soft border-accent' : 'bg-muted border-line opacity-60 hover:opacity-100 hover:border-accent/40'
+                            sel ? 'bg-accent-soft border-accent' : 'bg-card border-line opacity-70 hover:opacity-100 hover:border-accent/40'
                           }`}>
                           <span className="text-2xl">{a.emoji}</span>
                           <span className={`text-xs font-medium ${sel ? 'text-accent' : 'text-subtle'}`}>{a.label}</span>
@@ -562,12 +551,7 @@ export function SleepWizard({ selectedDate, onClose, onSaveSuccess }: SleepWizar
                   <p className="text-[10px] text-subtle mt-1">Mesa de cabeceira</p>
                 </div>
               </div>
-              <div className="px-4 pb-4 pt-3">
-                <button onClick={() => setStep(7)}
-                  className="w-full bg-accent text-white font-semibold text-base rounded-xl py-4 cursor-pointer hover:bg-accent-pressed transition-colors shadow-xs">
-                  Continuar
-                </button>
-              </div>
+              <StepFooter step={6} onNext={() => setStep(7)} onBack={() => setStep(5)} />
             </motion.div>
           )}
 
@@ -608,12 +592,7 @@ export function SleepWizard({ selectedDate, onClose, onSaveSuccess }: SleepWizar
                   </div>
                 </div>
               </div>
-              <div className="px-4 pb-4 pt-3">
-                <button onClick={() => setStep(8)}
-                  className="w-full bg-accent text-white font-semibold text-base rounded-xl py-4 cursor-pointer hover:bg-accent-pressed transition-colors shadow-xs">
-                  Continuar
-                </button>
-              </div>
+              <StepFooter step={7} onNext={() => setStep(8)} onBack={() => setStep(6)} />
             </motion.div>
           )}
 
@@ -679,12 +658,7 @@ export function SleepWizard({ selectedDate, onClose, onSaveSuccess }: SleepWizar
                   </div>
                 </div>
               </div>
-              <div className="px-4 pt-3 pb-10">
-                <button disabled={salvando} onClick={handleSave}
-                  className="w-full bg-accent text-white font-semibold text-base rounded-xl py-4 cursor-pointer disabled:opacity-30 hover:bg-accent-pressed transition-colors shadow-xs">
-                  {salvando ? 'Salvando...' : 'Finalizar registro'}
-                </button>
-              </div>
+              <StepFooter step={8} onNext={handleSave} onBack={() => setStep(7)} nextLabel={salvando ? 'Salvando...' : 'Finalizar registro'} disabled={salvando} />
             </motion.div>
           )}
         </AnimatePresence>
