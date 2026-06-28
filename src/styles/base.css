@@ -1,16 +1,53 @@
 @layer base {
+  /* ── Light theme (default) ── */
+  :root {
+    --bg-app: #F9F9F8;
+    --bg-card: #FFFFFF;
+    --bg-muted: #F2F2F0;
+    --bg-muted-soft: #F7F7F5;
+    --bg-surface: #F4F4F2;
+    --bg-surface-soft: #F9F9F8;
+
+    --border-line: #E4E4E1;
+    --border-line-soft: #EDEDEA;
+    --border-line-strong: #C8C8C4;
+
+    --text-ink: #1C1C1A;
+    --text-ink-soft: #343430;
+    --text-subtle: #6E6D66;
+    --text-faint: #A3A19A;
+  }
+
+  /* ── Dark theme ── */
+  [data-theme="dark"] {
+    --bg-app: #1A1A18;
+    --bg-card: #242422;
+    --bg-muted: #2A2A28;
+    --bg-muted-soft: #222220;
+    --bg-surface: #2E2E2C;
+    --bg-surface-soft: #222220;
+
+    --border-line: #353533;
+    --border-line-soft: #2E2E2C;
+    --border-line-strong: #454543;
+
+    --text-ink: #EDEDEA;
+    --text-ink-soft: #C8C8C4;
+    --text-subtle: #9A9A94;
+    --text-faint: #6E6D68;
+  }
+
   html {
     height: 100%;
-    background: var(--color-app);
+    background: var(--bg-app);
     -webkit-text-size-adjust: 100%;
-    scroll-behavior: smooth;
   }
 
   body {
     min-height: 100%;
     margin: 0;
-    background: var(--color-app);
-    color: var(--color-ink);
+    background: var(--bg-app);
+    color: var(--text-ink);
     font-family: var(--font-sans);
     overscroll-behavior-y: none;
     -webkit-font-smoothing: antialiased;
@@ -27,6 +64,7 @@
 
   button, input, textarea, select {
     font: inherit;
+    font-size: inherit;
   }
 
   button, a, input, select, textarea, [role="button"] {
