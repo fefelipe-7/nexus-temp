@@ -1,0 +1,581 @@
+{
+  "metadata": {
+    "project": "nexus",
+    "display_name": "Nexus",
+    "tagline": "seu sistema pessoal de evolução",
+    "version": "0.1.0",
+    "nature": "augmentation",
+    "description": "Complemento técnico detalhado do roadmap principal em .context/14-roadmap.md. Este documento especifica entidades, telas, estados, validações e edge cases para os primeiros passos de implementação. O roadmap principal (`.context/14-roadmap.md`) continua sendo a referência estratégica definitiva.",
+    "stack": {
+      "language": "typescript",
+      "version": "5.8+",
+      "framework": "react",
+      "framework_version": "19",
+      "state_management": "useReducer + useContext",
+      "routing": "react-router-dom v7",
+      "bundler": "vite 6",
+      "css": "tailwindcss v4",
+      "local_storage": "localStorage (chaves nexus_*)",
+      "component_variants": "class-variance-authority",
+      "ui_primitives": "radix-ui"
+    },
+    "platforms": ["web"],
+    "references": {
+      "roadmap_principal": "../.context/14-roadmap.md",
+      "arquitetura_detalhada": "../.context/08-architecture.md",
+      "agente_arquitetura_mission": "../.context/agents/system-architecture/MISSION.md",
+      "agente_arquitetura_rules": "../.context/agents/system-architecture/RULES.md",
+      "agente_arquitetura_skills": "../.context/agents/system-architecture/SKILLS.md",
+      "design_system": "../.context/design-system/design-system.json"
+    },
+    "created_at": "2025-06-24",
+    "updated_at": "2026-06-28"
+  },
+
+  "mapping_to_principal": {
+    "description": "Este documento detalha os Marcos M1.1 a M1.3 do roadmap principal, que correspondem à fundação técnica e aos primeiros submódulos do MVP.",
+    "phase_0_foundation": "Fase 0 (Contexto e Arquitetura) — M1.1 (Setup do projeto + arquitetura base)",
+    "phase_1_auth": "Pré-requisito técnico não listado no roadmap principal. Adiciona autenticação como esqueleto antes dos módulos de negócio.",
+    "phase_2_onboarding": "Transição entre Fase 0 e Fase 1 — prepara a experiência do usuário.",
+    "phases_3_to_5": "Detalhamento dos primeiros submódulos da Fase 1 (Ação: Tarefas, Hábitos; Mente: Journal/Notas) e Fase 4 (Dashboard)."
+  },
+
+  "entities": [
+    {
+      "id": "user",
+      "description": "Usuário do sistema",
+      "attributes": [
+        "id: string (uuid)",
+        "email: string",
+        "password_hash: string",
+        "display_name: string",
+        "avatar_url: string?",
+        "created_at: datetime",
+        "updated_at: datetime"
+      ],
+      "persistence": { "local": "localStorage", "remote": "future_sync" },
+      "first_phase": "phase-1-auth"
+    },
+    {
+      "id": "task",
+      "description": "Tarefa do usuário — corresponde ao submódulo Ação/Tarefas no roadmap principal",
+      "attributes": [
+        "id: string (uuid)",
+        "title: string",
+        "description: string?",
+        "status: enum (pending, in_progress, completed, cancelled)",
+        "priority: enum (low, medium, high, urgent)",
+        "category_id: string? (fk category)",
+        "due_date: datetime?",
+        "completed_at: datetime?",
+        "energy_level: integer? (1-5, alinhado com submódulo Energia)",
+        "created_at: datetime",
+        "updated_at: datetime"
+      ],
+      "persistence": { "local": "localStorage", "remote": "future_sync" },
+      "first_phase": "phase-3-tasks"
+    },
+    {
+      "id": "category",
+      "description": "Categoria para agrupar tarefas/notas",
+      "attributes": [
+        "id: string (uuid)",
+        "name: string",
+        "color: string (hex)",
+        "icon: string",
+        "created_at: datetime"
+      ],
+      "persistence": { "local": "localStorage", "remote": "future_sync" },
+      "first_phase": "phase-3-tasks"
+    },
+    {
+      "id": "note",
+      "description": "Nota do knowledge base — corresponde ao submódulo Mente/Journal",
+      "attributes": [
+        "id: string (uuid)",
+        "title: string",
+        "content: string (markdown)",
+        "mood: enum (very_bad, bad, neutral, good, very_good)?",
+        "tags: string[]?",
+        "task_id: string? (fk task)",
+        "is_archived: boolean",
+        "created_at: datetime",
+        "updated_at: datetime"
+      ],
+      "persistence": { "local": "localStorage", "remote": "future_sync" },
+      "first_phase": "phase-4-notes"
+    },
+    {
+      "id": "habit",
+      "description": "Hábito diário — corresponde ao submódulo Ação/Hábitos no roadmap principal",
+      "attributes": [
+        "id: string (uuid)",
+        "name: string",
+        "description: string?",
+        "frequency: enum (daily, weekly, monthly)",
+        "streak_count: integer",
+        "created_at: datetime"
+      ],
+      "persistence": { "local": "localStorage", "remote": "future_sync" },
+      "first_phase": "phase-5-extras"
+    },
+    {
+      "id": "goal",
+      "description": "Meta / OKR — corresponde ao módulo Vida/Conquistas no roadmap principal",
+      "attributes": [
+        "id: string (uuid)",
+        "title: string",
+        "objective: string (key result)",
+        "target_date: datetime?",
+        "progress: integer (0-100)",
+        "status: enum (active, completed, cancelled)",
+        "created_at: datetime"
+      ],
+      "persistence": { "local": "localStorage", "remote": "future_sync" },
+      "first_phase": "phase-5-extras"
+    },
+    {
+      "id": "pomodoro_session",
+      "description": "Sessão do timer foco — complementar aos submódulos de Ação",
+      "attributes": [
+        "id: string (uuid)",
+        "duration_minutes: integer",
+        "break_minutes: integer",
+        "type: enum (focus, short_break, long_break)",
+        "completed_at: datetime",
+        "task_id: string? (fk task)"
+      ],
+      "persistence": { "local": "localStorage", "remote": "future_sync" },
+      "first_phase": "phase-5-extras"
+    }
+  ],
+
+  "phases": [
+    {
+      "id": "phase-0-foundation",
+      "name": "Fundação Técnica",
+      "status": "completed",
+      "priority": "critical",
+      "nature": "infrastructure",
+      "parent_phase": "Fase 0 (Contexto e Arquitetura)",
+      "description": "Estrutura inicial do projeto React, arquitetura limpa, temas, router, storage. Corresponde ao marco M1.1 do roadmap principal.",
+      "deliverables": [
+        "vite_project_scaffold_react_typescript",
+        "feature_first_layers (domain/data/ui/core)",
+        "theme_system_tailwind_css_v4",
+        "react_router_setup",
+        "localStorage_facade",
+        "design_tokens_theme_css",
+        "context/roadmap.json (spec JSON)",
+        "context/system-architecture.md (diagrama C4)"
+      ],
+      "completed_at": "2025-06-24"
+    },
+    {
+      "id": "phase-1-auth",
+      "name": "Autenticação & Onboarding",
+      "status": "pending",
+      "priority": "high",
+      "nature": "skeleton",
+      "parent_phase": "Pré-requisito para Fase 1 (MVP)",
+      "description": "Fluxo de autenticação (login/signup) implementado como esqueleto de teste — backend preparado mas não funcional, apenas para demonstrar o fluxo completo. Este fase não existe no roadmap principal e foi adicionada como preparação técnica.",
+      "layers": {
+        "data": {
+          "datasources": [
+            {
+              "name": "auth_remote_datasource",
+              "description": "Chamadas HTTP mockadas para login/signup/logout",
+              "type": "mock"
+            },
+            {
+              "name": "auth_local_datasource",
+              "description": "Armazenamento local do token de sessão via localStorage",
+              "type": "localStorage"
+            }
+          ],
+          "models": ["user_model", "auth_token_model", "login_request", "signup_request"],
+          "repositories": ["auth_repository_impl"]
+        },
+        "domain": {
+          "entities": ["user"],
+          "repositories": ["auth_repository (abstract)"],
+          "usecases": ["login_usecase", "signup_usecase", "logout_usecase", "check_auth_usecase"]
+        },
+        "ui": {
+          "hook": "useAuth (useReducer + context)",
+          "pages": ["LoginPage", "SignupPage"],
+          "components": ["AuthForm", "AuthHeader", "SocialLoginButtons"]
+        }
+      },
+      "states": {
+        "auth_initial": "Nenhum usuário logado, exibe tela de login",
+        "auth_loading": "Processando requisição (loading spinner)",
+        "auth_authenticated": "Usuário logado, redireciona para home",
+        "auth_unauthenticated": "Sessão expirada ou logout, redireciona para login",
+        "auth_error": "Erro na autenticação (credenciais inválidas, rede, etc.)"
+      },
+      "routes": [
+        { "path": "/login", "auth_required": false, "redirect_to": "/home" },
+        { "path": "/signup", "auth_required": false, "redirect_to": "/home" },
+        { "path": "/home", "auth_required": true, "redirect_to": "/login" }
+      ],
+      "validations": {
+        "email": "regex: ^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+        "password": "min_length: 8, requires_uppercase: true, requires_number: true",
+        "display_name": "min_length: 3, max_length: 50"
+      },
+      "edge_cases": [
+        "token_expirado_ao_abrir_app",
+        "login_com_email_inexistente",
+        "signup_com_email_ja_cadastrado",
+        "perda_de_conexao_durante_autenticacao",
+        "token_invalido_ou_corrompido",
+        "primeiro_acesso_mostrar_onboarding"
+      ]
+    },
+    {
+      "id": "phase-2-onboarding",
+      "name": "Onboarding do Usuário",
+      "status": "pending",
+      "priority": "high",
+      "nature": "functional",
+      "parent_phase": "Fase 0 → Fase 1 (transição)",
+      "description": "Tela de boas-vindas e configuração inicial. Prepara o usuário para começar a registrar seus primeiros dados.",
+      "states": {
+        "onboarding_not_shown": "Primeiro acesso, exibe telas de boas-vindas",
+        "onboarding_completed": "Usuário completou onboarding, redireciona para home/dashboard"
+      },
+      "routes": [
+        { "path": "/onboarding", "auth_required": false, "redirect_to": "/home" }
+      ]
+    },
+    {
+      "id": "phase-3-tasks",
+      "name": "Gerenciamento de Tarefas (Ação/Tarefas)",
+      "status": "pending",
+      "priority": "high",
+      "nature": "functional",
+      "parent_phase": "Fase 1 (MVP) — submódulo Ação/Tarefas",
+      "description": "CRUD completo de tarefas com categorias, prioridade, filtros e busca. Corresponde ao submódulo Tarefas do módulo Ação no roadmap principal. Inclui campo energy_level para integração futura com o submódulo Energia.",
+      "layers": {
+        "data": {
+          "datasources": [
+            { "name": "task_local_datasource", "description": "Operações CRUD via localStorage", "type": "localStorage" },
+            { "name": "task_remote_datasource", "description": "Preparado para sync futuro", "type": "future_sync" }
+          ],
+          "models": ["task_model", "category_model"],
+          "repositories": ["task_repository_impl", "category_repository_impl"]
+        },
+        "domain": {
+          "entities": ["task", "category"],
+          "repositories": ["task_repository (abstract)", "category_repository (abstract)"],
+          "usecases": [
+            "create_task_usecase", "update_task_usecase", "delete_task_usecase",
+            "get_tasks_usecase", "get_task_by_id_usecase",
+            "create_category_usecase", "get_categories_usecase"
+          ]
+        },
+        "ui": {
+          "hook": "useTasks (useReducer)",
+          "pages": ["TaskListPage", "TaskDetailPage", "TaskFormPage"],
+          "components": [
+            "TaskCard", "TaskFilterBar", "TaskSearchInput",
+            "CategorySelector", "PriorityIndicator", "TaskStatusBadge"
+          ]
+        }
+      },
+      "states": {
+        "tasks_initial": "Carregando lista inicial",
+        "tasks_loaded": "Lista de tarefas carregada com sucesso",
+        "tasks_filtered": "Lista filtrada por categoria/status/prioridade",
+        "tasks_searching": "Resultados da busca textual",
+        "tasks_loading": "Carregando operação (create/update/delete)",
+        "tasks_error": "Erro ao carregar/operar tarefas"
+      },
+      "routes": [
+        { "path": "/tasks", "component": "TaskListPage" },
+        { "path": "/tasks/new", "component": "TaskFormPage" },
+        { "path": "/tasks/:id", "component": "TaskDetailPage" },
+        { "path": "/tasks/:id/edit", "component": "TaskFormPage" }
+      ],
+      "validations": {
+        "title": "required, max_length: 200",
+        "description": "max_length: 5000",
+        "due_date": "must_be_future_or_today"
+      },
+      "edge_cases": [
+        "criar_tarefa_sem_categoria",
+        "editar_tarefa_concluida",
+        "excluir_tarefa_com_notas_vinculadas",
+        "lista_vazia_mostrar_empty_state",
+        "concluir_tarefa_atrasada",
+        "tarefa_com_energy_level_mas_sem_integracao_ativa"
+      ]
+    },
+    {
+      "id": "phase-4-notes",
+      "name": "Journal & Notas (Mente/Journal)",
+      "status": "pending",
+      "priority": "medium",
+      "nature": "functional",
+      "parent_phase": "Fase 1 (MVP) — submódulo Mente/Journal",
+      "description": "Editor rich text (markdown) para journaling, tags, busca full-text, vinculação notas ↔ tarefas. Corresponde ao submódulo Journal do módulo Mente no roadmap principal. Inclui campo mood para integração com submódulo Humor.",
+      "layers": {
+        "data": {
+          "datasources": [
+            { "name": "note_local_datasource", "type": "localStorage" },
+            { "name": "note_remote_datasource", "type": "future_sync" }
+          ],
+          "models": ["note_model"],
+          "repositories": ["note_repository_impl"]
+        },
+        "domain": {
+          "entities": ["note"],
+          "repositories": ["note_repository (abstract)"],
+          "usecases": [
+            "create_note_usecase", "update_note_usecase", "delete_note_usecase",
+            "get_notes_usecase", "search_notes_usecase"
+          ]
+        },
+        "ui": {
+          "hook": "useNotes (useReducer)",
+          "pages": ["NoteListPage", "NoteDetailPage", "NoteEditorPage"],
+          "components": ["NoteCard", "NoteSearchBar", "MarkdownRenderer", "TagInput", "MoodSelector"]
+        }
+      },
+      "states": {
+        "notes_initial": "Carregando notas",
+        "notes_loaded": "Notas carregadas",
+        "notes_editing": "Nota sendo editada",
+        "notes_searching": "Buscando notas",
+        "notes_error": "Erro ao carregar/operar notas"
+      },
+      "routes": [
+        { "path": "/notes", "component": "NoteListPage" },
+        { "path": "/notes/new", "component": "NoteEditorPage" },
+        { "path": "/notes/:id", "component": "NoteDetailPage" },
+        { "path": "/notes/:id/edit", "component": "NoteEditorPage" }
+      ],
+      "validations": {
+        "title": "required, max_length: 300",
+        "content": "max_length: 50000"
+      },
+      "edge_cases": [
+        "nota_sem_conteudo_apenas_titulo",
+        "vinculo_nota_tarefa_excluida",
+        "busca_full_text_em_markdown",
+        "exportar_nota_como_markdown"
+      ]
+    },
+    {
+      "id": "phase-5-dashboard",
+      "name": "Dashboard e Visão Hoje",
+      "status": "pending",
+      "priority": "medium",
+      "nature": "functional",
+      "parent_phase": "Fase 1 (MVP) — Tela Hoje",
+      "description": "Visão geral com métricas de produtividade, gráficos semanais/mensais, streaks e metas. Corresponde à Tela Hoje do roadmap principal, que agrega dados de múltiplos módulos.",
+      "layers": {
+        "data": {
+          "datasources": [
+            { "name": "stats_local_datasource", "description": "Agregações locais via localStorage queries", "type": "localStorage" },
+            { "name": "stats_remote_datasource", "type": "future_sync" }
+          ],
+          "repositories": ["stats_repository_impl"]
+        },
+        "domain": {
+          "entities": ["dashboard_stats", "productivity_report"],
+          "repositories": ["stats_repository (abstract)"],
+          "usecases": ["get_dashboard_stats_usecase", "get_weekly_report_usecase"]
+        },
+        "ui": {
+          "hook": "useDashboard",
+          "pages": ["HomePage"],
+          "components": [
+            "StatsCard", "ProductivityChart", "StreakIndicator",
+            "TaskCompletionRing", "UpcomingDeadlinesList", "MoodTodayCard",
+            "SmartSummaryCard"
+          ]
+        }
+      },
+      "routes": [
+        { "path": "/", "component": "HomePage", "redirect_from": "/home" }
+      ]
+    },
+    {
+      "id": "phase-6-extras",
+      "name": "Extras de Produtividade (Ação/Hábitos, Vida/Conquistas)",
+      "status": "pending",
+      "priority": "low",
+      "nature": "functional",
+      "parent_phase": "Fase 1 (MVP) — submódulos Ação/Hábitos e Vida/Conquistas",
+      "description": "Features complementares: timer foco, hábitos, metas/OKRs. Corresponde aos submódulos Hábitos (Ação) e Conquistas (Vida) do roadmap principal.",
+      "modules": [
+        {
+          "id": "pomodoro",
+          "name": "Timer Foco",
+          "description": "Timer pomodoro com ciclos foco/pausa, histórico de sessões",
+          "hook": "usePomodoro",
+          "pages": ["PomodoroPage"],
+          "components": ["PomodoroTimer", "SessionHistory"]
+        },
+        {
+          "id": "habits",
+          "name": "Acompanhamento de Hábitos (Ação/Hábitos)",
+          "description": "Registro diário de hábitos com streaks",
+          "hook": "useHabits",
+          "pages": ["HabitListPage", "HabitFormPage"],
+          "components": ["HabitTile", "HabitCalendar", "StreakChart"]
+        },
+        {
+          "id": "goals",
+          "name": "Metas / Conquistas (Vida/Conquistas)",
+          "description": "Definição e acompanhamento de metas de longo prazo",
+          "hook": "useGoals",
+          "pages": ["GoalListPage", "GoalFormPage", "GoalDetailPage"],
+          "components": ["GoalCard", "ProgressBar", "KeyResultItem"]
+        }
+      ]
+    },
+    {
+      "id": "phase-7-infra",
+      "name": "Infraestrutura & Qualidade",
+      "status": "pending",
+      "priority": "medium",
+      "nature": "infrastructure",
+      "parent_phase": "Fase 1 (MVP) — contínuo",
+      "description": "Testes, CI/CD, lint, build. Executado em paralelo às demais fases.",
+      "deliverables": [
+        {
+          "id": "tests",
+          "description": "Testes unitários (hooks/usecase/repository) + componentes + integração",
+          "coverage_target": "80%",
+          "tools": ["vitest", "@testing-library/react", "jsdom"]
+        },
+        {
+          "id": "ci_cd",
+          "description": "Pipeline GitHub Actions para lint, teste e build",
+          "platforms": ["web"]
+        },
+        {
+          "id": "offline",
+          "description": "Modo offline completo com localStorage como fonte primária",
+          "strategy": "localStorage_first + seed_automatico"
+        }
+      ]
+    }
+  ],
+
+  "architecture": {
+    "pattern": "clean_architecture_feature_first",
+    "layers": {
+      "data": {
+        "responsibility": "Fontes de dados (localStorage), modelos (json <-> domain), implementação de repositórios",
+        "subdirectories": ["datasources/local", "models", "repositories"],
+        "rules_reference": ".context/agents/system-architecture/RULES.md (R9-R12 para storage, R3 para abstração)"
+      },
+      "domain": {
+        "responsibility": "Entidades de negócio, interfaces de repositório, casos de uso — SEM dependência de React",
+        "subdirectories": ["entities", "repositories", "usecases"],
+        "rules_reference": ".context/agents/system-architecture/RULES.md (R2 para domínio puro, R4 para responsabilidade única)"
+      },
+      "ui": {
+        "responsibility": "Hooks/useReducer, páginas, componentes de UI específicos da feature",
+        "subdirectories": ["hooks", "pages", "components"],
+        "rules_reference": ".context/agents/system-architecture/RULES.md (R6-R8 para estado, R5 para componentes sem banco)"
+      }
+    },
+    "shared": {
+      "core": "Constantes, tema, utils, componentes genéricos",
+      "lib": "cn(), storage facade, helpers",
+      "app": "Configuração do app (router, providers globais)"
+    },
+    "adrs": [
+      {
+        "id": "adr-001",
+        "title": "Uso de useReducer + Context para state management",
+        "context": "Precisamos de um padrão previsível e testável para gerenciar estado sem dependências externas pesadas",
+        "decision": "useReducer com eventos e estados tipados por feature, Context para compartilhamento global quando necessário",
+        "consequences": "Cada feature tem seu próprio reducer, facilitando testes e isolamento",
+        "location": ".context/decisions/"
+      },
+      {
+        "id": "adr-002",
+        "title": "react-router-dom para navegação declarativa",
+        "context": "Navegação complexa com autenticação e guards",
+        "decision": "react-router-dom v7 com rotas aninhadas e componentes de proteção (auth guard)",
+        "consequences": "Roteamento centralizado, fácil de auditar e modificar"
+      },
+      {
+        "id": "adr-003",
+        "title": "localStorage como banco local",
+        "context": "Persistência local sem dependência de servidor ou banco externo",
+        "decision": "localStorage com chaves prefixadas (nexus_*) e seed automático se chave não existir",
+        "consequences": "Sem SQL, sem migrations, sem dependências de banco. Dados persistem no navegador."
+      },
+      {
+        "id": "adr-004",
+        "title": "Feature-first com clean architecture",
+        "context": "O app crescerá com múltiplos domínios independentes",
+        "decision": "Cada feature é um módulo independente com data/domain/ui",
+        "consequences": "Isolamento entre features, facilidade para teste e remoção"
+      },
+      {
+        "id": "adr-005",
+        "title": "Design system baseado no skill Impeccable",
+        "context": "UI profissional e consistente para um produto de produtividade",
+        "decision": "Seguir os princípios do reference/product.md do skill Impeccable + design-system.json",
+        "consequences": "UI restrained, tipografia única, componentes com todos os estados"
+      }
+    ],
+    "data_flow": {
+      "description": "Fluxo unidirecional: UI → Dispatch → Reducer → Service → Repository → localStorage",
+      "diagram": "UI → dispatch(action) → reducer → service → repository → localStorage"
+    }
+  },
+
+  "permissions": {
+    "unauthenticated": ["view_onboarding", "view_login", "view_signup"],
+    "authenticated": [
+      "crud_tasks", "crud_notes", "crud_categories",
+      "view_dashboard", "crud_habits", "crud_goals", "use_pomodoro"
+    ]
+  },
+
+  "errors": {
+    "categories": {
+      "network": ["no_connection", "timeout", "server_error"],
+      "auth": ["invalid_credentials", "email_already_exists", "expired_token", "unauthorized"],
+      "validation": ["invalid_email", "weak_password", "required_field", "max_length_exceeded"],
+      "persistence": ["storage_error", "write_failed", "read_failed"]
+    },
+    "handling_strategy": "Result pattern nos services, estados de erro mapeados no reducer + fallback UI com erro boundary"
+  },
+
+  "future_extensions": [
+    {
+      "id": "modules_saude_mente",
+      "description": "Submódulos de Saúde (Sono, Alimentação, Movimento) e Mente (Humor, Mindfulness) — previstos na Fase 1 do roadmap principal"
+    },
+    {
+      "id": "modules_financas_vida",
+      "description": "Submódulos de Finanças (Despesas, Receitas, Orçamento) e Vida (Eventos, Relacionamentos) — previstos na Fase 1 do roadmap principal"
+    },
+    {
+      "id": "relations_engine",
+      "description": "Motor de relações cross-module para conectar dados de diferentes submódulos (ex: Sono → Humor) — Fase 2 do roadmap principal"
+    },
+    {
+      "id": "sync_cloud",
+      "description": "Sincronização opcional entre dispositivos com criptografia — Fase 4 do roadmap principal"
+    },
+    {
+      "id": "llm_on_device",
+      "description": "Modelo de linguagem rodando localmente para análise de padrões e coaching — Fase 6 do roadmap principal"
+    },
+    {
+      "id": "integracoes_externas",
+      "description": "Integração com wearables, bancos, Google Calendar — Fase 5 do roadmap principal"
+    }
+  ]
+}

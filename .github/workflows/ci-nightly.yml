@@ -5,6 +5,10 @@ on:
     - cron: '0 0 * * *'
   workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: ./nexus
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -14,44 +18,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'npm'
-
       - run: npm ci
-
-      - name: Type check
-        run: npm run lint
-
-      - name: Run tests with coverage
-        run: npm test -- --coverage
-
-      - name: Upload coverage
-        uses: actions/upload-artifact@v4
+      - run: npm run lint
+      - run: npm test -- --coverage
+      - uses: actions/upload-artifact@v4
         with:
           name: nightly-coverage
-          path: coverage/
+          path: nexus/coverage/
 
   build:
     needs: test-nightly
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'npm'
-
       - run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Upload build
-        uses: actions/upload-artifact@v4
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
         with:
           name: nightly-build
-          path: dist/
+          path: nexus/dist/
