@@ -1,9 +1,0 @@
-export type { LifeArea } from './daily-record';
-export type { DailyRecord } from './daily-record';
-export type { Habit } from './habit';
-export type { Goal } from './goal';
-export type { Project } from './project';
-export type { Task } from './task';
-export type { FinanceTransaction } from './finance';
-export type { Person } from './person';
-export type { Insight } from './insight';

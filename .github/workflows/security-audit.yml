@@ -5,24 +5,27 @@ on:
     - cron: '0 6 * * 1'
   workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: ./nexus
+
 jobs:
   audit-npm:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'npm'
-
+          cache-dependency-path: nexus/package-lock.json
       - run: npm ci
 
       - name: npm audit
         id: audit
         continue-on-error: true
         run: |
-          npm audit --json > audit-report.json 2>&1 || true
+          npm audit --json > ../audit-report.json 2>&1 || true
 
       - name: Create issue if vulnerabilities found
         if: steps.audit.outcome == 'failure'

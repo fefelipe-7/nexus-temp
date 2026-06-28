@@ -11,15 +11,15 @@ UI: `radix-ui` + `class-variance-authority` disponíveis.
 ## Comandos (ordem de verificação: `lint → test → build`)
 
 ```bash
-npm run dev       # vite --port=3000 --host=0.0.0.0
-npm run build     # vite build
+npm run dev       # Vite dev server (porta 3000)
+npm run build     # tsc -b && vite build
 npm run preview   # vite preview
-npm run lint      # tsc --noEmit (único checker — sem ESLint/Prettier)
-npm run test      # vitest run (3 suites em src/__tests__/)
+npm run lint      # oxlint
+npm run test      # vitest run
 npm run clean     # rm -rf dist server.js
 ```
 
-CI (GitHub Actions) executa lint → test → build e faz deploy para Vercel (preview em PR, produção em main/master).
+CI (GitHub Actions) executa lint → test → build e faz deploy para Vercel (preview em PR, staging em staging, produção em main/master).
 
 ## Commits
 
@@ -97,7 +97,7 @@ Estrutura definida em `.github/`:
 
 | Workflow | Arquivo | Gatilho | O que faz |
 |----------|---------|---------|-----------|
-| **ci** | `.github/workflows/ci.yml` | `push` (main, master, develop) + `pull_request` (main, master) | `lint` (tsc) → `test` (vitest) → `build` → deploy Vercel |
+| **ci** | `.github/workflows/ci.yml` | `push` (main, master, dev, staging, feature/*) + `pull_request` (main, master, dev, staging) | `lint` (oxlint) → `test` (vitest) → `build` → deploy Vercel (preview/staging/prod) |
 | **ci-nightly** | `.github/workflows/ci-nightly.yml` | `schedule` (00:00 UTC) + `workflow_dispatch` | Testes completos + build |
 | **security-audit** | `.github/workflows/security-audit.yml` | `schedule` (seg 06:00) + `workflow_dispatch` | `npm audit` + cria issue automática se detectar vulnerabilidades |
 | **dependency-update** | `.github/workflows/dependency-update.yml` | `schedule` (seg 06:00) + `workflow_dispatch` | `npm outdated` + cria issue com relatório |
