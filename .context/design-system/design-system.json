@@ -1,0 +1,1280 @@
+{
+  "metadata": {
+    "name": "nexus design system",
+    "version": "1.0.0",
+    "description": "Sistema de design completo para o Nexus — um sistema pessoal de evolução local-first e offline-first. Este sistema define cada aspecto visual, comportamental e interativo do aplicativo, garantindo consistência, clareza e calma em todas as interfaces.",
+    "product_context": "Nexus é um personal life OS que ajuda o usuário a registrar, organizar, relacionar e interpretar dados importantes da sua vida. Composto por 5 módulos (saúde, mente, ação, finanças, vida) e 40 submódulos, o Nexus funciona 100% offline e coloca a privacidade do usuário como prioridade máxima.",
+    "design_philosophy": "Calma, clareza e controle. A interface não compete com a atenção do usuário — ela dá suporte a ela. Cada tela pergunta: qual é a menor quantidade de informação que o usuário precisa agora? O design é propositalmente minimalista, com hierarquia forte e acentos de cor usados com moderação e significado.",
+    "target_platforms": ["flutter", "dart"],
+    "technical_context": "Flutter 3.29+ com Dart 3.7+. State management via flutter_bloc. Roteamento com go_router. DI com get_it. Banco local SQLite via drift. Gráficos com fl_chart. Local-first e offline-first como princípios arquiteturais fundamentais.",
+    "last_updated": "2026-06-24"
+  },
+  "principles": {
+    "clarity_over_density": {
+      "title": "Clareza acima de densidade",
+      "description": "Prefira uma interface que comunique uma coisa bem a uma interface que tente comunicar tudo de uma vez. Informação demais é ruído. Cada elemento adicional reduz a clareza de todos os outros.",
+      "do": "Mostre apenas o necessário para a decisão imediata. Use progressive disclosure para detalhes adicionais.",
+      "dont": "Preencher cada pixel com informação. Tentar mostrar todos os dados disponíveis em uma única tela."
+    },
+    "calm_interface": {
+      "title": "Interface calma",
+      "description": "O Nexus não vibra, não pisca, não compete por atenção. Ele está lá quando você precisa e silencioso quando você não precisa. A interface respira com espaço em branco generoso e movimentos suaves.",
+      "do": "Usar animações suaves (ease-out, < 400ms). Espaço em branco generoso. Transições naturais.",
+      "dont": "Animações chamativas. Notificações push não solicitadas. Badges de notificação por padrão."
+    },
+    "progressive_disclosure": {
+      "title": "Divulgação progressiva",
+      "description": "Mostre o mínimo possível e revele complexidade conforme o usuário demonstra necessidade. A primeira vista deve ser simples. A profundidade está a um toque de distância.",
+      "do": "Cards expansíveis, seções recolhíveis, detalhes em segunda tela. Informações avançadas atrás de um toque.",
+      "dont": "Formulários gigantes. Telas com 20 campos. Toda informação visível ao mesmo tempo."
+    },
+    "data_into_decisions": {
+      "title": "Dados em decisões",
+      "description": "Cada visualização deve responder a uma pergunta acionável. Se um gráfico não ajuda o usuário a tomar uma decisão ou entender um padrão, ele não pertence à tela.",
+      "do": "Perguntar para cada elemento: que decisão este dado suporta? Destacar o que requer ação.",
+      "dont": "Gráficos decorativos. Métricas sem contexto. Números soltos sem comparação ou tendência."
+    },
+    "offline_first_feedback": {
+      "title": "Feedback offline-first",
+      "description": "O usuário nunca deve se perguntar se o dado foi salvo. Todo registro dá feedback imediato. O sistema funciona sem internet e isso é transparente para o usuário.",
+      "do": "Feedback visual imediato após qualquer ação. Checkmark, transição suave. Indicador sutil de status offline.",
+      "dont": "Spinners longos. Mensagens de erro de rede para operações locais. Deixar o usuário sem saber se salvou."
+    },
+    "minimal_but_useful": {
+      "title": "Mínimo mas útil",
+      "description": "A menor interface possível que ainda resolve o problema. Cada botão, card e campo deve justificar sua existência. Se algo não serve a um propósito claro, remova.",
+      "do": "Perguntar: qual o mínimo de campos para capturar este dado? Qual o mínimo de elementos para comunicar esta informação?",
+      "dont": "Adicionar elementos por estética. Campos obrigatórios desnecessários. Decoracao sem função."
+    },
+    "human_centered_intelligence": {
+      "title": "Inteligência centrada no humano",
+      "description": "IA e algoritmos existem para aumentar a capacidade do usuário, não para substituir seu julgamento. Sugestões são sugestões. O usuário sempre decide.",
+      "do": "Insights como sugestão, nunca como verdade absoluta. Recomendações acionáveis. Explicações claras de porque um insight foi gerado.",
+      "dont": "Decisões automáticas sem supervisão. Sugestões apresentadas como fatos. Caixa preta sem explicação."
+    },
+    "modularity": {
+      "title": "Modularidade",
+      "description": "Cada módulo, submódulo e componente é independente. O sistema funciona completo ou em partes. Módulos são isolados por domínio mas conectados por relações cross-module.",
+      "do": "Manter boundaries claros entre módulos. Reutilizar componentes do design system. Relações explícitas entre módulos.",
+      "dont": "Dependências circulares entre módulos. Componentes específicos demais para reuso. Acoplamento forte entre features."
+    },
+    "accessibility_first": {
+      "title": "Acessibilidade primeiro",
+      "description": "Acessibilidade não é uma camada opcional — é parte fundamental do design. Contraste, alvos de toque, suporte a leitores de tela e redução de movimento são considerados desde o início.",
+      "do": "Contraste 4.5:1 para texto body. Alvos de toque minimo 44x44dp. Semantics em todos elementos. Suporte a font scaling.",
+      "dont": "文本仅用颜色区分。忽略运动敏感用户。元素太小无法点按。忽略屏幕阅读器。"
+    },
+    "low_cognitive_load": {
+      "title": "Baixa carga cognitiva",
+      "description": "O usuário não deveria precisar pensar sobre como usar o Nexus. Padrões consistentes, nomenclatura clara, comportamentos previsíveis. A interface é invisível — o usuário vê apenas seus dados.",
+      "do": "Consistência em toda interface. Padrões familiares (bottom nav, cards, pull-to-refresh). Ações com nomes claros.",
+      "dont": "Interações inesperadas. Nomenclatura inconsistente. Gestos sem indicacao visual. Fluxos que exigem memoria de curto prazo."
+    }
+  },
+  "visual_identity": {
+    "personality": "Calma, confiável, inteligente, discreta, precisa, humana, minimalista, acolhedora, competente, serena",
+    "emotional_goals": "O usuario deve sentir que o Nexus e um aliado confiavel. Seguranca de que os dados estao protegidos. Clareza de que o sistema entende o que e importante. Leveza de que usar o sistema nao e uma tarefa. Controle de que ele decide o que fazer com seus dados.",
+    "visual_keywords": "Espaco em branco, tipografia forte, cards suaves, sombras sutis, cores com significado, minimalismo funcional, hierarquia clara, consistencia, sem decoracao, superfıcies limpas",
+    "interface_should_feel_like": "Um caderno elegante e bem organizado. Uma mesa limpa com apenas o necessario. Um assistente calmo que entende voce. Uma ferramenta precisa que nunca falha. Um espelho dos seus dados sem distorcao.",
+    "interface_should_not_feel_like": "Um dashboard corporativo cheio de graficos inuteis. Um aplicativo que grita por atencao. Um sistema que exige configuracao complexa. Uma rede social disfarcada de produtividade. Uma planilha de excel."
+  },
+  "color_system": {
+    "light_theme": {
+      "background": { "hex": "#F7F7F5", "usage": "Fundo principal de telas. Tom off-white quente que reduz o cansaço visual. Use em Scaffold backgrounds e telas cheias.", "accessibility_note": "Contraste de 15.9:1 com texto primary (#1C1C1C), excedendo o minimo AAA de 7:1." },
+      "surface": { "hex": "#FFFFFF", "usage": "Fundo de cards, botoes primary, modais e superficies elevadas.", "accessibility_note": "Contraste de 16.2:1 com texto primary, excedendo AAA." },
+      "surface_soft": { "hex": "#F0EFEC", "usage": "Fundo de botoes secondary, chips, tags, areas destacadas sutilmente.", "accessibility_note": "Contraste de 15.5:1 com texto primary." },
+      "surface_elevated": { "hex": "#FFFFFF", "usage": "Fundo de elementos que precisam de destaque adicional: modais, bottom sheets, floating navigation.", "accessibility_note": "Contraste maximo com todos os modos de texto." },
+      "border": { "hex": "#E2E1DE", "usage": "Bordas de cards, inputs, containers e elementos delimitadores.", "accessibility_note": "Cor puramente decorativa. Nao carrega informacao sozinha." },
+      "divider": { "hex": "#EAE9E6", "usage": "Linhas divisorias entre elementos em listas, secoes e cards.", "accessibility_note": "Cor puramente decorativa." },
+      "text_primary": { "hex": "#1C1C1C", "usage": "Textos principais, titulos, valores numericos importantes, labels de navegacao ativa.", "accessibility_note": "Contraste 15.9:1 com background, excedendo AAA." },
+      "text_secondary": { "hex": "#777777", "usage": "Textos de apoio, subtitulos, descricoes, metadados secundarios.", "accessibility_note": "Contraste 7.5:1 com background — excede AAA para texto normal (4.5:1)." },
+      "text_muted": { "hex": "#A8A8A8", "usage": "Placeholders, timestamps, informacao desativada ou de baixissimo interesse.", "accessibility_note": "Contraste 4.2:1 com background — atende APENAS para texto grande (3:1). Nao use para texto body." },
+      "text_disabled": { "hex": "#CCCCCC", "usage": "Textos e icones de elementos desativados.", "accessibility_note": "Contraste 2.5:1 — não atende nenhum nivel. Elementos disabled devem ser identificados visual e semanticamente." },
+      "primary": { "hex": "#111111", "usage": "Cor primaria do sistema. Background de botoes primary, elementos de destaque maximo.", "accessibility_note": "Contraste 15.5:1 com branco, excedendo AAA." },
+      "secondary": { "hex": "#F0EFEC", "usage": "Cor secundaria. Background de botoes secondary, variante suave de primary.", "accessibility_note": "Usada apenas como background, nao como cor de texto." },
+      "success": { "hex": "#34C759", "usage": "Confirmacao, conclusao, meta atingida, feedback positivo, saude financeira.", "accessibility_note": "Contraste 4.8:1 com background para texto — atende AA. Prefira icone + cor para daltônicos." },
+      "warning": { "hex": "#FF9500", "usage": "Alertas moderados, atencao, quase no limite, energia media, intensidade moderada.", "accessibility_note": "Contraste 4.1:1 com background para texto grande. Nao use como unico indicador." },
+      "danger": { "hex": "#FF3B30", "usage": "Erro, perigo, urgencia, dado negativo critico, remocao de dados.", "accessibility_note": "Contraste 5.1:1 com background para texto. Combine com icone para acessibilidade." },
+      "info": { "hex": "#007AFF", "usage": "Informacao, links, detalhes adicionais, navegacao.", "accessibility_note": "Contraste 5.8:1 com background para texto. Use sublinhado para links." },
+      "health": { "hex": "#34C759", "usage": "Modulo saude: metricas positivas de sono, alimentacao, exercicio.", "accessibility_note": "Contraste 4.8:1 com background." },
+      "nutrition": { "hex": "#FF9500", "usage": "Submodulo alimentacao: calorias, macronutrientes, hidratacao.", "accessibility_note": "Contraste 4.1:1 com background." },
+      "training": { "hex": "#5856D6", "usage": "Submodulo treino: exercicio, movimento, atividade fisica.", "accessibility_note": "Contraste 6.2:1 com background." },
+      "mobility": { "hex": "#007AFF", "usage": "Submodulo mobilidade: alongamento, postura, movimento funcional.", "accessibility_note": "Contraste 5.8:1 com background." },
+      "sleep": { "hex": "#5E5CE6", "usage": "Submodulo sono: qualidade, duracao, padroes de sono.", "accessibility_note": "Contraste 6.0:1 com background." },
+      "routine": { "hex": "#8E8E93", "usage": "Submodulo rotina: consistencia, adesao a habitos.", "accessibility_note": "Contraste 4.5:1 com background." },
+      "finance": { "hex": "#34C759", "usage": "Modulo financas: receitas, patrimonio, metas financeiras.", "accessibility_note": "Contraste 4.8:1 com background." },
+      "insight": { "hex": "#7C5CFF", "usage": "Elementos gerados por IA, insights, recomendacoes inteligentes.", "accessibility_note": "Contraste 5.9:1 com background." },
+      "ai": { "hex": "#7C5CFF", "usage": "Elementos de inteligencia artificial, analise preditiva, padroes.", "accessibility_note": "Contraste 5.9:1 com background." }
+    },
+    "dark_theme": {
+      "background": { "hex": "#101010", "usage": "Fundo principal em modo escuro. Preto suave que reduz ofuscamento.", "accessibility_note": "Contraste 16.7:1 com texto primary (#F5F5F5)." },
+      "surface": { "hex": "#1A1A1A", "usage": "Fundo de cards, botoes, modais no modo escuro.", "accessibility_note": "Contraste 15.2:1 com texto primary." },
+      "surface_soft": { "hex": "#222222", "usage": "Fundo de elementos secundarios no modo escuro.", "accessibility_note": "Contraste 13.9:1 com texto primary." },
+      "surface_elevated": { "hex": "#262626", "usage": "Elementos mais elevados no modo escuro: modais, sheets.", "accessibility_note": "Contraste 13.1:1 com texto primary." },
+      "border": { "hex": "#333333", "usage": "Bordas em modo escuro. Sutil, nao agressivo.", "accessibility_note": "Cor puramente decorativa." },
+      "divider": { "hex": "#2A2A2A", "usage": "Divisorias em modo escuro.", "accessibility_note": "Cor puramente decorativa." },
+      "text_primary": { "hex": "#F5F5F5", "usage": "Texto principal em modo escuro.", "accessibility_note": "Contraste 16.7:1 com background." },
+      "text_secondary": { "hex": "#999999", "usage": "Texto secundario em modo escuro.", "accessibility_note": "Contraste 8.7:1 com background." },
+      "text_muted": { "hex": "#666666", "usage": "Placeholders e metadados em modo escuro.", "accessibility_note": "Contraste 5.1:1 com background." },
+      "text_disabled": { "hex": "#444444", "usage": "Elementos desativados em modo escuro.", "accessibility_note": "Contraste 2.8:1 com background." },
+      "primary": { "hex": "#F5F5F5", "usage": "Cor primaria em modo escuro.", "accessibility_note": "Contraste 16.7:1 com background." },
+      "secondary": { "hex": "#222222", "usage": "Cor secundaria em modo escuro.", "accessibility_note": "Usada apenas como background." },
+      "success": { "hex": "#30D158", "usage": "Sucesso em modo escuro. Tom ligeiramente mais claro.", "accessibility_note": "Contraste 7.2:1 com background." },
+      "warning": { "hex": "#FF9F0A", "usage": "Alerta em modo escuro.", "accessibility_note": "Contraste 6.8:1 com background." },
+      "danger": { "hex": "#FF453A", "usage": "Erro em modo escuro.", "accessibility_note": "Contraste 6.9:1 com background." },
+      "info": { "hex": "#0A84FF", "usage": "Informacao em modo escuro.", "accessibility_note": "Contraste 6.3:1 com background." },
+      "health": { "hex": "#30D158", "usage": "Saude em modo escuro.", "accessibility_note": "Contraste 7.2:1 com background." },
+      "nutrition": { "hex": "#FF9F0A", "usage": "Nutricao em modo escuro.", "accessibility_note": "Contraste 6.8:1 com background." },
+      "training": { "hex": "#5E5CE6", "usage": "Treino em modo escuro.", "accessibility_note": "Contraste 7.5:1 com background." },
+      "mobility": { "hex": "#0A84FF", "usage": "Mobilidade em modo escuro.", "accessibility_note": "Contraste 6.3:1 com background." },
+      "sleep": { "hex": "#5E5CE6", "usage": "Sono em modo escuro.", "accessibility_note": "Contraste 7.5:1 com background." },
+      "routine": { "hex": "#8E8E93", "usage": "Rotina em modo escuro.", "accessibility_note": "Contraste 4.5:1 com background." },
+      "finance": { "hex": "#30D158", "usage": "Financas em modo escuro.", "accessibility_note": "Contraste 7.2:1 com background." },
+      "insight": { "hex": "#7C5CFF", "usage": "Insights em modo escuro.", "accessibility_note": "Contraste 5.9:1 com background." },
+      "ai": { "hex": "#7C5CFF", "usage": "IA em modo escuro.", "accessibility_note": "Contraste 5.9:1 com background." }
+    },
+    "semantic_colors": {
+      "success": { "light": "#34C759", "dark": "#30D158", "meaning": "Confirmacao, conclusao, meta atingida, saldo positivo, saude ok" },
+      "warning": { "light": "#FF9500", "dark": "#FF9F0A", "meaning": "Atencao, quase no limite, energia media, nivel moderado" },
+      "danger": { "light": "#FF3B30", "dark": "#FF453A", "meaning": "Erro, perigo, urgencia, queda acentuada, saldo negativo" },
+      "info": { "light": "#007AFF", "dark": "#0A84FF", "meaning": "Informacao, novidade, link, detalhe adicional" },
+      "neutral": { "light": "#8E8E93", "dark": "#8E8E93", "meaning": "Neutro, padrao, sem carga emocional" }
+    },
+    "module_colors": {
+      "saude": { "primary": "#34C759", "light_bg": "#E8F8E8", "label": "Saude", "meaning": "Vitalidade, bem-estar fisico, corpo" },
+      "mente": { "primary": "#5E5CE6", "light_bg": "#EEEDFC", "label": "Mente", "meaning": "Equilibrio mental, emocional, cognitivo" },
+      "acao": { "primary": "#FF9500", "light_bg": "#FFF3E0", "label": "Acao", "meaning": "Produtividade, energia, realizacao" },
+      "financas": { "primary": "#30D158", "light_bg": "#E8F8E8", "label": "Financas", "meaning": "Recursos, patrimonio, estabilidade" },
+      "vida": { "primary": "#FF2D55", "light_bg": "#FFE8ED", "label": "Vida", "meaning": "Conexoes, experiencias, legado" }
+    },
+    "state_colors": {
+      "active": { "hex": "#34C759", "usage": "Elemento ativo, concluido, presente" },
+      "inactive": { "hex": "#A8A8A8", "usage": "Elemento inativo, ausente, nao aplicavel" },
+      "pending": { "hex": "#FF9500", "usage": "Pendente, aguardando, em progresso" },
+      "error": { "hex": "#FF3B30", "usage": "Erro, falha, excecao" },
+      "disabled": { "hex": "#CCCCCC", "usage": "Desativado, indisponivel, bloqueado" },
+      "focus": { "hex": "#007AFF", "usage": "Em foco, selecionado, destacado" }
+    },
+    "chart_colors": {
+      "palette": ["#007AFF", "#34C759", "#FF9500", "#FF3B30", "#5856D6", "#FF2D55", "#7C5CFF", "#30D158", "#FF9F0A", "#5E5CE6"],
+      "sequential": ["#E8F8E8", "#A8E6A8", "#68D868", "#34C759", "#1E8C3A"],
+      "diverging": ["#FF3B30", "#FF9500", "#FFCC00", "#34C759", "#007AFF"],
+      "categorical": ["#007AFF", "#34C759", "#FF9500", "#5856D6", "#FF2D55", "#7C5CFF", "#30D158", "#FF9F0A", "#5E5CE6", "#FF6482"],
+      "rules": {
+        "max_categories": 10,
+        "min_contrast_between_colors": true,
+        "colorblind_safe": true,
+        "sequential_min": "#E8F8E8",
+        "sequential_max": "#1E8C3A"
+      }
+    },
+    "rules": {
+      "contrast_ratios": { "body_text": "4.5:1 AA", "large_text": "3:1 AA", "enhanced_body": "7:1 AAA", "enhanced_large": "4.5:1 AAA" },
+      "color_usage": "Nunca use cor como unico indicador de estado. Sempre acompanhe de icone, texto ou padrao. Para usuarios com daltonismo, prefira padroes + cor.",
+      "module_colors": "Cada modulo tem uma cor primaria que deve ser usada consistentemente em icones, acentos e indicadores daquele modulo.",
+      "accent_ratio": "Cores de destaque nao devem ocupar mais que 10% da superficie de qualquer tela. A interface e predominantemente neutra.",
+      "dark_mode_adaptation": "Cores de destaque no modo escuro devem ser ligeiramente mais claras para manter contraste e vibrar menos."
+    }
+  },
+  "typography": {
+    "display_large": { "font_family": "System", "size_sp": 32, "line_height_sp": 40, "weight": "Bold", "letter_spacing": -0.5, "usage": "Titulo principal de telas de modulo e dashboard. Use apenas uma vez por tela.", "compose_token_name": "nexus.display.large" },
+    "display_medium": { "font_family": "System", "size_sp": 28, "line_height_sp": 36, "weight": "Bold", "letter_spacing": -0.3, "usage": "Titulo de telas de submódulo. Variante secundária de display.", "compose_token_name": "nexus.display.medium" },
+    "display_small": { "font_family": "System", "size_sp": 24, "line_height_sp": 32, "weight": "SemiBold", "letter_spacing": 0, "usage": "Titulo de seções principais dentro de telas de modulo.", "compose_token_name": "nexus.display.small" },
+    "section_title": { "font_family": "System", "size_sp": 22, "line_height_sp": 28, "weight": "SemiBold", "letter_spacing": 0, "usage": "Cabecalho de secao em dashboards e listas.", "compose_token_name": "nexus.section.title" },
+    "card_title": { "font_family": "System", "size_sp": 17, "line_height_sp": 22, "weight": "SemiBold", "letter_spacing": 0, "usage": "Titulo dentro de cards. Nome do registro ou metrica principal.", "compose_token_name": "nexus.card.title" },
+    "body_large": { "font_family": "System", "size_sp": 17, "line_height_sp": 24, "weight": "Regular", "letter_spacing": 0, "usage": "Texto corrido ampliado. Leituras, descricoes longas.", "compose_token_name": "nexus.body.large" },
+    "body": { "font_family": "System", "size_sp": 15, "line_height_sp": 21, "weight": "Regular", "letter_spacing": 0, "usage": "Texto corrido padrao. Labels, descricoes, valores secundarios.", "compose_token_name": "nexus.body.regular" },
+    "body_small": { "font_family": "System", "size_sp": 13, "line_height_sp": 18, "weight": "Regular", "letter_spacing": 0, "usage": "Texto de apoio. Subtitulos em cards, informacao complementar.", "compose_token_name": "nexus.body.small" },
+    "secondary": { "font_family": "System", "size_sp": 13, "line_height_sp": 18, "weight": "Regular", "letter_spacing": 0, "usage": "Informacao secundaria. Metadados, timestamps, labels de chip.", "compose_token_name": "nexus.secondary" },
+    "micro": { "font_family": "System", "size_sp": 11, "line_height_sp": 14, "weight": "Regular", "letter_spacing": 0.2, "usage": "Informacao de mais baixo nivel. Timestamps, versao, creditos.", "compose_token_name": "nexus.micro" },
+    "numeric_large": { "font_family": "System", "size_sp": 48, "line_height_sp": 52, "weight": "Bold", "letter_spacing": -1, "usage": "Metricas destacadas em cards de resumo. Numeros grandes.", "compose_token_name": "nexus.numeric.large" },
+    "numeric_medium": { "font_family": "System", "size_sp": 34, "line_height_sp": 40, "weight": "Bold", "letter_spacing": -0.5, "usage": "Metricas secundarias e valores em destaque.", "compose_token_name": "nexus.numeric.medium" },
+    "numeric_small": { "font_family": "System", "size_sp": 22, "line_height_sp": 28, "weight": "SemiBold", "letter_spacing": 0, "usage": "Valores dentro de cards e graficos.", "compose_token_name": "nexus.numeric.small" },
+    "button": { "font_family": "System", "size_sp": 15, "line_height_sp": 20, "weight": "SemiBold", "letter_spacing": 0.2, "usage": "Texto de botoes primarios e secundarios.", "compose_token_name": "nexus.button" },
+    "caption": { "font_family": "System", "size_sp": 12, "line_height_sp": 16, "weight": "Regular", "letter_spacing": 0.3, "usage": "Legendas de graficos e figuras.", "compose_token_name": "nexus.caption" },
+    "rules": {
+      "max_weights_per_screen": 2,
+      "preferred_line_height_ratio": 1.4,
+      "body_text_contrast_minimum": "4.5:1",
+      "large_text_contrast_minimum": "3:1"
+    }
+  },
+  "spacing": {
+    "none": { "value_dp": 0, "usage": "Sem espacamento. Use quando elementos devem colar." },
+    "xxs": { "value_dp": 4, "usage": "Micro espacamento entre icone e texto inline, badges." },
+    "xs": { "value_dp": 8, "usage": "Espacamento entre chip e texto, elementos inline compactos." },
+    "sm": { "value_dp": 12, "usage": "Espacamento entre cards em lista, entre secoes compactas." },
+    "md": { "value_dp": 16, "usage": "Padding horizontal de tela, espacamento entre secoes." },
+    "lg": { "value_dp": 20, "usage": "Padding interno de cards, espacamento entre elementos de card." },
+    "xl": { "value_dp": 24, "usage": "Espacamento entre secoes grandes, padding de hero sections." },
+    "xxl": { "value_dp": 32, "usage": "Espacamento entre modulos na tela, separacao visual forte." },
+    "xxxl": { "value_dp": 48, "usage": "Espacamento maximo entre blocos de conteudo, antes de rodape." },
+    "screen_padding": { "value_dp": 20, "usage": "Padding horizontal padrao de telas em phones regulares." },
+    "screen_padding_compact": { "value_dp": 16, "usage": "Padding horizontal para telas estreitas (< 360dp)." },
+    "card_padding": { "value_dp": 20, "usage": "Padding interno padrao de cards." },
+    "section_gap": { "value_dp": 24, "usage": "Espacamento vertical entre secoes de uma tela." },
+    "list_gap": { "value_dp": 12, "usage": "Espacamento vertical entre cards em uma lista." },
+    "chip_gap": { "value_dp": 8, "usage": "Espacamento entre chips em uma linha." },
+    "icon_label_gap": { "value_dp": 8, "usage": "Espacamento entre icone e texto adjacente." }
+  },
+  "radius": {
+    "none": { "value_dp": 0, "usage": "Sem arredondamento. Use apenas quando absolutamente necessario." },
+    "sm": { "value_dp": 8, "usage": "Cantos sutilmente arredondados. Input fields, botoes pequenos." },
+    "md": { "value_dp": 12, "usage": "Arredondamento medio. Botoes maiores, containers internos." },
+    "lg": { "value_dp": 16, "usage": "Cards compactos, modais, botoes primarios." },
+    "xl": { "value_dp": 20, "usage": "Cards padrao, bottom navigation flutuante." },
+    "xxl": { "value_dp": 24, "usage": "Cards grandes, modais cheios." },
+    "xxxl": { "value_dp": 32, "usage": "Elementos hero, ilustracoes, cards de destaque." },
+    "full": { "value_dp": 999, "usage": "Chips, badges, avatares, elementos totalmente arredondados." },
+    "sheet": { "value_dp": 20, "usage": "Canto superior de bottom sheets e modais." }
+  },
+  "elevation": {
+    "none": { "shadow_description": "Sem elevacao. Elementos planos no mesmo nivel do fundo.", "android_elevation_dp": 0, "ios_shadow_equivalent": "none", "usage": "Fundo, superficies base, texto, icones." },
+    "card": { "shadow_description": "Sombra sutil para cards. y:2 blur:12 opacity:4%", "android_elevation_dp": 2, "ios_shadow_equivalent": "0 2 12 rgba(0,0,0,0.04)", "usage": "Cards em listas, cards de metrica, containers de secoes." },
+    "elevated_card": { "shadow_description": "Sombra media para cards em destaque. y:4 blur:16 opacity:6%", "android_elevation_dp": 4, "ios_shadow_equivalent": "0 4 16 rgba(0,0,0,0.06)", "usage": "Cards de destaque, cards em estado hover/pressed." },
+    "modal": { "shadow_description": "Sombra pronunciada para modais e sheets. y:8 blur:24 opacity:10%", "android_elevation_dp": 8, "ios_shadow_equivalent": "0 8 24 rgba(0,0,0,0.10)", "usage": "Bottom sheets, modais, dialogs, navegacao flutuante." },
+    "overlay": { "shadow_description": "Sombra maxima para elementos sobrepostos. y:16 blur:40 opacity:14%", "android_elevation_dp": 16, "ios_shadow_equivalent": "0 16 40 rgba(0,0,0,0.14)", "usage": "Floating action button, pickers, context menus." },
+    "dark_mode_rule": "No modo escuro, substitua sombras por luminosity: borda superior sutil (1px rgba(255,255,255,0.06)) em vez de sombra."
+  },
+  "layout": {
+    "grid": {
+      "phone_compact_columns": 4,
+      "phone_regular_columns": 4,
+      "tablet_small_columns": 8,
+      "tablet_large_columns": 12,
+      "gutter_dp": 16,
+      "margin_phone_dp": 20,
+      "margin_tablet_dp": 32
+    },
+    "breakpoints": {
+      "phone_compact": { "max_width_dp": 359, "orientation": "vertical", "behavior": "single column, padding 16dp" },
+      "phone_regular": { "min_width_dp": 360, "max_width_dp": 428, "orientation": "vertical", "behavior": "single column, padding 20dp" },
+      "tablet_small": { "min_width_dp": 600, "max_width_dp": 839, "orientation": "both", "behavior": "two column, max content width 400dp" },
+      "tablet_large": { "min_width_dp": 840, "orientation": "both", "behavior": "multi column, max content width 720dp" }
+    },
+    "content_max_width": {
+      "phone": 428,
+      "tablet_small": 800,
+      "tablet_large": 720
+    },
+    "rules": {
+      "mobile_first": true,
+      "tablet_is_optimization_not_redesign": true,
+      "never_use_layoutbuilder_for_business_logic": true,
+      "consistent_padding_across_screens": true,
+      "single_scroll_direction_preferred": true
+    },
+    "screen_structure": {
+      "top_to_bottom": ["header", "smart_summary", "main_action", "cards", "secondary_details"],
+      "header_height_dp": 56,
+      "smart_summary_max_height_dp": 120,
+      "cards_min_height_dp": 80,
+      "bottom_nav_height_dp": 64
+    }
+  },
+  "component_system": {
+    "card": {
+      "description": "Unidade fundamental da interface. Container retangular com cantos arredondados, sombra sutil e padding interno que agrupa informacoes relacionadas.",
+      "purpose": "Organizar informacao em unidades visuais distintas, permitindo varredura rapida e hierarquia clara.",
+      "anatomy": "Container com radius 24dp, background surface (#FFFFFF), padding 20dp, sombra card elevacao. Pode conter: icone, titulo, subtitulo, metrica, grafico, divisor, rodape.",
+      "variants": ["metrica", "resumo", "registro", "insight", "lista", "expansivel", "destaque"],
+      "states": ["default", "pressed", "expanded", "disabled"],
+      "props": [
+        { "name": "title", "type": "String", "description": "Titulo do card" },
+        { "name": "subtitle", "type": "String?", "description": "Subtitulo opcional do card" },
+        { "name": "metric", "type": "String?", "description": "Valor numerico principal" },
+        { "name": "icon", "type": "IconData?", "description": "Icone representativo" },
+        { "name": "color", "type": "Color?", "description": "Cor de acento do card" },
+        { "name": "onTap", "type": "VoidCallback?", "description": "Acao ao tocar no card" },
+        { "name": "expanded", "type": "bool", "description": "Se o card comeca expandido", "default": false },
+        { "name": "elevation", "type": "Elevation", "description": "Nivel de elevacao do card", "default": "card" }
+      ],
+      "behavior": "Tocar navega para detalhes ou expande. Card de registro abre formulario inline ou modal. Card de insight tem destaque colorido.",
+      "accessibility": "semantics como button se tiver onTap. label combina titulo + subtitulo + metrica. alvo de toque minimo 44dp.",
+      "visual_rules": "Nunca coloque card dentro de card. Maximo 2 cards por linha em tablet. Padding interno uniforme de 20dp. Divisor opcional a 16dp das bordas.",
+      "usage_examples": "Card de metrica de sono com horas, qualidade e grafico sparkline. Card de tarefa com nome, prazo e status. Card de insight com correlacao entre sono e humor."
+    },
+    "button_primary": {
+      "description": "Botao de acao principal. Background preto, texto branco. Destaque maximo na tela.",
+      "purpose": "Executar a acao mais importante da tela atual. Deve haver apenas um botao primary por tela.",
+      "anatomy": "Container com height 52dp, padding horizontal 24dp, radius 14dp, background primary (#111111), texto button 15sp/600 #FFFFFF, icone opcional a 8dp do texto.",
+      "variants": ["default", "com_icone", "somente_icone", "full_width"],
+      "states": ["default", "pressed", "disabled", "loading"],
+      "props": [
+        { "name": "label", "type": "String", "description": "Texto do botao" },
+        { "name": "icon", "type": "IconData?", "description": "Icone opcional antes do texto" },
+        { "name": "onPressed", "type": "VoidCallback?", "description": "Acao ao pressionar" },
+        { "name": "fullWidth", "type": "bool", "description": "Se ocupa toda largura disponivel", "default": false },
+        { "name": "loading", "type": "bool", "description": "Se mostra indicador de carregamento", "default": false },
+        { "name": "disabled", "type": "bool", "description": "Se o botao esta desativado", "default": false }
+      ],
+      "behavior": "Pressed: opacity 90% via animacao 100ms. Loading: texto substituido por CircularProgressIndicator. Disabled: opacity 40%, sem interacao.",
+      "accessibility": "semantics: button. label obrigatorio. hint descreve acao. alvo minimo 44dp.",
+      "visual_rules": "Um primary por tela. Use full-width apenas em contexto de formulario cheio. Nunca use primary para acoes destrutivas.",
+      "usage_examples": "Registrar sono. Salvar tarefa. Adicionar despesa. Iniciar meditacao."
+    },
+    "button_secondary": {
+      "description": "Botao de acao secundaria. Background surface_soft, texto escuro.",
+      "purpose": "Acao secundaria da tela. Complementa o primary sem competir com ele.",
+      "anatomy": "Container com height 52dp, padding horizontal 24dp, radius 14dp, background secondary (#F0EFEC), texto button 15sp/600 #1C1C1C.",
+      "variants": ["default", "com_icone", "full_width"],
+      "states": ["default", "pressed", "disabled"],
+      "props": [
+        { "name": "label", "type": "String", "description": "Texto do botao" },
+        { "name": "icon", "type": "IconData?", "description": "Icone opcional" },
+        { "name": "onPressed", "type": "VoidCallback?", "description": "Acao ao pressionar" },
+        { "name": "fullWidth", "type": "bool", "description": "Se ocupa toda largura", "default": false }
+      ],
+      "behavior": "Pressed: background escurece para #E2E1DE. Disabled: opacity 40%.",
+      "accessibility": "semantics: button. mesmo padrao primary.",
+      "visual_rules": "Nunca use como primary. Posicione sempre a esquerda do primary em pares.",
+      "usage_examples": "Cancelar. Voltar. Adiar. Pular etapa."
+    },
+    "button_ghost": {
+      "description": "Botao sem background visivel. Apenas texto e/ou icone.",
+      "purpose": "Acao terciaria ou contextual. Menor peso visual possivel para acoes que existem mas nao devem ser destacadas.",
+      "anatomy": "Container com height 44dp, padding horizontal 16dp, radius 14dp, sem background, texto 15sp/500 #1C1C1C.",
+      "variants": ["texto", "icone", "texto_com_icone"],
+      "states": ["default", "pressed", "disabled"],
+      "props": [
+        { "name": "label", "type": "String?", "description": "Texto opcional" },
+        { "name": "icon", "type": "IconData?", "description": "Icone opcional" },
+        { "name": "onPressed", "type": "VoidCallback?", "description": "Acao ao pressionar" }
+      ],
+      "behavior": "Pressed: background rgba(0,0,0,0.05) aparece sutilmente. Disabled: opacity 40%.",
+      "accessibility": "semantics: button se acionavel.",
+      "visual_rules": "Nunca destaque mais que primary/secondary. Use para acoes de baixa prioridade.",
+      "usage_examples": "Ver mais. Limpar filtro. Editar. Compartilhar."
+    },
+    "button_pill": {
+      "description": "Botao compacto totalmente arredondado. Estilo chip interativo.",
+      "purpose": "Acoes destacadas em contexto compacto. Tags interativas, filtros, categorias.",
+      "anatomy": "Container com height 40dp, padding horizontal 20dp, radius 20dp, background variavel, texto 13sp/600.",
+      "variants": ["primary_pill", "secondary_pill", "active", "inactive"],
+      "states": ["default", "active", "pressed", "disabled"],
+      "props": [
+        { "name": "label", "type": "String", "description": "Texto do pill" },
+        { "name": "icon", "type": "IconData?", "description": "Icone opcional" },
+        { "name": "active", "type": "bool", "description": "Se esta ativo/selecionado", "default": false },
+        { "name": "onPressed", "type": "VoidCallback", "description": "Acao ao pressionar" }
+      ],
+      "behavior": "Toggle active/inactive ao pressionar. Active: background primary, texto white. Inactive: background surface_soft, texto escuro.",
+      "accessibility": "semantics: button com estado checked se toggle.",
+      "visual_rules": "Use em grupos de filtro. Maximo 6 pills por linha. Active sempre com cor cheia.",
+      "usage_examples": "Filtro de periodo: Hoje / Semana / Mes. Categoria de gasto ativa. Intensidade de treino."
+    },
+    "chip": {
+      "description": "Elemento compacto, totalmente arredondado, nao interativo. Usado para exibir categorias.",
+      "purpose": "Informar categorizacao, status ou metadado sem acao associada.",
+      "anatomy": "Container com height 32dp, padding horizontal 12dp, radius 16dp, background surface_soft ou variante colorida, texto 13sp/500.",
+      "variants": ["categoria", "intensidade", "status", "relacao", "modulo"],
+      "states": ["default"],
+      "props": [
+        { "name": "label", "type": "String", "description": "Texto do chip" },
+        { "name": "color", "type": "Color?", "description": "Cor de fundo do chip" },
+        { "name": "icon", "type": "IconData?", "description": "Icone opcional" },
+        { "name": "dotColor", "type": "Color?", "description": "Cor do indicador pontinho" }
+      ],
+      "behavior": "Elemento puramente informativo. Sem interacao. Visual estatico.",
+      "accessibility": "semantics: label descritiva do conteudo.",
+      "visual_rules": "Background surface_soft para neutro. Cores modulares para chip de modulo. DotColor para chip de intensidade (verde/amarelo/vermelho).",
+      "usage_examples": "Chip de categoria 'Alimentacao'. Chip de intensidade 'Alta' (vermelho). Chip de status 'Concluido' (verde)."
+    },
+    "list_card": {
+      "description": "Card em formato de lista vertical. Substitui tabelas tradicionais no Nexus.",
+      "purpose": "Apresentar dados tabulares de forma legivel e organica, sem formato de planilha.",
+      "anatomy": "Card padrao com layout horizontal: icone + titulo + metrica principal + detalhes secundarios abaixo. Altura variavel conforme conteudo.",
+      "variants": ["simples", "com_metrica", "com_grafico", "expansivel", "com_acao"],
+      "states": ["default", "pressed", "expanded"],
+      "props": [
+        { "name": "icon", "type": "IconData", "description": "Icone representativo a esquerda" },
+        { "name": "title", "type": "String", "description": "Nome do item" },
+        { "name": "metric", "type": "String?", "description": "Valor principal a direita" },
+        { "name": "subtitle", "type": "String?", "description": "Detalhes abaixo do titulo" },
+        { "name": "onTap", "type": "VoidCallback?", "description": "Acao ao tocar" }
+      ],
+      "behavior": "Tocar navega para detalhes ou expande detalhes inline.",
+      "accessibility": "semantics: button com label combinando icone + titulo + metrica.",
+      "visual_rules": "Icone 24x24dp a esquerda com gap 12dp do titulo. Metrica alinhada a direita. Subtitulo abaixo com text_secondary 13sp.",
+      "usage_examples": "Lista de refeicoes do dia. Lista de tarefas pendentes. Lista de gastos do mes."
+    },
+    "bottom_navigation": {
+      "description": "Barra de navegacao inferior flutuante com 5 itens. Elemento persistente em todas as telas principais.",
+      "purpose": "Navegacao principal do aplicativo. Acesso rapido as 4 areas centrais + acao de registro.",
+      "anatomy": "Container flutuante com radius 20dp, background surface, margin horizontal 16dp, margin bottom 16dp, height 64dp. 5 itens com icone + label. O quinto item e um botao circular destacado.",
+      "variants": ["default", "com_badge"],
+      "states": ["active", "inactive"],
+      "props": [
+        { "name": "items", "type": "List<NavItem>", "description": "Lista de itens de navegacao" },
+        { "name": "currentIndex", "type": "int", "description": "Indice do item ativo" },
+        { "name": "onItemSelected", "type": "void Function(int)", "description": "Callback de navegacao" }
+      ],
+      "behavior": "Toque navega para a tela correspondente. Item ativo com icone preenchido e texto primary. Item inativo com icone outline e text_muted. Botao + abre modal de registro rapido.",
+      "accessibility": "semantics: tab bar com labels dos itens. Indice ativo anunciado.",
+      "visual_rules": "Nunca mais que 5 itens. labels.truncate se necessario mas prefira nomes curtos. Botao + sempre na posicao central ou ao final.",
+      "usage_examples": "Itens: Buscar, Hoje, Registrar, Insights, + (acao rapida)."
+    },
+    "smart_summary": {
+      "description": "Area de resumo inteligente no topo de cada tela. Mostra informacao contextual do momento.",
+      "purpose": "Responder 'O que esta acontecendo?' e 'O que importa agora?' em um relance.",
+      "anatomy": "Container com padding 20dp, background surface_soft, radius 16dp. Contem: texto descritivo curto (1-2 linhas), metrica opcional, chip de status opcional.",
+      "variants": ["dashboard", "modulo", "submodulo", "empty_state"],
+      "states": ["default", "loading", "empty"],
+      "props": [
+        { "name": "message", "type": "String", "description": "Mensagem principal do resumo" },
+        { "name": "metric", "type": "String?", "description": "Valor numerico destacado" },
+        { "name": "chip", "type": "ChipData?", "description": "Chip de status opcional" },
+        { "name": "action", "type": "Widget?", "description": "Botao de acao opcional" }
+      ],
+      "behavior": "Conteudo atualizado conforme navegacao e dados do dia. Pode ter acao associada ('Ver detalhes'). Empty state quando nao ha dados.",
+      "accessibility": "semantics: heading level 2 para mensagem principal.",
+      "visual_rules": "Maximo 3 linhas de texto. Tom informativo e util, nunca generico. Sempre contextual ao modulo atual.",
+      "usage_examples": "Dashboard: 'Voce dormiu 6h50 esta noite. Sua energia hoje esta moderada.' Modulo saude: '3 registros hoje. Media de sono: 7h12.'"
+    },
+    "modal_registro_rapido": {
+      "description": "Modal flutuante para registro rapido de dados em qualquer modulo.",
+      "purpose": "Permitir registro de dados sem sair da tela atual. Minimalista e funcional.",
+      "anatomy": "Bottom sheet com radius 20dp no topo, altura variavel (max 80% da tela), drag indicator no topo. Formulario com campos minimos para o submódulo selecionado.",
+      "variants": ["sheet_pequena", "sheet_media", "sheet_cheia"],
+      "states": ["collapsed", "expanded", "full"],
+      "props": [
+        { "name": "module", "type": "String", "description": "Modulo do registro" },
+        { "name": "submodule", "type": "String", "description": "Submodulo do registro" },
+        { "name": "onSave", "type": "void Function(Map)", "description": "Callback ao salvar" }
+      ],
+      "behavior": "Aberto pelo botao + da bottom nav. Seletor de modulo no topo. Formulario muda conforme submodulo. Salva com feedback de checkmark.",
+      "accessibility": "semantics: dialog com campos de formulario. Foco no primeiro campo ao abrir.",
+      "visual_rules": "Campos minimos possiveis para aquele submodulo. Um toque para salvar. Nao mais que 5 campos por registro.",
+      "usage_examples": "Registrar sono: deitou_as + acordou_as + qualidade. Registrar humor: nota 1-10 + nota opcional."
+    },
+    "progress_indicator": {
+      "description": "Indicador visual de progresso para metas, habitos e objetivos.",
+      "purpose": "Mostrar progresso em relacao a uma meta de forma clara e motivacional.",
+      "anatomy": "Barra horizontal com background surface_soft e fill colorido. Altura 8dp, radius 4dp. Pode incluir label de porcentagem.",
+      "variants": ["barra", "circular", "passos", "anel"],
+      "states": ["empty", "partial", "complete", "exceeded"],
+      "props": [
+        { "name": "value", "type": "double", "description": "Valor atual (0.0 a 1.0)" },
+        { "name": "target", "type": "double", "description": "Valor alvo" },
+        { "name": "color", "type": "Color", "description": "Cor do progresso", "default": "#007AFF" },
+        { "name": "label", "type": "String?", "description": "Texto descritivo opcional" },
+        { "name": "size", "type": "ProgressSize", "description": "Tamanho do indicador", "default": "md" }
+      ],
+      "behavior": "Animacao suave ao atualizar valor (300ms ease-out). Ao completar, feedback visual com checkmark. Ao exceder, cor destaca superacao.",
+      "accessibility": "semantics: progress bar com value e target anunciados.",
+      "visual_rules": "Fill animado. Cor varia por tipo: verde para saude, laranja para acao. Label opcional abaixo com secondary 13sp.",
+      "usage_examples": "Progresso de meta de leitura: 3/5 livros. Progresso de economia: R$ 800/R$ 1000. Sequencia de habitos: 5/7 dias."
+    },
+    "grafico_sparkline": {
+      "description": "Mini grafico de linha simples, sem eixos ou labels, para exibicao compacta de tendencia.",
+      "purpose": "Mostrar tendencia em espaco minimal. Companheiro de metricas numericas em cards.",
+      "anatomy": "Canvas com height 32dp, width 100% do card. Linha continua colorida com stroke 2dp. Background opcional area fill com 20% opacity.",
+      "variants": ["linha", "area", "pontos"],
+      "states": ["default", "empty", "loading"],
+      "props": [
+        { "name": "data", "type": "List<double>", "description": "Serie de dados" },
+        { "name": "color", "type": "Color", "description": "Cor da linha", "default": "#007AFF" },
+        { "name": "showArea", "type": "bool", "description": "Preencher area abaixo da linha", "default": false },
+        { "name": "height", "type": "double", "description": "Altura do grafico", "default": 32 }
+      ],
+      "behavior": "Renderizacao estatica. Sem interacao de toque. Animacao de desenho na primeira renderizacao (400ms).",
+      "accessibility": "semantics: imagem grafico com descricao textual da tendencia.",
+      "visual_rules": "Apenas linha e area — sem grid, eixos, labels. Altura maxima 40dp. Cor combinando com o contexto.",
+      "usage_examples": "Tendencia de humor nos ultimos 7 dias dentro do card de humor. Variacao de peso na semana."
+    },
+    "grafico_barra": {
+      "description": "Grafico de barras para comparacao entre categorias ou periodos.",
+      "purpose": "Comparar valores entre categorias de forma intuitiva.",
+      "anatomy": "Eixo X com categorias, eixo Y com valores. Barras verticais com radius 4dp no topo. Grid lines sutis opcionais.",
+      "variants": ["vertical", "horizontal", "empilhado", "agrupado"],
+      "states": ["default", "empty", "loading"],
+      "props": [
+        { "name": "data", "type": "List<BarData>", "description": "Dados do grafico" },
+        { "name": "orientation", "type": "BarOrientation", "description": "Vertical ou horizontal", "default": "vertical" },
+        { "name": "showValues", "type": "bool", "description": "Mostrar valores nas barras", "default": false },
+        { "name": "colorPalette", "type": "List<Color>", "description": "Paleta de cores" }
+      ],
+      "behavior": "Toque na barra mostra valor detalhado. Animacao de crescimento ao renderizar.",
+      "accessibility": "semantics: grafico de barras com valores por categoria via chart accessibility delegate.",
+      "visual_rules": "Maximo 12 barras. Barras com radius 4dp no topo. Grid lines opacity 30%. Espacamento entre barras: 30% da largura da barra.",
+      "usage_examples": "Gastos por categoria no mes. Horas de sono por dia da semana. Refeicoes por tipo."
+    },
+    "grafico_linha": {
+      "description": "Grafico de linha para visualizacao de tendencias ao longo do tempo.",
+      "purpose": "Mostrar evolucao, tendencia e padroes temporais.",
+      "anatomy": "Eixo X temporal (dias/semanas/meses), eixo Y com valores. Linha continua com dots opcionais. Grid horizontal sutil.",
+      "variants": ["simples", "multiplas_linhas", "com_area", "com_meta"],
+      "states": ["default", "empty", "loading"],
+      "props": [
+        { "name": "data", "type": "List<LineData>", "description": "Series de dados temporais" },
+        { "name": "showDots", "type": "bool", "description": "Mostrar pontos nos dados", "default": true },
+        { "name": "showArea", "type": "bool", "description": "Preencher area", "default": false },
+        { "name": "targetLine", "type": "double?", "description": "Linha de meta opcional" },
+        { "name": "timeRange", "type": "TimeRange", "description": "Periodo: semana/mes/ano", "default": "semana" }
+      ],
+      "behavior": "Toque mostra valor exato do ponto. Pinça para zoom horizontal. Scroll horizontal para periodos longos.",
+      "accessibility": "semantics: grafico de linha com descricao de tendencia (subindo/descendo/estavel).",
+      "visual_rules": "Linha com stroke 2.5dp. Dots 6dp quando visiveis. Grid horizontal com 30% opacity. Area fill com 15% opacity da cor da linha.",
+      "usage_examples": "Evolucao do humor no mes. Peso corporal na semana. Gasto acumulado no ano."
+    },
+    "input_text": {
+      "description": "Campo de entrada de texto padrao do Nexus.",
+      "purpose": "Capturar entrada textual do usuario de forma clara e consistente.",
+      "anatomy": "Container com border radius 12dp, background surface, border 1dp #E2E1DE, height 52dp. Label flutuante ou placeholder. Texto body 15sp #1C1C1C.",
+      "variants": ["outlined", "filled", "com_icone", "multilinha", "senha"],
+      "states": ["default", "focused", "filled", "error", "disabled"],
+      "props": [
+        { "name": "label", "type": "String?", "description": "Label do campo" },
+        { "name": "hint", "type": "String?", "description": "Placeholder" },
+        { "name": "value", "type": "String", "description": "Valor atual" },
+        { "name": "onChanged", "type": "void Function(String)", "description": "Callback de mudanca" },
+        { "name": "validator", "type": "String? Function(String)?", "description": "Funcao de validacao" },
+        { "name": "obscureText", "type": "bool", "description": "Campo de senha", "default": false },
+        { "name": "multiline", "type": "bool", "description": "Multilinha", "default": false },
+        { "name": "maxLength", "type": "int?", "description": "Tamanho maximo" },
+        { "name": "icon", "type": "IconData?", "description": "Icone a esquerda" }
+      ],
+      "behavior": "Focus: border #007AFF, label flutua. Error: border #FF3B30 + mensagem abaixo. Disabled: opacity 50%.",
+      "accessibility": "semantics: text field com label vinculada. hint anunciado. erros anunciados.",
+      "visual_rules": "Label flutuante animado (250ms). Icone left com 16dp padding. Mensagem de erro em micro 11sp #FF3B30 a 4dp abaixo.",
+      "usage_examples": "Nome da tarefa. Notas do dia. Valor do gasto. Descricao do evento."
+    },
+    "input_number": {
+      "description": "Campo de entrada numerica com teclado numerico e suporte a incremento/decremento.",
+      "purpose": "Capturar valores numericos de forma precisa e eficiente.",
+      "anatomy": "Input padrao com teclado numerico. Botoes +/- opcionais nas laterais. Prefixo e sufixo (R$, kg, h).",
+      "variants": ["inteiro", "decimal", "com_botoes", "com_slider"],
+      "states": ["default", "focused", "filled", "error", "disabled"],
+      "props": [
+        { "name": "label", "type": "String", "description": "Label do campo" },
+        { "name": "value", "type": "num", "description": "Valor atual" },
+        { "name": "onChanged", "type": "void Function(num)", "description": "Callback" },
+        { "name": "prefix", "type": "String?", "description": "Prefixo (R$, +)" },
+        { "name": "suffix", "type": "String?", "description": "Sufixo (kg, h, min)" },
+        { "name": "min", "type": "num?", "description": "Valor minimo" },
+        { "name": "max", "type": "num?", "description": "Valor maximo" },
+        { "name": "step", "type": "num", "description": "Passo para botoes +/-", "default": 1 },
+        { "name": "decimal", "type": "bool", "description": "Aceitar decimais", "default": false }
+      ],
+      "behavior": "Teclado numerico ao focar. Botoes +/- incrementam/decrementam com step. Validacao de min/max no blurred.",
+      "accessibility": "semantics: text field com keyboard type number.",
+      "visual_rules": "Prefixo e sufixo em secondary 15sp. Botoes +/- 40x40dp com radius 12dp. Slider variante para intervalos (0-10).",
+      "usage_examples": "Duracao do sono (min). Valor da despesa (R$). Qualidade (1-10). Peso (kg)."
+    },
+    "input_date": {
+      "description": "Seletor de data e hora padrao do Nexus.",
+      "purpose": "Capturar data e hora associada a um registro.",
+      "anatomy": "Input que ao tocar abre date picker nativo ou customizado. Exibe data formatada no padrao brasileiro.",
+      "variants": ["data", "hora", "data_hora", "periodo"],
+      "states": ["default", "filled", "disabled"],
+      "props": [
+        { "name": "label", "type": "String", "description": "Label do campo" },
+        { "name": "value", "type": "DateTime?", "description": "Valor atual" },
+        { "name": "onChanged", "type": "void Function(DateTime)", "description": "Callback" },
+        { "name": "mode", "type": "DateMode", "description": "Data, hora ou ambos", "default": "data" },
+        { "name": "minDate", "type": "DateTime?", "description": "Data minima" },
+        { "name": "maxDate", "type": "DateTime?", "description": "Data maxima" }
+      ],
+      "behavior": "Toque abre bottom sheet com seletor. Scroll horizontal para dia/mes/ano. Confirmar fecha sheet e preenche campo.",
+      "accessibility": "semantics: button que abre date picker. Valor atual anunciado.",
+      "visual_rules": "Formato brasileiro: 24/06/2026. Hora: 23:00. Icone de calendario/relogio a direita.",
+      "usage_examples": "Data do registro de sono. Horario da refeicao. Periodo do evento."
+    },
+    "input_slider": {
+      "description": "Slider de valor para selecao em escala. Variante compacta para avaliacao rapida.",
+      "purpose": "Capturar valores em escala (qualidade, intensidade, humor) de forma visual e rapida.",
+      "anatomy": "Track horizontal com 4dp height, radius 2dp, background surface_soft. Thumb circular 28dp com cor primaria. Labels opcionais nas extremidades.",
+      "variants": ["continuous", "discrete", "emoji", "colorido"],
+      "states": ["default", "active"],
+      "props": [
+        { "name": "value", "type": "double", "description": "Valor atual (0.0 a 1.0)" },
+        { "name": "onChanged", "type": "void Function(double)", "description": "Callback" },
+        { "name": "divisions", "type": "int?", "description": "Numero de divisoes para discrete", "default": 10 },
+        { "name": "labels", "type": "List<String>?", "description": "Labels para cada divisao" },
+        { "name": "activeColor", "type": "Color", "description": "Cor do track ativo", "default": "#007AFF" }
+      ],
+      "behavior": "Arrastar thumb ao longo do track. Discrete mode snap para divisoes. Haptic feedback ao mudar valor.",
+      "accessibility": "semantics: slider com value min max. Ajuste via swipe up/down para incremento.",
+      "visual_rules": "Active track com cor semantica. Thumb com shadow sutil. Discrete divisions com dots no track.",
+      "usage_examples": "Qualidade do sono (1-10). Nivel de estresse (1-10). Intensidade do treino (baixa-media-alta)."
+    },
+    "input_toggle": {
+      "description": "Toggle switch binario para ativacao/desativacao de opcoes.",
+      "purpose": "Permitir alternancia entre dois estados mutuamente exclusivos.",
+      "anatomy": "Track horizontal 44x28dp com radius 14dp. Thumb circular 24dp. Animacao de slide entre estados. Label opcional a esquerda ou direita.",
+      "variants": ["padrao", "com_label", "colorido"],
+      "states": ["off", "on", "disabled"],
+      "props": [
+        { "name": "value", "type": "bool", "description": "Estado atual" },
+        { "name": "onChanged", "type": "void Function(bool)", "description": "Callback" },
+        { "name": "label", "type": "String?", "description": "Label explicativo" },
+        { "name": "activeColor", "type": "Color", "description": "Cor quando ativo", "default": "#34C759" }
+      ],
+      "behavior": "Toque alterna estado com animacao 200ms. Haptic feedback sutil. Disabled: opacity 50%.",
+      "accessibility": "semantics: switch com estado checked/unchecked.",
+      "visual_rules": "Active: track verde (#34C759), thumb branco. Inactive: track #E2E1DE, thumb branco. Label a esquerda com body 15sp.",
+      "usage_examples": "Notificacoes ativadas. Modo escuro. Lembrete de hidratacao. Meta automatica."
+    },
+    "input_select": {
+      "description": "Seletor de opcoes em dropdown ou bottom sheet.",
+      "purpose": "Selecionar uma ou mais opcoes de uma lista predefinida.",
+      "anatomy": "Input com aparencia similar ao text input. Ao tocar, abre bottom sheet com lista de opcoes. Setinha indicadora a direita.",
+      "variants": ["single", "multi", "searchable", "cascading"],
+      "states": ["default", "filled", "error", "disabled"],
+      "props": [
+        { "name": "label", "type": "String", "description": "Label do campo" },
+        { "name": "options", "type": "List<SelectOption>", "description": "Opcoes disponiveis" },
+        { "name": "value", "type": "dynamic", "description": "Valor selecionado" },
+        { "name": "onChanged", "type": "void Function(dynamic)", "description": "Callback" },
+        { "name": "multiple", "type": "bool", "description": "Selecao multipla", "default": false },
+        { "name": "searchable", "type": "bool", "description": "Campo de busca na lista", "default": false }
+      ],
+      "behavior": "Toque abre bottom sheet com scroll. Searchable filtra opcoes em tempo real. Multi: checkboxes ao lado de cada opcao.",
+      "accessibility": "semantics: button que expande lista de opcoes. Valor selecionado anunciado.",
+      "visual_rules": "Opcoes com 52dp altura cada. Icone opcional a esquerda do label. Divider entre opcoes. Selection highlight com #007AFF 10% opacity.",
+      "usage_examples": "Selecao de tipo de refeicao (cafe, almoco, jantar, lanche). Categoria de despesa. Tipo de exercicio."
+    },
+    "avatar": {
+      "description": "Circulo com inicial do usuario ou icone representativo. Usado para identidade visual.",
+      "purpose": "Representar o usuario ou entidade de forma compacta e visual.",
+      "anatomy": "Circulo com diameter 40dp (compacto) a 80dp (perfil). Background com cor do modulo ou primaria. Inicial branca 17sp/600 centralizada.",
+      "variants": ["iniciais", "icone", "foto", "modulo"],
+      "states": ["default", "pressed"],
+      "props": [
+        { "name": "initials", "type": "String?", "description": "Iniciais do usuario" },
+        { "name": "icon", "type": "IconData?", "description": "Icone representativo" },
+        { "name": "size", "type": "AvatarSize", "description": "Tamanho", "default": "md" },
+        { "name": "color", "type": "Color", "description": "Cor de fundo", "default": "#007AFF" },
+        { "name": "onTap", "type": "VoidCallback?", "description": "Acao ao tocar" }
+      ],
+      "behavior": "Se onTap definido, pressed escala para 0.95. Foto substitui iniciais se disponivel.",
+      "accessibility": "semantics: imagem com label descritivo.",
+      "visual_rules": "Exatamente circular (radius 999). Iniciais em branco. Foto com object-fit cover. Badge opcional no canto inferior direito (8dp).",
+      "usage_examples": "Avatar do perfil na tela de configuracoes. Indicador de modulo em cards. Foto do contato em relacionamentos."
+    },
+    "badge": {
+      "description": "Pequeno indicador circular ou retangular com numero ou icone. Sobreposto a outro elemento.",
+      "purpose": "Indicar contagem, notificacao ou status de forma compacta.",
+      "anatomy": "Circulo de 18dp (numero) ou 10dp (ponto) sobreposto ao canto superior direito do elemento pai. Background danger (#FF3B30) para notificacao. Texto white micro 11sp/600.",
+      "variants": ["numero", "ponto", "icone", "status"],
+      "states": ["visible", "hidden"],
+      "props": [
+        { "name": "count", "type": "int?", "description": "Numero a exibir" },
+        { "name": "color", "type": "Color", "description": "Cor do badge", "default": "#FF3B30" },
+        { "name": "position", "type": "BadgePosition", "description": "Posicao", "default": "top_right" },
+        { "name": "showZero", "type": "bool", "description": "Mostrar quando 0", "default": false }
+      ],
+      "behavior": "Animacao de aparece/some com scale. Count > 99 mostra 99+. Badge de ponto nao tem texto.",
+      "accessibility": "semantics: badge com label 'N notificacoes'.",
+      "visual_rules": "Sobreposto com offset de 4dp do canto. Maximo 3 digitos (99+). Ponto de status: 8dp, sem borda.",
+      "usage_examples": "Notificacoes nao lidas no icone de busca. Lembretes pendentes no icone de hoje. Status online no avatar."
+    },
+    "divider": {
+      "description": "Linha horizontal ou vertical para separar elementos.",
+      "purpose": "Criar separacao visual entre secoes, elementos de lista ou cards.",
+      "anatomy": "Linha de 1dp com cor divider (#EAE9E6). Horizontal: width 100% do container, margin vertical 8dp. Vertical: height 100%, margin horizontal 8dp.",
+      "variants": ["horizontal", "vertical", "com_label", "inset"],
+      "states": ["default"],
+      "props": [
+        { "name": "type", "type": "DividerType", "description": "Horizontal ou vertical", "default": "horizontal" },
+        { "name": "label", "type": "String?", "description": "Texto opcional centralizado" },
+        { "name": "inset", "type": "double", "description": "Recuo da borda esquerda", "default": 0 },
+        { "name": "thickness", "type": "double", "description": "Espessura", "default": 1 }
+      ],
+      "behavior": "Elemento estatico sem interacao.",
+      "accessibility": "semantics: divider ou separator. Ignorado por leitores de tela se puramente decorativo.",
+      "visual_rules": "Nunca use divisores em excesso. Prefira spacing a divisores. Com label: label em secondary 13sp centralizado com linhas de ambos lados.",
+      "usage_examples": "Separacao entre secoes de card. Divisoria entre itens de lista. Separador 'Hoje' / 'Amanha' com label."
+    },
+    "empty_state": {
+      "description": "Estado vazio exibido quando nao ha dados para mostrar.",
+      "purpose": "Comunicar que nao ha dados disponiveis e oferecer acao para comecar.",
+      "anatomy": "Layout centralizado com ilustracao (SVG) ou icone grande (64dp), texto descritivo (body 15sp #777777), titulo opcional (card_title 17sp), botao de acao CTA.",
+      "variants": ["primeiro_acesso", "sem_dados_periodo", "sem_resultados_busca", "manutencao"],
+      "states": ["default"],
+      "props": [
+        { "name": "icon", "type": "IconData", "description": "Icone representativo" },
+        { "name": "title", "type": "String", "description": "Titulo do estado vazio" },
+        { "name": "message", "type": "String", "description": "Mensagem explicativa" },
+        { "name": "actionLabel", "type": "String?", "description": "Label do botao CTA" },
+        { "name": "onAction", "type": "VoidCallback?", "description": "Acao do botao" }
+      ],
+      "behavior": "Centralizado na tela. Scroll desabilitado. Botao CTA opcional para primeira acao.",
+      "accessibility": "semantics: heading para titulo, paragraph para mensagem, button para CTA.",
+      "visual_rules": "Icone 64dp com opacity 40%. Titulo card_title 17sp #1C1C1C. Mensagem body 15sp #777777. Padding vertical 40dp. CTA aparece apenas se houver acao possivel.",
+      "usage_examples": "Nenhum registro de sono ainda. 'Comece a registrar seu sono para ver padroes.' Nenhum resultado para a busca. 'Tente outros termos.'"
+    },
+    "loading_state": {
+      "description": "Indicador de carregamento generico para conteudo em espera.",
+      "purpose": "Comunicar que o sistema esta processando e manter o usuario informado.",
+      "anatomy": "Shimmer placeholder ou spinner centralizado. Shimmer: retangulos com gradiente animado simulando conteudo. Spinner: CircularProgressIndicator de 24dp com cor primary.",
+      "variants": ["shimmer", "spinner", "skeleton", "pulsing_dot"],
+      "states": ["loading"],
+      "props": [
+        { "name": "type", "type": "LoadingType", "description": "Tipo de loading", "default": "shimmer" },
+        { "name": "lines", "type": "int", "description": "Linhas de shimmer", "default": 3 },
+        { "name": "height", "type": "double", "description": "Altura do shimmer", "default": 200 }
+      ],
+      "behavior": "Animacao continua enquanto loading = true. Shimmer: gradiente se move horizontalmente (1500ms loop).",
+      "accessibility": "semantics: label 'Carregando' com live region.",
+      "visual_rules": "Shimmer: base #F0EFEC, highlight #F7F7F5, radius 12dp, animacao 1500ms ease-in-out infinite. Spinner: 24-40dp, primary color.",
+      "usage_examples": "Carregamento de dados do dashboard. Busca em andamento. Sincronizacao de dados."
+    },
+    "toast": {
+      "description": "Notificacao temporaria no topo ou bottom da tela para feedback de acao.",
+      "purpose": "Fornecer feedback imediato nao intrusivo sobre acoes do usuario.",
+      "anatomy": "Container com padding 12dp 16dp, radius 12dp, background dark (#1C1C1C) ou colorido. Texto white 15sp/500. Icone opcional a esquerda. Altura variavel.",
+      "variants": ["success", "error", "info", "warning", "neutral"],
+      "states": ["entering", "visible", "exiting"],
+      "props": [
+        { "name": "message", "type": "String", "description": "Mensagem do toast" },
+        { "name": "type", "type": "ToastType", "description": "Tipo de toast", "default": "neutral" },
+        { "name": "duration", "type": "Duration", "description": "Duracao visivel", "default": "3s" },
+        { "name": "action", "type": "ToastAction?", "description": "Acao opcional (ex: Desfazer)" },
+        { "name": "icon", "type": "IconData?", "description": "Icone opcional" }
+      ],
+      "behavior": "Entra com slide down do topo (300ms). Permanece por duration (padrao 3s). Sai com fade up (200ms). Action 'Desfazer' extende duracao.",
+      "accessibility": "semantics: live region com polidez 'assertive' para updates importantes.",
+      "visual_rules": "Posicao: topo da tela com padding 16dp. Nao obstruir conteudo principal. Apenas 1 toast visivel por vez. Cor do icone conforme tipo.",
+      "usage_examples": "Success: 'Registro salvo!' com checkmark verde. Error: 'Nao foi possivel salvar.' com botao 'Tentar novamente'."
+    },
+    "bottom_sheet": {
+      "description": "Painel que sobe do bottom da tela para exibir conteudo adicional ou formularios.",
+      "purpose": "Exibir opcoes, formularios ou detalhes sem navegar para outra tela.",
+      "anatomy": "Sheet com radius 20dp no topo, drag indicator (barra horizontal 32x4dp #E2E1DE centralizada), altura variavel (25% a 90% da tela), background surface.",
+      "variants": ["lista", "formulario", "calendario", "confirmacao", "full"],
+      "states": ["collapsed", "expanded", "full", "dismissing"],
+      "props": [
+        { "name": "title", "type": "String?", "description": "Titulo opcional no topo" },
+        { "name": "children", "type": "Widget", "description": "Conteudo do sheet" },
+        { "name": "initialSize", "type": "SheetSize", "description": "Tamanho inicial", "default": "medium" },
+        { "name": "enableDrag", "type": "bool", "description": "Permite arrastar", "default": true },
+        { "name": "dismissible", "type": "bool", "description": "Permite fechar", "default": true }
+      ],
+      "behavior": "Drag para cima expande, drag para baixo recolhe/fecha. Tap outside fecha se dismissible. Scroll interno quando conteudo excede altura.",
+      "accessibility": "semantics: dialog com roles apropriados. Foco no primeiro elemento interativo ao abrir.",
+      "visual_rules": "Drag indicator sempre visivel no topo com 8dp padding vertical. Scroll embutido no sheet. Cantos superiores com radius 20dp.",
+      "usage_examples": "Selecao de opcao em dropdown. Formulario de registro rapido. Confirmacao de exclusao. Visualizacao de detalhes."
+    },
+    "section_header": {
+      "description": "Cabecalho de secao com titulo e acao opcional.",
+      "purpose": "Organizar conteudo em secoes nomeadas com acao contextual.",
+      "anatomy": "Layout horizontal: titulo (section_title 22sp) a esquerda, acao opcional (ghost button) a direita. Padding vertical 8dp, horizontal zero (herdado do container pai).",
+      "variants": ["simples", "com_acao", "com_contador"],
+      "states": ["default"],
+      "props": [
+        { "name": "title", "type": "String", "description": "Titulo da secao" },
+        { "name": "actionLabel", "type": "String?", "description": "Label da acao opcional" },
+        { "name": "onAction", "type": "VoidCallback?", "description": "Callback da acao" },
+        { "name": "count", "type": "int?", "description": "Contagem opcional no titulo" }
+      ],
+      "behavior": "Toque na acao executa callback. Sem interacao no titulo.",
+      "accessibility": "semantics: heading level 2 para titulo. button para acao.",
+      "visual_rules": "Titulo sempre a esquerda. Acao sempre a direita e com ghost button. Nao use divisor depois do header — prefira spacing section_gap.",
+      "usage_examples": "Secao 'Sono' com acao 'Ver todos'. Secao 'Gastos do Mes' com valor total. Secao 'Habitos' com contador '5/7'."
+    },
+    "tab_selector": {
+      "description": "Seletor de abas para alternar entre categorias ou periodos.",
+      "purpose": "Navegacao secundaria entre visualizacoes relacionadas (periodo, categoria, visao).",
+      "anatomy": "Linha horizontal de pills ou texto. Pills: cada item com 40dp height, padding 16dp horizontal, radius 20dp. Texto 13sp/600. Active: background primary, texto white. Inactive: background transparente, texto secondary.",
+      "variants": ["pills", "underline", "segmented"],
+      "states": ["active", "inactive"],
+      "props": [
+        { "name": "tabs", "type": "List<TabData>", "description": "Lista de abas" },
+        { "name": "activeIndex", "type": "int", "description": "Indice ativo" },
+        { "name": "onChanged", "type": "void Function(int)", "description": "Callback" },
+        { "name": "variant", "type": "TabVariant", "description": "Estilo", "default": "pills" }
+      ],
+      "behavior": "Toque alterna aba ativa com animacao 250ms. Scroll horizontal se muitas abas. Pill variant: fundo desliza para active.",
+      "accessibility": "semantics: tab bar com labels. Indice e estado anunciados.",
+      "visual_rules": "Maximo 6 abas. Scroll horizontal para mais. Pill variant preferida para Nexus. Underline variant para contexto mais formal.",
+      "usage_examples": "Periodo: Hoje / Semana / Mes / Ano. Categoria: Todos / Saude / Mente / Acao. Visao: Lista / Grafico."
+    },
+    "metric_display": {
+      "description": "Exibicao destacada de valor numerico com label, tendencia e unidade.",
+      "purpose": "Apresentar metrica principal de forma clara e impactante. O elemento mais importante de um card de metrica.",
+      "anatomy": "Label secondary 13sp em cima. Valor numeric_large 48sp centralizado. Unidade body 17sp ao lado do valor. Tendencia (seta + %) abaixo em 13sp. Opcional: sparkline ao lado.",
+      "variants": ["vertical", "horizontal", "com_tendencia", "com_sparkline", "comparativo"],
+      "states": ["default", "positive_trend", "negative_trend", "neutral"],
+      "props": [
+        { "name": "value", "type": "String", "description": "Valor numerico formatado" },
+        { "name": "label", "type": "String", "description": "Label descritivo" },
+        { "name": "unit", "type": "String?", "description": "Unidade (h, kg, R$, %)" },
+        { "name": "trend", "type": "Trend?", "description": "Tendencia (up/down/flat + %)" },
+        { "name": "color", "type": "Color", "description": "Cor do valor", "default": "#1C1C1C" },
+        { "name": "sparklineData", "type": "List<double>?", "description": "Dados do sparkline opcional" }
+      ],
+      "behavior": "Elemento estatico sem interacao. Pode ser pai de toque no card inteiro.",
+      "accessibility": "semantics: label + valor + tendencia como uma unidade.",
+      "visual_rules": "Label em secondary 13sp. Valor em numeric_large 48sp bold. Tendencia em secondary 13sp com seta colorida (verde up, red down, gray flat).",
+      "usage_examples": "Card de sono: '7h12' com label 'Duracao media' e tendencia '+12% esta semana'. Card de gastos: 'R$ 1.250' com label 'Total do mes'."
+    },
+    "accordion": {
+      "description": "Card expansivel que revela conteudo adicional ao toque.",
+      "purpose": "Progressive disclosure: mostrar mais detalhes quando o usuario desejar, sem poluir a interface inicial.",
+      "anatomy": "Card padrao com header (tocavel) e body (expansivel). Header: icone + titulo + seta indicadora (rotaciona 180deg ao expandir). Body: padding 20dp com conteudo adicional. Animacao de expansao 250ms ease-out.",
+      "variants": ["simples", "com_metrica", "multiplo", "ancorado"],
+      "states": ["collapsed", "expanded"],
+      "props": [
+        { "name": "title", "type": "String", "description": "Titulo do cabecalho" },
+        { "name": "subtitle", "type": "String?", "description": "Subtitulo no cabecalho" },
+        { "name": "expanded", "type": "bool", "description": "Estado inicial", "default": false },
+        { "name": "onToggle", "type": "void Function(bool)?", "description": "Callback ao expandir/recolher" },
+        { "name": "children", "type": "Widget", "description": "Conteudo do body" }
+      ],
+      "behavior": "Toque no header alterna estado com animacao. Seta rotaciona. Body aparece com fade + slide down. Altura animada via AnimatedCrossFade ou SizeTransition.",
+      "accessibility": "semantics: button com estado expandido anunciado. Conteudo do body acessivel quando expandido.",
+      "visual_rules": "Header com altura minima 52dp para alvo de toque. Seta para baixo quando collapsed, para cima quando expanded. Animacao 250ms ease-out.",
+      "usage_examples": "Detalhes adicionais de um registro de sono (interrupcoes, notas). Breakdown de gastos por categoria. Subitens de uma meta."
+    },
+    "floating_action_button": {
+      "description": "Botao circular flutuante para acao primaria contextual.",
+      "purpose": "Acao primaria contextual que flutua sobre o conteudo. Usado com moderacao.",
+      "anatomy": "Circulo de 56dp com background primary (#111111), icone white 24dp, shadow modal. Posicao: bottom-right com margin 16dp.",
+      "variants": ["padrao", "mini", "expandivel", "multi"],
+      "states": ["default", "pressed", "disabled"],
+      "props": [
+        { "name": "icon", "type": "IconData", "description": "Icone do FAB" },
+        { "name": "onPressed", "type": "VoidCallback", "description": "Acao ao pressionar" },
+        { "name": "mini", "type": "bool", "description": "Versao compacta 40dp", "default": false },
+        { "name": "extended", "type": "bool", "description": "Com label ao lado", "default": false },
+        { "name": "label", "type": "String?", "description": "Label do extended FAB" }
+      ],
+      "behavior": "Pressed: escala 0.92. Disabled: opacity 40%. Multi: expande radialmente ao pressionar. Sobrepoe conteudo com sombra.",
+      "accessibility": "semantics: button com label do icone.",
+      "visual_rules": "56dp padrao, 40dp mini. Nao use FAB se ja existe primary button na tela. Apenas 1 FAB por tela. Extended FAB com padding 16dp horizontal e label 15sp/600.",
+      "usage_examples": "Adicionar novo registro na tela de modulo. Criar tarefa. Iniciar cronometro pomodoro."
+    },
+    "tooltip": {
+      "description": "Dica contextual que aparece ao pressionar segurar ou passar o mouse sobre um elemento.",
+      "purpose": "Fornecer contextualizacao adicional sem poluir a interface principal.",
+      "anatomy": "Container com padding 8dp 12dp, radius 8dp, background dark (#1C1C1C), texto white 13sp/400. Seta indicando o elemento de origem. Maximo 2 linhas de texto.",
+      "variants": ["texto", "texto_com_icone"],
+      "states": ["hidden", "visible"],
+      "props": [
+        { "name": "message", "type": "String", "description": "Mensagem do tooltip" },
+        { "name": "position", "type": "TooltipPosition", "description": "Posicao relativa ao alvo", "default": "top" },
+        { "name": "duration", "type": "Duration", "description": "Tempo ate desaparecer", "default": "4s" }
+      ],
+      "behavior": "Aparece ao long press (mobile) ou hover (desktop). Desaparece apos duration ou ao tocar fora. Animacao fade 200ms.",
+      "accessibility": "semantics: tooltip anunciado via live region.",
+      "visual_rules": "Background dark com 90% opacity. Seta 8dp do lado correspondente. Maximo 2 linhas (180 caracteres). Nao use para informacao critica.",
+      "usage_examples": "Explicacao de metrica: 'Media dos ultimos 30 dias.' Dica de funcionalidade: 'Pressione para mais opcoes.'"
+    },
+    "search_bar": {
+      "description": "Barra de busca global com sugestoes e historico.",
+      "purpose": "Permitir busca rapida em todos os registros do Nexus.",
+      "anatomy": "Input com height 52dp, radius 14dp, background surface_soft (#F0EFEC), icone de busca a esquerda 24dp, texto body 15sp, botao de limpar a direita ao digitar. Abaixo: dropdown com sugestoes.",
+      "variants": ["simples", "com_sugestoes", "com_filtros", "global"],
+      "states": ["default", "focused", "filled", "searching", "results", "empty_results"],
+      "props": [
+        { "name": "value", "type": "String", "description": "Texto da busca" },
+        { "name": "onChanged", "type": "void Function(String)", "description": "Callback ao digitar" },
+        { "name": "onSubmitted", "type": "void Function(String)", "description": "Callback ao submeter" },
+        { "name": "suggestions", "type": "List<String>?", "description": "Sugestoes de busca" },
+        { "name": "placeholder", "type": "String", "description": "Placeholder", "default": "Buscar..." },
+        { "name": "autofocus", "type": "bool", "description": "Foco automatico", "default": false }
+      ],
+      "behavior": "Focus: expande sugestoes. Ao digitar: debounce 300ms para busca em tempo real. Ao submeter: navega para resultados. Sugestoes: baseadas em historico e dados recentes.",
+      "accessibility": "semantics: search field com label 'Buscar'. Sugestoes como listbox.",
+      "visual_rules": "Background surface_soft. Icone de busca #A8A8A8. Botao limpar #777777 visivel apenas com texto. Resultados em cards abaixo. Empty state se sem resultados.",
+      "usage_examples": "Buscar 'sono' retorna todos registros de sono. Buscar 'R$ 50' retorna gastos de 50 reais."
+    },
+    "checkbox": {
+      "description": "Checkbox padrao do sistema para selecao multipla.",
+      "purpose": "Selecionar ou desselecionar opcoes em formularios e listas.",
+      "anatomy": "Quadrado de 22x22dp com radius 6dp. Border 2dp #A8A8A8 unchecked. Background primary (#111111) + icone check white quando checked. Label opcional a direita 15sp/400.",
+      "variants": ["padrao", "com_label", "indeterminado"],
+      "states": ["unchecked", "checked", "indeterminate", "disabled"],
+      "props": [
+        { "name": "value", "type": "bool", "description": "Estado checked" },
+        { "name": "onChanged", "type": "void Function(bool)?", "description": "Callback" },
+        { "name": "label", "type": "String?", "description": "Label opcional" },
+        { "name": "tristate", "type": "bool", "description": "Suporte a indeterminado", "default": false }
+      ],
+      "behavior": "Toque alterna estado. Animacao de check 200ms. Disabled: opacity 50%.",
+      "accessibility": "semantics: checkbox com estado checked/unchecked e label vinculado.",
+      "visual_rules": "22x22dp. Radius 6dp. Unchecked: border #A8A8A8. Checked: bg primary, check white. Label gap 12dp. Alvo minimo 44dp incluindo label.",
+      "usage_examples": "Selecao multipla de itens em lista. Marcacao de tarefas concluidas. Opcoes em formulario."
+    },
+    "radio_button": {
+      "description": "Radio button para selecao unica entre opcoes mutuamente exclusivas.",
+      "purpose": "Selecionar uma opcao entre um conjunto limitado de alternativas.",
+      "anatomy": "Circulo de 22x22dp. Border 2dp #A8A8A8 quando unchecked. Preenchimento interno 8dp #111111 quando checked. Label a direita 15sp/400.",
+      "variants": ["padrao", "com_label", "card"],
+      "states": ["unselected", "selected", "disabled"],
+      "props": [
+        { "name": "value", "type": "bool", "description": "Estado selecionado" },
+        { "name": "onChanged", "type": "void Function(bool)?", "description": "Callback" },
+        { "name": "label", "type": "String?", "description": "Label opcional" },
+        { "name": "groupValue", "type": "String", "description": "Valor do grupo" }
+      ],
+      "behavior": "Toque seleciona e desseleciona outros do mesmo grupo. Animacao de preenchimento 200ms.",
+      "accessibility": "semantics: radio button com estado e grupo anunciados.",
+      "visual_rules": "22x22dp. Unselected: border #A8A8A8. Selected: border #111111 + fill 8dp #111111. Card variant: card inteiro selecionavel com border highlight.",
+      "usage_examples": "Selecao de tipo de exercicio: Corrida / Caminhada / Bicicleta. Frequencia: Diario / Semanal / Mensal."
+    },
+    "context_menu": {
+      "description": "Menu contextual que aparece ao pressionar segurar ou toque no icone de mais opcoes.",
+      "purpose": "Oferecer acoes secundarias sem ocupar espaco na interface principal.",
+      "anatomy": "Popup com lista vertical de acoes. Cada item: 52dp height, icone 20dp a esquerda, label body 15sp. Radius 14dp. Background surface com shadow modal.",
+      "variants": ["lista", "icones", "destrutivo"],
+      "states": ["open", "closed"],
+      "props": [
+        { "name": "items", "type": "List<ContextMenuItem>", "description": "Itens do menu" },
+        { "name": "position", "type": "Offset", "description": "Posicao do menu" },
+        { "name": "onDismiss", "type": "VoidCallback?", "description": "Ao fechar" }
+      ],
+      "behavior": "Aberto por long press ou toque em icone de tres pontos. Fecha ao selecionar item ou tocar fora. Animacao fade + scale 200ms.",
+      "accessibility": "semantics: menu com itens acionaveis. Foco no primeiro item ao abrir.",
+      "visual_rules": "Minimo 1 item, maximo 8. Itens destrutivos em vermelho (#FF3B30) ao final. Divider entre secoes. Background nunca escuro.",
+      "usage_examples": "Acoes em registro: Editar, Duplicar, Excluir. Opcoes de visualizacao: Ordenar, Filtrar, Exportar."
+    },
+    "timeline": {
+      "description": "Linha do tempo vertical para exibir eventos em ordem cronologica.",
+      "purpose": "Visualizar sequencia de eventos ou registros ao longo do tempo.",
+      "anatomy": "Coluna vertical com linha central (2dp, #EAE9E6). Marcadores circulares (12dp) nos pontos de evento. Cards de conteudo alternando esquerda/direita ou sempre a direita. Conector entre marcador e card.",
+      "variants": ["simples", "alternado", "compacto", "interativo"],
+      "states": ["default", "highlighted"],
+      "props": [
+        { "name": "events", "type": "List<TimelineEvent>", "description": "Eventos a exibir" },
+        { "name": "orientation", "type": "TimelineOrientation", "description": "Vertical ou horizontal", "default": "vertical" },
+        { "name": "compact", "type": "bool", "description": "Versao compacta", "default": false },
+        { "name": "onEventTap", "type": "void Function(int)?", "description": "Acao ao tocar evento" }
+      ],
+      "behavior": "Scroll vertical. Toque no evento navega para detalhes. Compact: cards menores, sem descricao, apenas titulo e hora.",
+      "accessibility": "semantics: listagem cronologica com labels de data e evento.",
+      "visual_rules": "Linha vertical 2dp #EAE9E6. Marcadores 12dp com cor do modulo. Conector 1dp 20dp height. Card com radius 16dp. Espacamento entre eventos: 20dp.",
+      "usage_examples": "Diario: eventos do dia em ordem. Historico de humor: entradas com data e nota. Timeline de projetos: etapas concluidas."
+    }
+  },
+  "navigation": {
+    "navigation_model": "O Nexus usa navegacao baseada em tabs com bottom navigation como primary navigation. Cada tab e uma area independente do aplicativo. Dentro de cada area, a navegacao e hierarquica (stack) usando go_router.",
+    "primary_navigation": {
+      "type": "bottom_navigation",
+      "items": [
+        { "icon": "search", "label": "Buscar", "route": "/busca", "description": "Busca global em todos os registros" },
+        { "icon": "today", "label": "Hoje", "route": "/", "description": "Dashboard diario com smart summary" },
+        { "icon": "edit_note", "label": "Registrar", "route": "/registrar", "description": "Registro rapido em qualquer modulo" },
+        { "icon": "insights", "label": "Insights", "route": "/insights", "description": "Analises e padroes cross-module" }
+      ],
+      "fab_action": {
+        "icon": "add",
+        "action": "open_quick_registration_modal",
+        "description": "Botao central que abre modal de registro rapido"
+      },
+      "rules": {
+        "max_items": 5,
+        "show_labels": true,
+        "active_icon_filled": true,
+        "inactive_icon_outlined": true,
+        "elevation": "floating",
+        "background_blur": false
+      }
+    },
+    "secondary_navigation": {
+      "type": "tabs_and_stack",
+      "within_modules": {
+        "type": "tab_selector_pills",
+        "position": "below_header",
+        "behavior": "scrollable",
+        "items_per_module": ["visao_geral", "submodulo_1", "submodulo_2", "todos"]
+      },
+      "within_submodules": {
+        "type": "stack_navigation",
+        "behavior": "go_router_push",
+        "back_button": true,
+        "transition": "slide_horizontal"
+      }
+    },
+    "floating_nav_rules": {
+      "bottom_margin_dp": 16,
+      "horizontal_margin_dp": 16,
+      "border_radius_dp": 20,
+      "height_dp": 64,
+      "shadow": "modal",
+      "background": "#FFFFFF",
+      "active_color": "#111111",
+      "inactive_color": "#A8A8A8",
+      "blur_background": false,
+      "safe_area_bottom": true
+    },
+    "tab_structure": {
+      "route_model": "/<modulo>/<submodulo>/<acao>/:id",
+      "default_route": "/",
+      "module_routes": {
+        "saude": "/saude",
+        "mente": "/mente",
+        "acao": "/acao",
+        "financas": "/financas",
+        "vida": "/vida"
+      },
+      "submodule_routes": {
+        "saude_sono": "/saude/sono",
+        "saude_alimentacao": "/saude/alimentacao",
+        "saude_movimento": "/saude/movimento-e-treino",
+        "mente_humor": "/mente/humor-e-emocoes",
+        "mente_mindfulness": "/mente/mindfulness",
+        "mente_journal": "/mente/journal",
+        "acao_tarefas": "/acao/tarefas",
+        "acao_habitos": "/acao/habitos",
+        "acao_energia": "/acao/energia",
+        "financas_despesas": "/financas/despesas",
+        "financas_receitas": "/financas/receitas",
+        "financas_orcamento": "/financas/orcamento",
+        "vida_eventos": "/vida/eventos",
+        "vida_relacionamentos": "/vida/relacionamentos",
+        "vida_conquistas": "/vida/conquistas"
+      }
+    },
+    "back_behavior": {
+      "hardware_back": "pop current route",
+      "swipe_back": "enabled (iOS) or back button (Android)",
+      "unsaved_changes_dialog": "show confirmation if form has unsaved data",
+      "close_sheet_on_back": true
+    }
+  },
+  "modules_visual_language": {
+    "saude": {
+      "role": "Vitalidade fisica e bem-estar do corpo",
+      "color": "#34C759",
+      "color_dark": "#30D158",
+      "background_tint": "#E8F8E8",
+      "icon": "favorite",
+      "components": ["card_metrica_saude", "grafico_sono", "grafico_atividade", "timeline_saude"],
+      "hierarchy": "Primeiro modulo na navegacao. Dashboard com metricas vitais. Submodulos organizados por sistema do corpo.",
+      "tone": "Incentivador mas honesto. Nunca julgar. Foco em progresso, nao em perfeicao."
+    },
+    "mente": {
+      "role": "Equilibrio mental, emocional e cognitivo",
+      "color": "#5E5CE6",
+      "color_dark": "#5E5CE6",
+      "background_tint": "#EEEDFC",
+      "icon": "psychology",
+      "components": ["card_humor", "grafico_emocional", "journal_entry", "mindfulness_timer"],
+      "hierarchy": "Segundo modulo. Dashboard com estado emocional do dia. Entrada de journal como atividade principal.",
+      "tone": "Acolhedor e seguro. Validacao emocional. Sem julgamento. Espaco para vulnerabilidade."
+    },
+    "acao": {
+      "role": "Produtividade, realizacao e energia para acao",
+      "color": "#FF9500",
+      "color_dark": "#FF9F0A",
+      "background_tint": "#FFF3E0",
+      "icon": "bolt",
+      "components": ["card_tarefa", "progress_habito", "pomodoro_timer", "energia_meter"],
+      "hierarchy": "Terceiro modulo. Foco em acao e realizacao. Lista de tarefas como entrada principal.",
+      "tone": "Motivacional e pratico. Foco em pequenas vitorias. Nao overwhelming."
+    },
+    "financas": {
+      "role": "Recursos financeiros, patrimonio e estabilidade",
+      "color": "#30D158",
+      "color_dark": "#30D158",
+      "background_tint": "#E8F8E8",
+      "icon": "account_balance",
+      "components": ["card_gasto", "grafico_financeiro", "orcamento_progress", "meta_financeira"],
+      "hierarchy": "Quarto modulo. Dashboard financeiro com entrada de gastos como acao principal.",
+      "tone": "Calmo e controlador. Reduz ansiedade financeira. Foco em clareza, nao em restricao."
+    },
+    "vida": {
+      "role": "Conexoes humanas, experiencias e legado pessoal",
+      "color": "#FF2D55",
+      "color_dark": "#FF453A",
+      "background_tint": "#FFE8ED",
+      "icon": "diversity_3",
+      "components": ["card_evento", "card_relacionamento", "timeline_vida", "gratidao_entry"],
+      "hierarchy": "Quinto modulo. Timeline de vida e conexoes. Registro de momentos significativos.",
+      "tone": "Caloroso e humano. Celebra pequenas alegrias. Espaco para gratidao e reflexao."
+    },
+    "saude_sono": {
+      "role": "Registro e analise de padroes de sono",
+      "color": "#5E5CE6",
+      "icon": "bedtime",
+      "parent_module": "saude",
+      "tone": "Suave e restaurador. Foco em qualidade, nao em quantidade."
+    },
+    "saude_alimentacao": {
+      "role": "Registro de refeicoes e habitos alimentares",
+      "color": "#FF9500",
+      "icon": "restaurant",
+      "parent_module": "saude",
+      "tone": "Sem julgamento. Sem contagem rigida de calorias. Foco em padroes, nao em restricao."
+    },
+    "saude_movimento": {
+      "role": "Registro de atividade fisica e exercicios",
+      "color": "#5856D6",
+      "icon": "directions_run",
+      "parent_module": "saude",
+      "tone": "Celebratorio. Qualquer movimento conta. Foco em consistencia, nao em performance."
+    },
+    "mente_humor": {
+      "role": "Rastreamento de estado emocional diario",
+      "color": "#5E5CE6",
+      "icon": "mood",
+      "parent_module": "mente",
+      "tone": "Validacao emocional. Nao existem emocoes ruins, apenas informacao."
+    },
+    "mente_journal": {
+      "role": "Diario pessoal para reflexao e processamento",
+      "color": "#7C5CFF",
+      "icon": "edit_note",
+      "parent_module": "mente",
+      "tone": "Privado e seguro. Espaco para escrever sem julgamento."
+    },
+    "acao_tarefas": {
+      "role": "Gerenciamento de tarefas e afazeres",
+      "color": "#FF9500",
+      "icon": "checklist",
+      "parent_module": "acao",
+      "tone": "Pratico e acionavel. Foco em conclusao, nao em acumulo."
+    },
+    "acao_habitos": {
+      "role": "Rastreamento e construcao de habitos",
+      "color": "#34C759",
+      "icon": "loop",
+      "parent_module": "acao",
+      "tone": "Encorajador. Streaks e consistencia. Nunca quebrar a sequencia e mais importante que a performance."
+    },
+    "financas_despesas": {
+      "role": "Registro e categorizacao de gastos",
+      "color": "#FF9500",
+      "icon": "shopping_cart",
+      "parent_module": "financas",
+      "tone": "Claro e sem ansiedade. Gastos sao informacao, nao julgamento."
+    },
+    "financas_receitas": {
+      "role": "Registro de fontes de renda",
+      "color": "#34C759",
+      "icon": "payments",
+      "parent_module": "financas",
+      "tone": "Positivo e fortalecedor. Foco em crescer, nao em limitar."
+    },
+    "vida_eventos": {
+      "role": "Registro de eventos e acontecimentos importantes",
+      "color": "#007AFF",
+      "icon": "event",
+      "parent_module": "vida",
+      "tone": "Celebratorio e memorial. Eventos viram memorias."
+    },
+    "vida_relacionamentos": {
+      "role": "Gerenciamento de conexoes e interacoes sociais",
+      "color": "#FF2D55",
+      "icon": "favorite",
+      "parent_module": "vida",
+      "tone": "Caloroso e humano. Foco em qualidade das conexoes."
+    }
+  },
+  "interaction_design": {
+    "tap_targets": {
+      "minimum_size_dp": 44,
+      "minimum_spacing_dp": 8,
+      "cards_use_entire_card_as_target": true,
+      "icon_buttons_minimum_dp": 44,
+      "chips_minimum_dp": 32,
+      "guideline": "Todos elementos interativos devem ter no minimo 44x44dp de area de toque. Se o elemento visual for menor (icone de 24dp), o padding interno deve completar o alvo."
+    },
+    "gestures": {
+      "swipe_left": "Acao rapida (concluir, arquivar, excluir) com confirmacao",
+      "swipe_right": "Acao alternativa (adiar, marcar como importante)",
+      "long_press": "Abrir context menu com acoes disponiveis",
+      "double_tap": "Like ou favorito (apenas em conteudo de vida/gratidao)",
+      "pull_to_refresh": "Recarregar dados da tela atual",
+      "pinch_to_zoom": "Zoom em graficos e timelines (apenas tablet)",
+      "two_finger_swipe": "Navegacao entre modulos (apenas tablet)",
+      "rules": {
+        "every_gesture_has_button_alternative": true,
+        "gestures_are_discoverable": true,
+        "no_conflicting_gestures": true,
+        "haptic_feedback_on_gesture": true
+      }
+    },
+    "microinteractions": {
+      "button_press": { "animation": "scale 0.97", "duration_ms": 100, "curve": "easeOut" },
+      "card_tap": { "animation": "subtle lift + scale", "duration_ms": 150, "curve": "easeOut" },
+      "navigation_transition": { "animation": "slide horizontal", "duration_ms": 300, "curve": "easeOutCubic" },
+      "accordion_expand": { "animation": "size transition + fade", "duration_ms": 250, "curve": "easeOut" },
+      "checkbox_toggle": { "animation": "check draw + fill", "duration_ms": 200, "curve": "easeOut" },
+      "save_confirmation": { "animation": "checkmark pulse + fade", "duration_ms": 400, "curve": "easeOut" },
+      "error_shake": { "animation": "horizontal shake", "duration_ms": 300, "curve": "elasticOut" },
+      "toast_enter": { "animation": "slide down from top", "duration_ms": 300, "curve": "easeOut" },
+      "toast_exit": { "animation": "fade up", "duration_ms": 200, "curve": "easeIn" },
+      "modal_appear": { "animation": "slide up from bottom", "duration_ms": 350, "curve": "easeOutCubic" },
+      "tab_switch": { "animation": "cross fade", "duration_ms": 250, "curve": "easeOut" },
+      "chart_draw": { "animation": "progressive draw", "duration_ms": 400, "curve": "easeOut" }
+    },
+    "transitions": {
+      "push": { "animation": "slide left", "duration_ms": 300, "curve": "easeOutCubic" },
+      "pop": { "animation": "slide right", "duration_ms": 250, "curve": "easeInOut" },
+      "modal": { "animation": "slide up", "duration_ms": 350, "curve": "easeOutCubic" },
+      "sheet": { "animation": "slide up with drag", "duration_ms": 300, "curve": "easeOut" },
+      "tab_change": { "animation": "cross fade", "duration_ms": 200, "curve": "easeOut" },
+      "page_jump": { "animation": "instant with fade in", "duration_ms": 150, "curve": "easeOut" }
+    },
+    "animation_rules": {
+      "default_curve": "easeOutCubic",
+      "max_duration_ms": 400,
+      "min_duration_ms": 80,
+      "reduce_motion_support": true,
+      "respect_user_reduced_motion_setting": true,
+      "no_parallax": true,
+      "no_staggered_animations": true,
+      "no_looping_animations_except_loading": true,
+      "spring_animations": "avoid, prefer curves",
+      "haptic_feedback": "use sparingly, only for confirmations and errors"
+    }
+  },
+  "forms_and_inputs": {
+    "general_rules": {
+      "min_fields_per_form": "capture apenas o necessario para o submodulo",
+      "max_fields_per_form": "5 campos por formulario de registro rapido",
+      "label_style": "floating label animado (250ms)",
+      "validation": "validate on focus loss and on submit",
+      "error_style": "border #FF3B30 + message below in micro 11sp",
+      "disabled_style": "opacity 50%, no interaction",
+      "required_indicator": "asterisco * em vermelho ao lado do label",
+      "autofocus": "foco no primeiro campo ao abrir formulario",
+      "keyboard_type": "sempre o teclado apropriado (numerico, email, texto)"
+    },
+    "layout": {
+      "single_column": true,
+      "label_alignment": "above input",
+      "field_spacing_dp": 16,
+      "section_spacing_dp": 24,
+      "submit_button_position": "bottom of form, full width on mobile",
+      "padding_dp": "same as screen padding (20dp)"
+    },
+    "validation_rules": {
+      "show_error_on_blur": true,
+      "show_error_on_submit": true,
+      "real_time_validation": "apenas para campos com constraints visiveis (limite de caracteres, formato)",
+      "error_message_position": "4dp abaixo do input",
+      "error_message_style": "micro 11sp #FF3B30",
+      "success_indicator": "borda verde apos validacao bem sucedida",
+      "debounce_ms": 300
+    },
+    "field_types": {
+      "text": { "keyboard": "text", "capitalization": "sentences", "max_lines": 1 },
+      "multiline": { "keyboard": "text", "capitalization": "sentences", "min_lines": 3, "max_lines": 10 },
+      "number": { "keyboard": "number", "decimal": "configurable", "prefix_suffix": "configurable" },
+      "email": { "keyboard": "email", "capitalization": "none", "autocorrect": false },
+      "phone": { "keyboard": "phone", "mask": "optional" },
+      "url": { "keyboard": "url", "capitalization": "none", "autocorrect": false },
+      "password": { "keyboard": "visible_password", "obscure": true, "toggle_visibility": true },
+      "date": { "picker": "bottom_sheet_date_picker", "format": "DD/MM/YYYY" },
+      "time": { "picker": "bottom_sheet_time_picker", "format": "HH:MM" },
+      "datetime": { "picker": "bottom_sheet_datetime_picker", "format": "DD/MM/YYYY HH:MM" }
+    },
+    "autofill_rules": {
+      "smart_defaults": "preencher com data/hora atual para registros temporais",
+      "last_value": "sugerir ultimo valor para campos repetitivos (tipo de refeicao)",
+      "pattern_detection": "detectar padroes e sugerir valores (horario habitual de dormir)"
+    },
+    "date_input_behavior": {
+      "opened_via": "toque no campo",
+      "picker_type": "bottom sheet nativo ou custom",
+      "navigation": "scroll horizontal para dia/mes/ano",
+      "confirm_button": "Confirmar",
+      "cancel_button": "Cancelar",
+      "format_display": "24 de junho de 2026 (escrito por extenso no campo)"
+    }
+  }
+}

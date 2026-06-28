@@ -14,33 +14,33 @@ export function TimelineItemRow({ item, onToggle, onDelete }: TimelineItemRowPro
     <div
       className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${
         item.concluida
-          ? 'bg-surface-soft/60 border-hairline-soft opacity-60'
-          : 'bg-canvas border border-hairline hover:border-slate shadow-none'
+          ? 'bg-muted/60 border-line/50 opacity-60'
+          : 'bg-card border border-line hover:border-subtle shadow-card'
       }`}
     >
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <button
           onClick={() => onToggle(item.id, item.tipo)}
           className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 cursor-pointer active-tap ${
-            item.concluida ? 'bg-primary border-primary text-white' : 'border-slate/40 bg-white'
+            item.concluida ? 'bg-accent border-accent text-white' : 'border-subtle/40 bg-white'
           }`}
         >
           {item.concluida && <Check className="w-3.5 h-3.5 stroke-3" />}
         </button>
-        <span className={`text-[12px] truncate ${item.concluida ? 'line-through text-slate' : 'font-semibold text-ink'}`}>
+        <span className={`text-[12px] truncate ${item.concluida ? 'line-through text-subtle' : 'font-semibold text-ink'}`}>
           {item.nome}
         </span>
       </div>
       <div className="flex items-center gap-2 text-right shrink-0">
         <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${
-          item.tipo === 'habit' ? 'bg-tint-mint text-brand-green border border-brand-green/10' : 'bg-surface-soft text-slate border border-hairline'
+          item.tipo === 'habit' ? 'bg-accent-soft text-brand-green border border-brand-green/10' : 'bg-muted text-subtle border border-line'
         }`}>
           {item.tipo === 'habit' ? 'rotina' : (item.prioridade || 'regular')}
         </span>
         {item.tipo === 'task' && (
           <button
             onClick={() => onDelete(item.rawItem.id)}
-            className="p-1.5 text-slate hover:text-brand-pink active-tap cursor-pointer"
+            className="p-1.5 text-subtle hover:text-brand-pink active-tap cursor-pointer"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>

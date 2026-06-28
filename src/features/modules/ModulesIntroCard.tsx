@@ -2,7 +2,7 @@ import React from 'react';
 
 export function ModulesIntroCard() {
   return (
-    <div className="bg-card border border-line rounded-[var(--radius-3xl)] p-5 flex justify-between items-center gap-5 relative overflow-hidden">
+    <div className="bg-card border border-line rounded-2xl p-5 flex justify-between items-center gap-5 relative overflow-hidden">
       <div className="space-y-1.5 max-w-[72%]">
         <h3 className="text-xs font-bold font-mono text-subtle uppercase tracking-wider">Seu sistema pessoal</h3>
         <p className="text-[12px] leading-relaxed font-semibold text-ink">

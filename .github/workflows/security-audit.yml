@@ -1,0 +1,59 @@
+name: security-audit
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  audit-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: npm audit
+        id: audit
+        continue-on-error: true
+        run: |
+          npm audit --json > audit-report.json 2>&1 || true
+
+      - name: Create issue if vulnerabilities found
+        if: steps.audit.outcome == 'failure'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('fs');
+            let report;
+            try {
+              report = JSON.parse(fs.readFileSync('audit-report.json', 'utf8'));
+            } catch {
+              console.log('Could not parse audit report');
+              return;
+            }
+            const vulns = report.vulnerabilities || {};
+            const entries = Object.entries(vulns);
+            if (entries.length === 0) {
+              console.log('No vulnerabilities found');
+              return;
+            }
+            let body = '## Vulnerabilidades encontradas\n\n';
+            for (const [name, info] of entries) {
+              body += `### ${name}\n`;
+              body += `- Severidade: ${info.severity}\n`;
+              body += `- Via: ${info.via.join(', ')}\n`;
+              body += `- Range: ${info.range}\n\n`;
+            }
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Relatório de segurança: vulnerabilidades detectadas',
+              body: body,
+              labels: ['security', 'automated']
+            });

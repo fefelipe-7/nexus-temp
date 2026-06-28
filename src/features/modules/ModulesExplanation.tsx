@@ -7,7 +7,7 @@ interface ModulesExplanationProps {
 
 export function ModulesExplanation({ onOpenStructure }: ModulesExplanationProps) {
   return (
-    <div className="bg-card border border-line rounded-[22px] p-4.5 space-y-3 shadow-none">
+    <div className="bg-card border border-line rounded-xl p-4.5 space-y-3 shadow-none">
       <div className="space-y-1">
         <h5 className="text-xs font-bold text-ink">Como o Nexus organiza tudo</h5>
         <p className="text-[11.5px] leading-relaxed text-subtle">

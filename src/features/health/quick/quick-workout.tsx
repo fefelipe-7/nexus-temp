@@ -32,11 +32,11 @@ export function QuickWorkout({ selectedDate, onSaveSuccess, onClose }: QuickWork
   return (
     <div className="space-y-3">
       <div className="space-y-1">
-        <label className="text-[10px] font-mono text-slate uppercase">O que você treinou hoje?</label>
-        <input type="text" value={treinoNome} placeholder="Ex: Musculação Peito, Corrida rápida" onChange={e => setTreinoNome(e.target.value)} className="w-full text-xs border border-hairline rounded-lg p-2.5 mt-0.5 bg-canvas focus:border-[#6D5DD3] focus:outline-hidden" />
+        <label className="text-[10px] font-mono text-subtle uppercase">O que você treinou hoje?</label>
+        <input type="text" value={treinoNome} placeholder="Ex: Musculação Peito, Corrida rápida" onChange={e => setTreinoNome(e.target.value)} className="w-full text-xs border border-line rounded-lg p-2.5 mt-0.5 bg-card focus:border-[#6D5DD3] focus:outline-hidden" />
       </div>
       <div className="space-y-1">
-        <span className="text-[10px] font-mono text-slate uppercase">Duração estimada: {treinoDuracao} min</span>
+        <span className="text-[10px] font-mono text-subtle uppercase">Duração estimada: {treinoDuracao} min</span>
         <input type="range" min="15" max="120" step="5" value={treinoDuracao} onChange={e => setTreinoDuracao(parseInt(e.target.value))} className="w-full accent-[#6D5DD3] cursor-pointer" />
       </div>
       <button onClick={handleSave} disabled={salvando || !treinoNome.trim()} className="w-full bg-primary disabled:bg-stone hover:bg-primary-pressed text-white text-xs font-black py-2.5 rounded-xl cursor-pointer mt-3 flex items-center justify-center gap-1.5 shadow-xs">

@@ -16,7 +16,7 @@ export function WeekDayPicker({ weekDays, onSelect }: WeekDayPickerProps) {
           className={`flex flex-col items-center justify-center p-2 rounded-xl flex-1 min-w-[42px] max-w-[52px] transition-all cursor-pointer active-tap ${
             day.isSelected
               ? 'bg-ink text-white border border-ink shadow-sm font-bold scale-102'
-              : 'bg-canvas border border-hairline hover:border-slate text-slate'
+              : 'bg-card border border-line hover:border-subtle text-subtle'
           }`}
         >
           <span className="text-[9px] font-bold font-mono tracking-wider">{day.dayLabel}</span>

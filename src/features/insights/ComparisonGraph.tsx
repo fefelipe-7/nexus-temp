@@ -34,7 +34,7 @@ export function ComparisonGraph({ registros, metricA, metricB, hoveredDataIdx, o
   const metricColorB = METRIC_DETAILS[metricB].color;
 
   return (
-    <div className="bg-muted border border-line rounded-[18px] p-3 pt-4 relative overflow-hidden transition-all duration-300">
+    <div className="bg-muted border border-line rounded-xl p-3 pt-4 relative overflow-hidden transition-all duration-300">
       {registros.length === 0 ? (
         <div className="h-28 flex items-center justify-center text-xs text-subtle italic">
           Não há dados no histórico local para plotar gráfico.

@@ -239,7 +239,7 @@ function SleepTimeline({ deitou, dormiu, acordouTempo }: { deitou: string; dormi
           className="absolute flex flex-col items-center -translate-x-1/2"
           style={{ left: `${bedPct}%` }}
         >
-          <div className="w-3 h-3 rounded-full bg-stone border-2 border-white" />
+          <div className="w-3 h-3 rounded-full bg-faint border-2 border-white" />
           <span className="text-[10px] text-subtle mt-0.5">🛌</span>
         </div>
         <div
@@ -347,7 +347,7 @@ export function SleepWizard({ selectedDate, onClose, onSaveSuccess }: SleepWizar
 
   return (
     <div className="bg-app min-h-dvh text-ink flex flex-col absolute inset-0 z-50 overflow-y-auto">
-      <div className="sticky top-0 z-10 bg-canvas/80 backdrop-blur-md px-4 pt-4 pb-2 flex items-center justify-between border-b border-line">
+      <div className="sticky top-0 z-10 bg-app/80 backdrop-blur-md px-4 pt-4 pb-2 flex items-center justify-between border-b border-line">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center">
             <Moon className="w-3.5 h-3.5 text-accent" />

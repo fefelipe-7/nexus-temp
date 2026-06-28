@@ -25,10 +25,10 @@ export function PeriodSection({ periodo, items, onToggle, onDelete }: PeriodSect
       <div className={`flex items-center gap-1.5 px-0.5 ${config.color} font-extrabold text-xs`}>
         <Icon className="w-4 h-4" />
         <span className="tracking-tight text-ink">{periodo.charAt(0).toUpperCase() + periodo.slice(1)}</span>
-        <span className="text-[10px] font-mono font-medium text-slate">({items.length})</span>
+        <span className="text-[10px] font-mono font-medium text-subtle">({items.length})</span>
       </div>
       {items.length === 0 ? (
-        <p className="text-[11px] text-slate/75 italic px-6">{config.emptyText}</p>
+        <p className="text-[11px] text-subtle/75 italic px-6">{config.emptyText}</p>
       ) : (
         <div className="space-y-1.5">
           {items.map((item) => (
