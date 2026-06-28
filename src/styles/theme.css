@@ -140,4 +140,31 @@
   --color-nexus-green: var(--color-health-soft);
   --color-nexus-blue: var(--color-action-soft);
   --color-nexus-warm: var(--color-finance-soft);
+
+  /* ── Legacy aliases (compatibilidade com components existentes) ── */
+  --color-canvas: #FFFFFF;
+  --color-charcoal: var(--text-ink-soft);
+  --color-slate: var(--text-subtle);
+  --color-steel: var(--text-subtle);
+  --color-stone: var(--text-faint);
+  --color-hairline: var(--border-line);
+  --color-hairline-soft: var(--border-line-soft);
+  --color-hairline-strong: var(--border-line-strong);
+  --color-ink-deep: #000000;
+  --color-brand-blue: #0075de;
+  --color-brand-orange: #dd5b00;
+  --color-brand-orange-deep: #793400;
+  --color-brand-pink: #ff64c8;
+  --color-brand-pink-deep: #a02e6d;
+  --color-brand-purple: #7b3ff2;
+  --color-brand-purple-300: #d6b6f6;
+  --color-brand-purple-800: #391c57;
+  --color-brand-teal: #2a9d99;
+  --color-brand-green: #1aae39;
+  --color-brand-yellow: #f5d75e;
+  --color-brand-brown: #523410;
+  --color-tint-yellow-bold: #f9e79f;
+  --color-primary-soft: #EAF3FB;
+  --color-primary-alpha: rgba(9, 105, 218, 0.15);
+  --color-destructive-alpha: rgba(224, 109, 83, 0.15);
 }
