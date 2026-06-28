@@ -1,0 +1,47 @@
+name: dependency-update
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  check-outdated:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Check outdated dependencies
+        id: outdated
+        run: |
+          npm outdated --long > outdated-report.txt 2>&1 || true
+          cat outdated-report.txt
+          if grep -q "All" outdated-report.txt 2>/dev/null; then
+            echo "has_outdated=false" >> $GITHUB_OUTPUT
+          elif [ ! -s outdated-report.txt ]; then
+            echo "has_outdated=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_outdated=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create issue for outdated deps
+        if: steps.outdated.outputs.has_outdated == 'true'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('outdated-report.txt', 'utf8');
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Dependências desatualizadas encontradas',
+              body: '## Dependências desatualizadas\n\n```\n' + report + '\n```\n\n_Relatório gerado automaticamente pelo workflow `dependency-update`._',
+              labels: ['dependencies', 'automated']
+            });

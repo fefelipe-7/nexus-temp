@@ -70,7 +70,7 @@ export default function InsightsView({ selectedDate, refreshCount }: InsightsVie
   const descriptor = correlation.descriptor;
 
   return (
-    <div className="space-y-6 text-[#20201D] font-sans bg-[#F7F6F1] animate-fade-in">
+    <div className="space-y-6 text-ink font-sans bg-app animate-fade-in">
       <InsightsHeader onRecalibrate={() => showAlert('Banco de hábitos recalibrado em tempo real.', 'sistema')} />
 
       <div className="space-y-4">
@@ -80,7 +80,7 @@ export default function InsightsView({ selectedDate, refreshCount }: InsightsVie
         <MetricLegend metricA={metricA} metricB={metricB} />
         <div className="pt-2 flex justify-end">
           <button onClick={() => setIsDetailOpen(true)}
-            className="text-[11.5px] font-bold text-[#6D5DD3] hover:text-[#6D5DD3]/90 flex items-center gap-1 cursor-pointer active-tap select-none">
+            className="text-[11.5px] font-bold text-accent hover:text-accent/90 flex items-center gap-1 cursor-pointer active-tap select-none">
             <span>Como ler correlações analíticas</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
@@ -90,7 +90,7 @@ export default function InsightsView({ selectedDate, refreshCount }: InsightsVie
       <FilterPills activeFilter={activeFilter} onFilterChange={handleFilterChange} />
 
       <div className="space-y-3">
-        <h4 className="text-[10px] font-bold font-mono text-[#77736B] uppercase tracking-wider px-1">
+        <h4 className="text-[10px] font-bold font-mono           text-subtle uppercase tracking-wider px-1">
           Histórico e Tendências ({filteredInsights.length})
         </h4>
         <div className="space-y-3">

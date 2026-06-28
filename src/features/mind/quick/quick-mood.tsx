@@ -44,15 +44,15 @@ export function QuickMood({ selectedDate, onSaveSuccess, onClose }: QuickMoodPro
       </div>
       <div className="grid grid-cols-2 gap-3 pt-1">
         <div className="space-y-1">
-          <span className="text-[10px] font-mono font-bold text-slate uppercase">Estresse ({estresse}/10)</span>
+          <span className="text-[10px] font-mono font-bold text-subtle uppercase">Estresse ({estresse}/10)</span>
           <input type="range" min="1" max="10" value={estresse} onChange={e => setEstresse(parseInt(e.target.value))} className="w-full accent-teal-500 h-1 cursor-pointer" />
         </div>
         <div className="space-y-1">
-          <span className="text-[10px] font-mono font-bold text-slate uppercase">Ansiedade ({ansiedade}/10)</span>
+          <span className="text-[10px] font-mono font-bold text-subtle uppercase">Ansiedade ({ansiedade}/10)</span>
           <input type="range" min="1" max="10" value={ansiedade} onChange={e => setAnsiedade(parseInt(e.target.value))} className="w-full accent-teal-500 h-1 cursor-pointer" />
         </div>
       </div>
-      <div className="space-y-1 pt-2 border-t border-hairline">
+      <div className="space-y-1 pt-2 border-t border-line">
         <div className="flex justify-between text-xs font-semibold">
           <span>Coeficiente cognitivo (Foco)</span>
           <span className="font-mono font-extrabold text-teal-500">{foco}/10</span>

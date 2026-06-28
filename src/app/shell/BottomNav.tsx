@@ -35,7 +35,12 @@ export function BottomNav({ onOpenRegister, isHidden }: BottomNavProps) {
   };
 
   return (
-    <nav className={cn('bottom-nav transition-all duration-300', isHidden && 'translate-y-[calc(100%+16px)] opacity-0 pointer-events-none')}>
+    <nav
+      className={cn(
+        'bottom-nav transition-all duration-300',
+        isHidden && 'translate-y-[calc(100%+20px)] opacity-0 pointer-events-none',
+      )}
+    >
       {navItems.map((item) => {
         const Icon = item.icon;
         const isRegistrar = item.id === 'registrar';
@@ -45,9 +50,10 @@ export function BottomNav({ onOpenRegister, isHidden }: BottomNavProps) {
           return (
             <motion.button
               key={item.id}
-              whileTap={{ scale: 0.92 }}
+              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.05 }}
               onClick={() => handleClick(item.id)}
-              className="flex items-center justify-center w-11 h-11 rounded-full bg-accent text-white shadow-md hover:bg-accent-pressed active-tap cursor-pointer shrink-0 focus:outline-none"
+              className="flex items-center justify-center w-11 h-11 rounded-full bg-accent text-white shadow-md shadow-accent/20 hover:bg-accent-pressed active-tap cursor-pointer shrink-0 focus:outline-none"
               aria-label={item.label}
               type="button"
             >
@@ -62,10 +68,10 @@ export function BottomNav({ onOpenRegister, isHidden }: BottomNavProps) {
             whileTap={{ scale: 0.95 }}
             onClick={() => handleClick(item.id)}
             className={cn(
-              'flex items-center justify-center gap-1.5 px-3 py-2 rounded-full transition-colors duration-200 relative h-9 min-w-[40px] cursor-pointer focus:outline-none',
+              'flex items-center justify-center gap-1.5 px-3 py-2 rounded-full transition-all duration-200 relative h-9 min-w-[40px] cursor-pointer focus:outline-none',
               active
                 ? 'bg-accent-soft text-accent font-bold'
-                : 'bg-transparent text-subtle hover:text-ink hover:bg-muted'
+                : 'bg-transparent text-subtle hover:text-ink hover:bg-muted',
             )}
             aria-label={item.label}
             type="button"
