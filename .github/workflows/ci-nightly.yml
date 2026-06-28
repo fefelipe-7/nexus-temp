@@ -27,7 +27,7 @@ jobs:
 
       - run: npm run lint
       - run: npm test -- --coverage
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: nightly-coverage
           path: nexus/coverage/
@@ -44,7 +44,7 @@ jobs:
           cache-dependency-path: nexus/package-lock.json
       - run: npm ci
       - run: npm run build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: nightly-build
           path: nexus/dist/
