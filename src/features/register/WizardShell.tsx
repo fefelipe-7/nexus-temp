@@ -28,24 +28,24 @@ export function WizardShell({
   const isLastStep = step === totalSteps;
 
   return (
-    <div className="absolute inset-0 z-50 bg-canvas flex flex-col animate-fade-in text-charcoal">
-      <div className={`px-5 py-4 border-b border-hairline flex items-center justify-between ${colorBg} shrink-0`}>
+    <div className="absolute inset-0 z-50 bg-card flex flex-col animate-fade-in text-ink">
+      <div className={`px-5 py-4 border-b border-line flex items-center justify-between ${colorBg} shrink-0`}>
         <div className="flex items-center gap-2.5">
-          <div className="p-1.5 bg-white rounded-md border border-hairline shadow-2xs">
+          <div className="p-1.5 bg-card rounded-md border border-line shadow-2xs">
             <Icon className={`w-5 h-5 ${colorText}`} />
           </div>
           <div>
-            <span className="text-[9px] font-mono font-black text-slate tracking-wider uppercase">MODO DETALHADO NEXUS V2</span>
+            <span className="text-[9px] font-mono font-black text-subtle tracking-wider uppercase">MODO DETALHADO NEXUS V2</span>
             <h2 className="text-sm font-black text-ink">{title}</h2>
           </div>
         </div>
-        <button onClick={onBack} className="p-1 rounded-md hover:bg-black/5 text-slate active-tap cursor-pointer">
+        <button onClick={onBack} className="p-1 rounded-md hover:bg-black/5 text-subtle active-tap cursor-pointer">
           <X className="w-5 h-5" />
         </button>
       </div>
 
       {indicator ?? (
-        <div className="w-full bg-surface-soft h-1 shrink-0 relative">
+        <div className="w-full bg-muted h-1 shrink-0 relative">
           <motion.div className="absolute top-0 bottom-0 left-0 h-full transition-all duration-300"
             style={{ width: `${progress}%`, backgroundColor: colorAccent }} />
         </div>
@@ -59,8 +59,8 @@ export function WizardShell({
         </AnimatePresence>
       </div>
 
-      <div className="px-5 py-4 border-t border-hairline flex items-center justify-between shrink-0 bg-surface-soft">
-        <button onClick={onBack} className="px-3.5 py-2 rounded-md border border-nexus-border text-xs font-semibold text-charcoal hover:bg-neutral-100 flex items-center gap-1.5 transition-colors cursor-pointer">
+      <div className="px-5 py-4 border-t border-line flex items-center justify-between shrink-0 bg-muted">
+        <button onClick={onBack} className="px-3.5 py-2 rounded-md border border-line text-xs font-semibold text-ink hover:bg-neutral-100 flex items-center gap-1.5 transition-colors cursor-pointer">
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>{step === 1 ? 'Sair' : 'Voltar'}</span>
         </button>
@@ -81,7 +81,7 @@ export function WizardShell({
       <AnimatePresence>
         {sucesso && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-brand-teal text-white flex flex-col items-center justify-center p-6 text-center z-50 animate-fade-in">
+            className="absolute inset-0 bg-accent text-white flex flex-col items-center justify-center p-6 text-center z-50 animate-fade-in">
             <motion.div initial={{ scale: 0.8, rotate: -15 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', damping: 10 }}
               className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-4">
               <Check className="w-8 h-8 text-white" />

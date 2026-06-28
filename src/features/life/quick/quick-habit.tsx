@@ -35,8 +35,8 @@ export function QuickHabit({ selectedDate, onSaveSuccess, onClose }: QuickHabitP
     <div className="space-y-4">
       {habitsList.length > 0 ? (
         <div className="space-y-1">
-          <label className="text-[10px] font-mono text-slate uppercase font-bold">Selecione o Hábito Ativo</label>
-          <select value={selectedHabitId} onChange={e => setSelectedHabitId(e.target.value)} className="w-full text-xs border border-hairline bg-canvas rounded-lg p-2 text-charcoal mt-1">
+          <label className="text-[10px] font-mono text-subtle uppercase font-bold">Selecione o Hábito Ativo</label>
+          <select value={selectedHabitId} onChange={e => setSelectedHabitId(e.target.value)} className="w-full text-xs border border-line bg-card rounded-lg p-2 text-ink mt-1">
             {habitsList.map(h => <option key={h.id} value={h.id}>🔹 {h.nome}</option>)}
           </select>
         </div>

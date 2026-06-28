@@ -29,14 +29,14 @@ export function QuickTask({ selectedDate, onSaveSuccess, onClose }: QuickTaskPro
   return (
     <div className="space-y-4">
       <div className="space-y-1">
-        <label className="text-[10px] font-mono text-slate uppercase">Qual a sua meta operacional?</label>
-        <input type="text" value={tarefaNome} placeholder="Ex: Refatorar componente de roteamento em TS" onChange={e => setTarefaNome(e.target.value)} className="w-full text-xs border border-hairline rounded-lg p-2.5 mt-0.5 bg-canvas focus:border-[#6D5DD3] focus:outline-hidden" />
+        <label className="text-[10px] font-mono text-subtle uppercase">Qual a sua meta operacional?</label>
+        <input type="text" value={tarefaNome} placeholder="Ex: Refatorar componente de roteamento em TS" onChange={e => setTarefaNome(e.target.value)} className="w-full text-xs border border-line rounded-lg p-2.5 mt-0.5 bg-card focus:border-[#6D5DD3] focus:outline-hidden" />
       </div>
       <div className="space-y-1">
-        <label className="text-[10px] font-mono font-bold text-slate uppercase">Impacto Operacional</label>
+        <label className="text-[10px] font-mono font-bold text-subtle uppercase">Impacto Operacional</label>
         <div className="grid grid-cols-3 gap-2 mt-1">
           {(['baixa', 'media', 'alta'] as const).map(prio => (
-            <button key={prio} type="button" onClick={() => setTarefaPrioridade(prio)} className={`text-[10px] py-2 border rounded-lg capitalize font-bold cursor-pointer transition-all ${tarefaPrioridade === prio ? 'bg-[#6D5DD3] text-white border-[#6D5DD3]' : 'bg-white border-hairline text-charcoal hover:border-slate'}`}>{prio}</button>
+            <button key={prio} type="button" onClick={() => setTarefaPrioridade(prio)} className={`text-[10px] py-2 border rounded-lg capitalize font-bold cursor-pointer transition-all ${tarefaPrioridade === prio ? 'bg-[#6D5DD3] text-white border-[#6D5DD3]' : 'bg-card border-line text-ink hover:border-slate'}`}>{prio}</button>
           ))}
         </div>
       </div>

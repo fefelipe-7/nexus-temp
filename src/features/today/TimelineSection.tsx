@@ -16,14 +16,14 @@ export function TimelineSection({ manhaItems, tardeItems, noiteItems, onToggle, 
   return (
     <div className="space-y-5">
       <div className="flex justify-between items-center">
-        <h4 className="text-[10px] font-bold font-mono text-slate uppercase tracking-wider px-0.5">
+        <h4 className="text-[10px] font-bold font-mono text-subtle uppercase tracking-wider px-0.5">
           Cronograma do Dia
         </h4>
         <button
           onClick={onOpenAddTask}
-          className="flex items-center gap-1 text-[11px] text-ink hover:text-primary font-bold active-tap cursor-pointer"
+          className="flex items-center gap-1 text-[11px] text-ink hover:text-accent font-bold active-tap cursor-pointer"
         >
-          <Plus className="w-3.5 h-3.5 text-primary stroke-3" />
+          <Plus className="w-3.5 h-3.5 text-accent stroke-3" />
           <span>Nova Task</span>
         </button>
       </div>

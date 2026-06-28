@@ -18,27 +18,27 @@ export function ProfilePage() {
           <p className="text-xs text-subtle font-medium mt-0.5">Membro Nexus v2 Intel</p>
         </div>
       </div>
-      <div className="bg-card border border-line/80 rounded-[24px] p-5 text-left max-w-sm mx-auto space-y-4">
+      <div className="bg-card border border-line shadow-card rounded-xl p-5 text-left max-w-sm mx-auto space-y-4">
         <div>
-          <h3 className="text-[10px] font-mono font-bold text-[#77736B] uppercase tracking-wider mb-2">
+          <h3 className="text-[10px] font-mono font-bold text-subtle uppercase tracking-wider mb-2">
             ESTATÍSTICAS DA CONEXÃO
           </h3>
           <div className="space-y-2.5 text-xs font-medium">
-            <div className="flex justify-between border-b border-nexus-soft pb-2 text-[#20201D]">
-              <span className="text-[#77736B]">Armazenamento</span>
+            <div className="flex justify-between border-b border-line pb-2 text-ink">
+              <span className="text-subtle">Armazenamento</span>
               <span>Local Encrypt (100% Offline)</span>
             </div>
-            <div className="flex justify-between border-b border-nexus-soft pb-2 text-[#20201D]">
-              <span className="text-[#77736B]">Módulos Ativos</span>
+            <div className="flex justify-between border-b border-line pb-2 text-ink">
+              <span className="text-subtle">Módulos Ativos</span>
               <span>5 / 5 Ativados</span>
             </div>
-            <div className="flex justify-between text-[#20201D]">
-              <span className="text-[#77736B]">Sincronização</span>
+            <div className="flex justify-between text-ink">
+              <span className="text-subtle">Sincronização</span>
               <span>Completa</span>
             </div>
           </div>
         </div>
-        <div className="bg-app border border-line p-3.5 rounded-[16px] text-[11px] leading-relaxed text-subtle italic text-center">
+        <div className="bg-app border border-line p-3.5 rounded-xl text-[11px] leading-relaxed text-subtle italic text-center">
           &ldquo;Seu espaço de autoaprendizado está ativo. Parâmetros adicionais de perfil serão estruturados nos próximos passos de evolução.&rdquo;
         </div>
       </div>

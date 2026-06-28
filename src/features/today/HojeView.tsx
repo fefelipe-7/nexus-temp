@@ -155,7 +155,7 @@ export default function HojeView({ selectedDate, setSelectedDate, refreshCount, 
   const agora = getSugestaoAgora(activeTasks, habitos, selectedDate);
 
   return (
-    <div className="space-y-6 text-charcoal relative animate-fade-in font-sans">
+    <div className="space-y-6 text-ink relative animate-fade-in font-sans">
       <TodayHeader formattedDate={formattedDate} selectedDate={selectedDate} onDateChange={setSelectedDate} />
       <WeekDayPicker weekDays={weekDays} onSelect={setSelectedDate} />
       <TodaySummary concluidasHoje={concluidasHoje} totalParaHoje={totalParaHoje} horasPlanejadasStr={horasPlanejadasStr} energiaLabel={energiaLabel} />

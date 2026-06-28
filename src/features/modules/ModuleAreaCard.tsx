@@ -22,7 +22,7 @@ export function ModuleAreaCard({ area, onClick }: ModuleAreaCardProps) {
 
   return (
     <button onClick={onClick}
-      className="w-full text-left bg-card border border-line rounded-[22px] p-4.5 hover:border-subtle/55 flex items-center justify-between gap-4 transition-all active-tap cursor-pointer">
+      className="w-full text-left bg-card border border-line rounded-xl p-4.5 hover:border-subtle/55 flex items-center justify-between gap-4 transition-all active-tap cursor-pointer">
       <div className="space-y-3 flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <div className={`p-1.5 rounded-lg ${area.accentBg} ${area.accentBorder} border`}>
